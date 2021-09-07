@@ -5,12 +5,14 @@
   "main": "index.ts",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vue-tsc --noEmit && vite build",
     "serve": "vite preview",
     "release": "node scripts/release.js",
     "commitlint": "node scripts/verify-commit.js"
   },
   "devDependencies": {
+    "@vitejs/plugin-vue": "^1.6.1",
+    "@vue/compiler-sfc": "^3.2.9",
     "chalk": "^4.1.2",
     "enquirer": "^2.3.6",
     "execa": "^5.1.1",
@@ -23,5 +25,8 @@
   "keywords": [],
   "author": "",
   "bugs": {},
-  "homepage": ""
+  "homepage": "",
+  "dependencies": {
+    "vue": "^3.2.9"
+  }
 }
