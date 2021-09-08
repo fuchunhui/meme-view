@@ -1,0 +1,52 @@
+html, body {
+  width: 100%;
+  height: 100%;
+  font-size: 12px;
+	font-family: "Helvetica Neue", "Helvetica", "Arial", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "STHeiti", "SimHei", "SimSun", sans-serif;
+}
+
+@font-face {
+  font-family: "PingFang-SC";
+  font-weight: 400;
+  src: local("PingFang SC Regular");
+}
+
+@font-face {
+  font-family: "PingFang-SC";
+  font-weight: 500;
+  src: local("PingFang SC Medium");
+}
+
+html, body, p,
+h1, h2, h3, h4, h5, h6,
+ul, ol, li {
+	margin: 0;
+	padding: 0;
+}
+ul, ol, li {
+  list-style: none;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+.clearfix {
+	*zoom: 1;
+	&:after {
+    content: " ";
+    display: block;
+    height: 0;
+    clear: both;
+	}
+}
+
+a {
+  text-decoration: none;
+}
+
+@supports (font-variation-settings: normal) {
+  :root {
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  }
+}

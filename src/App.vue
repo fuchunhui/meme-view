@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue';
+import ImageWrap from './pages/ImageWrap.vue';
 </script>
 
 <template>
-  <HelloWorld msg="Hello Vue 3 + TypeScript + Vite" />
+  <ImageWrap />
 </template>
 
 <style lang="less">
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  width: 100%;
+  height: 100%;
   color: #2c3e50f3;
-  margin-top: 60px;
   background: rgb(229, 236, 231);
 }
 </style>
