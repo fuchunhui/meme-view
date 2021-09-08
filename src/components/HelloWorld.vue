@@ -1,16 +1,28 @@
-<script setup lang="ts">
-import { ref } from 'vue';
-
-defineProps<{ msg: string }>()
-
-const count = ref(0);
-</script>
-
 <template>
   <h1>{{ msg }}</h1>
 
-  <button type="button" @click="count++">count is: {{ count }}</button>
+  <!-- <button type="button" @click="count++">count is: {{ count }}</button> -->
 </template>
+
+<script lang="ts">
+import {defineComponent} from 'vue';
+// import {Story} from '../types/images';
+
+interface Story {
+  mid: string;
+  title: string;
+}
+
+export default defineComponent({
+  setup() {
+    const s: Story = {
+      r: 123
+    };
+    console.log(s);
+  }
+});
+
+</script>
 
 <style scoped>
 a {

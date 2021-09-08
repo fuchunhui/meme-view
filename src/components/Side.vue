@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import Api from '../api';
 
+const emit = defineEmits(['change']);
+
 const catalogList = ref([]);
 
 const getCatalog = () => {
@@ -45,7 +47,7 @@ const getCatalog = () => {
   ];
   setTimeout(() => {
     catalogList.value = list;
-  }, 2000);
+  }, 1500);
 
   // Api.getCatalog().then(res => {
   //   console.log('catalog: ', res);
@@ -53,7 +55,7 @@ const getCatalog = () => {
 };
 
 const showCell = child => {
-  console.log({...child});
+  emit('change', child.mid);
 };
 
 getCatalog();
@@ -63,7 +65,7 @@ getCatalog();
   <div class="side">
     <template v-for="(item, index) in catalogList" :key="item.id">
       <div class="side-content">
-        <p>{{ item.text }}</p>
+        <p class="side-content-title">{{ item.text }}</p>
         <div
           v-for="child in item.children"
           :key="child.id"
@@ -79,5 +81,37 @@ getCatalog();
 .side {
   width: 100%;
   height: 100%;
+  overflow-y: auto;
+  user-select: none;
+
+  &-content {
+    border-top: 1px solid #dddee4;
+    &-title {
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      padding-left: 8px;
+      background: #fff;
+      box-shadow: 0 2px 3px 0 rgb(0 0 0 / 10%);
+      color: #3f3f3f;
+      font-size: 12px;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    &-cell {
+      width: 100%;
+      height: 32px;
+      line-height: 32px;
+      padding-left: 10px;
+      color: #3f3f3f;
+      cursor: pointer;
+      &:hover {
+        background: #edf4fe;
+        color: #4B98F8;
+      }
+    }
+  }
 }
 </style>

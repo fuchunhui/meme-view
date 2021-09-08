@@ -3,7 +3,7 @@ import ImageWrap from './pages/ImageWrap.vue';
 </script>
 
 <template>
-  <ImageWrap />
+  <ImageWrap/>
 </template>
 
 <style lang="less">
