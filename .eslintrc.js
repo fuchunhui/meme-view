@@ -89,5 +89,11 @@ module.exports = {
         '@typescript-eslint/explicit-module-boundary-types': 'warn'
       }
     }
-  ]
+  ],
+  globals: {
+    defineProps: "readonly",
+    defineEmits: "readonly",
+    defineExpose: "readonly",
+    withDefaults: "readonly"
+  }
 };

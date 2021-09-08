@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import Api from '../api';
+import {ref} from 'vue';
+// import Api from '../api';
 
 const emit = defineEmits(['change']);
 
@@ -46,7 +46,7 @@ const getCatalog = () => {
     }
   ];
   setTimeout(() => {
-    catalogList.value = list;
+    catalogList.value = list; // TODO
   }, 1500);
 
   // Api.getCatalog().then(res => {

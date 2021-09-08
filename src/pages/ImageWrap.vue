@@ -1,13 +1,22 @@
 <script setup lang="ts">
-import {ref, watch} from 'vue';
+import {reactive, ref, watch} from 'vue';
 import Side from '../components/Side.vue';
 // import Container from '../components/Container.vue';
-// import {Story} from '../types';
+import {Story} from '../types';
 
 const mid = ref('');
-// const story: Story = {
-//   t: 123
-// };
+const story: Story = reactive({
+  mid: '',
+  title: '',
+  feature: '',
+  image: '',
+  x: 0,
+  y: 0,
+  max: 0,
+  font: '',
+  color: '',
+  align: ''
+});
 
 const imageChange = (value: string) => {
   if (mid.value !== value) {
@@ -25,15 +34,12 @@ watch(mid, (nv, ov) => {
   getImageData(nv);
 });
 
-// console.log(story);
-</script>
-
-<script lang="ts">
-// defineComponent
+console.log(story);
 </script>
 
 <template>
   <div class="image-wrap">
+    {{ story }}
     <side @change="imageChange"/>
     <!-- <container/> -->
   </div>
