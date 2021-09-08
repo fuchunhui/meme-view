@@ -2,37 +2,21 @@
 import {ref, watch} from 'vue';
 import Side from '../components/Side.vue';
 // import Container from '../components/Container.vue';
-import {Story} from '../types';
-
-// const props = defineProps({
-//   foo: String
-// });
-
-interface TT {
-  mid: string;
-  title: string;
-  feature: string;
-  image: string;
-  x: number;
-  y: number;
-  max: number;
-  font: string;
-  color: string;
-  align: string;
-}
+// import {Story} from '../types';
 
 const mid = ref('');
-const story: Story = {
-  t: 123
-};
+// const story: Story = {
+//   t: 123
+// };
 
-const imageChange = value => {
+const imageChange = (value: string) => {
   if (mid.value !== value) {
     mid.value = value;
   }
 };
 
-const getImageData = mid => {
+const getImageData = (mid: string) => {
+  console.log(mid);
   return '';
 };
 
@@ -41,7 +25,7 @@ watch(mid, (nv, ov) => {
   getImageData(nv);
 });
 
-console.log(story);
+// console.log(story);
 </script>
 
 <script lang="ts">
@@ -49,10 +33,10 @@ console.log(story);
 </script>
 
 <template>
-<div class="image-wrap">
-  <side @change="imageChange"/>
-  <!-- <container/> -->
-</div>
+  <div class="image-wrap">
+    <side @change="imageChange"/>
+    <!-- <container/> -->
+  </div>
 </template>
 
 <style lang="less">
