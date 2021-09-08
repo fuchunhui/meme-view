@@ -1,29 +1,27 @@
-import http from 'axios';
+import axios from 'axios';
+import { NetInfo } from '../types';
 
-export default api => {
-  let method = api.method === 'post' ? 'post' : 'get';
+/**
+ * errNo含义
+ * -1 服务端错误
+ *  0 OK
+ *  1 用户错误
+ */
+export default (api: NetInfo) => {
+  return async (params: any, options: any) => {
+    const {url, method} = api;
 
-  return async (params, options = {}) => {
-    let {payload, stream} = options;
-    let url = api.url;
-
-    return http.request({
+    return axios.request({
       withCredentials: true,
       url,
       method,
-      ...payload,
       [method === 'get' ? 'params' : 'data']: params
     }).then(result => {
       const data = result.data;
-      if (stream) {
+      if (options?.stream) {
         return result;
       }
-      /**
-       * errNo含义
-       * -1 服务端错误
-       *  0 OK
-       *  1 用户错误
-       */
+
       if (data.errNo === 0) {
         return data;
       } else {
