@@ -1,12 +1,26 @@
 <script setup lang="ts">
+import {toRefs, Ref} from 'vue';
 import Property from '../components/Property.vue';
+import {MemeButton} from './common';
 import {Story} from '../types';
 
 const props = defineProps<{
   story: Story
 }>();
+const emit = defineEmits(['change']);
 
-console.log('container: ', props.story);
+const localStory: Ref<Story> = toRefs(props).story;
+
+console.log('container: ', localStory.value);
+
+const update = () => {
+  // TODO 保证不过多发送数据，只在数据变化的执行
+  emit('change', localStory.value);
+};
+
+const propertyChange = () => {
+  console.log('propertyChange');
+};
 
 </script>
 
@@ -25,7 +39,7 @@ console.log('container: ', props.story);
         </div> -->
       </div>
       <footer class="container-footer">
-        button
+        <MemeButton label="更新" u="primary" @click="update"/>
       </footer>
     </div>
     <property/>
@@ -77,6 +91,10 @@ console.log('container: ', props.story);
   &-footer {
     height: 58px;
     .flex-center();
+
+    .meme-button {
+      width: 130px;
+    }
   }
   .property {
     width: 240px;

@@ -34,13 +34,17 @@ watch(mid, (nv, ov) => {
   getImageData(nv);
 });
 
+const storyChange = (value: Story) => {
+  console.log('story change value: ', value);
+};
+
 console.log(story);
 </script>
 
 <template>
   <div class="image-wrap">
     <side @change="imageChange"/>
-    <container :story="story"/>
+    <container :story="story" @change="storyChange"/>
     <!-- <container v-if="story.image && story.mid"/> -->
   </div>
 </template>
