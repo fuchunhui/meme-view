@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {reactive, ref, watch} from 'vue';
 import Side from '../components/Side.vue';
-// import Container from '../components/Container.vue';
+import Container from '../components/Container.vue';
 import {Story} from '../types';
 
 const mid = ref('');
@@ -13,9 +13,9 @@ const story: Story = reactive({
   x: 0,
   y: 0,
   max: 0,
-  font: '',
-  color: '',
-  align: ''
+  font: '32px sans-serif',
+  color: '#FF0000',
+  align: 'start'
 });
 
 const imageChange = (value: string) => {
@@ -39,9 +39,9 @@ console.log(story);
 
 <template>
   <div class="image-wrap">
-    {{ story }}
     <side @change="imageChange"/>
-    <!-- <container/> -->
+    <container :story="story"/>
+    <!-- <container v-if="story.image && story.mid"/> -->
   </div>
 </template>
 
@@ -59,6 +59,7 @@ console.log(story);
   }
   .container {
     flex: 1;
+    padding-left: 6px;;
   }
 }
 </style>

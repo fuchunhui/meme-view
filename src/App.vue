@@ -11,6 +11,6 @@ import ImageWrap from './pages/ImageWrap.vue';
   width: 100%;
   height: 100%;
   color: #2c3e50f3;
-  background: rgb(229, 236, 231);
+  background: #ebedf3;
 }
 </style>

@@ -1,12 +1,32 @@
 <script setup lang="ts">
 import Property from '../components/Property.vue';
+import {Story} from '../types';
+
+const props = defineProps<{
+  story: Story
+}>();
+
+console.log('container: ', props.story);
+
 </script>
 
 <template>
   <div class="container">
-    containers
     <div class="container-content">
-
+      <div class="container-header">
+        header
+      </div>
+      <div class="container-wraper">
+        <div class="container-image">
+          image
+        </div>
+        <!-- <div class="container-area">
+          text todo change layout
+        </div> -->
+      </div>
+      <footer class="container-footer">
+        button
+      </footer>
     </div>
     <property/>
   </div>
@@ -21,10 +41,45 @@ import Property from '../components/Property.vue';
   .flex-center();
 
   .container-content {
+    display: flex;
+    flex-direction: column;
     flex: 1;
+    height: 100%;
+  }
+  &-header {
+    flex-shrink: 0;
+    height: 46px;
+    margin: 0 -1px 6px;
+    background-color: #fff;
+    border: 1px solid #dddee4;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%);
+  }
+  &-wraper {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 3px;
+  }
+  &-image {
+    height: 100%;
+    border: 1px solid #dddee4;
+  }
+  &-area {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+  }
+  &-footer {
+    height: 58px;
+    .flex-center();
   }
   .property {
-    width: 280px;
+    width: 240px;
     background: rgb(153, 153, 131);
   }
 }

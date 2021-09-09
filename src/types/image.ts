@@ -9,4 +9,15 @@ export interface Story {
   font: string;
   color: string;
   align: string;
-};
+}
+
+export interface Catalog {
+  id: string;
+  text: string;
+  children: CatalogItem[]
+}
+
+export interface CatalogItem {
+  mid: string;
+  title: string;
+}

@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import {ref} from 'vue';
+import {Ref, ref} from 'vue';
+import {Catalog, CatalogItem} from '../types';
 // import Api from '../api';
 
 const emit = defineEmits(['change']);
 
-const catalogList = ref([]);
+const catalogList: Ref<Catalog[]> = ref([]);
 
 const getCatalog = () => {
-  const list = [
+  const list: Catalog[] = [
     {
       id: 'meme_common',
       text: 'common',
@@ -46,7 +47,7 @@ const getCatalog = () => {
     }
   ];
   setTimeout(() => {
-    catalogList.value = list; // TODO
+    catalogList.value = list;
   }, 1500);
 
   // Api.getCatalog().then(res => {
@@ -54,7 +55,7 @@ const getCatalog = () => {
   // });
 };
 
-const showCell = child => {
+const showCell = (child: CatalogItem) => {
   emit('change', child.mid);
 };
 
@@ -63,15 +64,19 @@ getCatalog();
 
 <template>
   <div class="side">
-    <template v-for="(item, index) in catalogList" :key="item.id">
+    <template v-for="item in catalogList" :key="item.id">
       <div class="side-content">
-        <p class="side-content-title">{{ item.text }}</p>
+        <p class="side-content-title">
+          {{ item.text }}
+        </p>
         <div
           v-for="child in item.children"
-          :key="child.id"
+          :key="child.mid"
           class="side-content-cell"
           @click="showCell(child)"
-        >{{ child.title }}</div>
+        >
+          {{ child.title }}
+        </div>
       </div>
     </template>
   </div>
@@ -81,6 +86,7 @@ getCatalog();
 .side {
   width: 100%;
   height: 100%;
+  border-right: 1px solid #dddee4;
   overflow-y: auto;
   user-select: none;
 
