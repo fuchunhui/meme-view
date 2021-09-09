@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {toRefs, Ref} from 'vue';
+import {toRefs, Ref, ref, onMounted, nextTick} from 'vue';
 import Property from '../components/Property.vue';
 import {MemeButton} from './common';
 import {Story} from '../types';
@@ -11,38 +11,70 @@ const emit = defineEmits(['change']);
 
 const localStory: Ref<Story> = toRefs(props).story;
 
-console.log('container: ', localStory.value);
+// console.log('container: ', localStory.value);
+
+const width = ref(0);
+const height = ref(0);
 
 const update = () => {
   // TODO 保证不过多发送数据，只在数据变化的执行
   emit('change', localStory.value);
 };
 
-const propertyChange = () => {
-  console.log('propertyChange');
+// const propertyChange = () => {
+//   console.log('propertyChange');
+// };
+
+const makeCanvas = () => {
+  const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
+  const img = new Image();
+
+  img.onload = async () => {
+    width.value = img.naturalWidth;
+    height.value = img.naturalHeight;
+
+    console.log('width: ', width.value, height.value);
+
+    await nextTick();
+    ctx.drawImage(img, 0, 0);
+
+    ctx.fillStyle = 'green';
+    ctx.fillRect(10, 10, 150, 60);
+    
+    // const {x, y, font, color, align, max} = options;
+    // ctx.font = font;
+    // ctx.fillStyle = color;
+    // ctx.textAlign = align;
+    // ctx.fillText(text, x, y, max || width);
+
+    // base64 = canvas.toDataURL(type);
+  };
+  img.onerror = err => {
+    console.error(err);
+  };
+  img.src = localStory.value.image;
 };
+
+onMounted(() => {
+  makeCanvas();
+});
 
 </script>
 
 <template>
   <div class="container">
-    <div class="container-content">
-      <div class="container-header">
-        header
-      </div>
-      <div class="container-wraper">
-        <div class="container-image">
-          image
-        </div>
-        <!-- <div class="container-area">
-          text todo change layout
-        </div> -->
-      </div>
-      <footer class="container-footer">
-        <MemeButton label="更新" u="primary" @click="update"/>
-      </footer>
+    <div class="container-header">
+      header
+    </div>
+    <div class="container-wraper">
+      <canvas id="canvas" :width="width" :height="height"/>
     </div>
     <property/>
+    <footer class="container-footer">
+      <MemeButton label="更新" u="primary" @click="update"/>
+    </footer>
   </div>
 </template>
 
@@ -50,16 +82,11 @@ const propertyChange = () => {
 @import url('src/assets/css/mixins.less');
 
 .container {
-  width: 100%;
   height: 100%;
-  .flex-center();
+  position: relative;
+  display: flex;
+  flex-direction: column;
 
-  .container-content {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    height: 100%;
-  }
   &-header {
     flex-shrink: 0;
     height: 46px;
@@ -70,23 +97,14 @@ const propertyChange = () => {
     box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%);
   }
   &-wraper {
-    position: relative;
-    flex: 1;
     height: 100%;
     padding: 10px;
     background-color: #fff;
     border-radius: 3px;
+    overflow: hidden;
   }
-  &-image {
-    height: 100%;
+  #canvas {
     border: 1px solid #dddee4;
-  }
-  &-area {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    bottom: 10px;
-    left: 10px;
   }
   &-footer {
     height: 58px;
@@ -97,7 +115,8 @@ const propertyChange = () => {
     }
   }
   .property {
-    width: 240px;
+    height: 100px;
+    flex-shrink: 0;
     background: rgb(153, 153, 131);
   }
 }

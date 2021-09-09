@@ -3,13 +3,14 @@ import {reactive, ref, watch} from 'vue';
 import Side from '../components/Side.vue';
 import Container from '../components/Container.vue';
 import {Story} from '../types';
+import i from './i';
 
 const mid = ref('');
 const story: Story = reactive({
-  mid: '',
-  title: '',
-  feature: '',
-  image: '',
+  mid: 'meme_1234567890',
+  title: '测试说明',
+  feature: '测试字段',
+  image: i,
   x: 0,
   y: 0,
   max: 0,
@@ -38,7 +39,7 @@ const storyChange = (value: Story) => {
   console.log('story change value: ', value);
 };
 
-console.log(story);
+// console.log(story);
 </script>
 
 <template>
@@ -55,15 +56,18 @@ console.log(story);
 .image-wrap {
   width: 100%;
   height: 100%;
-  .flex-center();
+  display: flex;
 
   .side {
+    min-width: 200px;
     width: 200px;
     background: #FFFFFF;
+    flex-shrink: 0;
   }
   .container {
     flex: 1;
-    padding-left: 6px;;
+    width: calc(100% - 200px);
+    padding: 0 6px;
   }
 }
 </style>

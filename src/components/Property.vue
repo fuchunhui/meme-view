@@ -4,7 +4,7 @@
 
 <template>
   <div class="property">
-    property
+    ppp
   </div>
 </template>
 
