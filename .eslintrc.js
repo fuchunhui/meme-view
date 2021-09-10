@@ -1,16 +1,19 @@
 module.exports = {
   root: true,
   env: {
+    browser: true,
     node: true
+  },
+  parser: 'vue-eslint-parser',
+  parserOptions: {
+    ecmaVersion: 2021,
+    parser: '@typescript-eslint/parser'
   },
   extends: [
     'eslint:recommended',
     'plugin:vue/vue3-strongly-recommended',
-    '@vue/typescript/recommended'
+    'plugin:@typescript-eslint/recommended'
   ],
-  parserOptions: {
-    ecmaVersion: 2021
-  },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
@@ -91,9 +94,10 @@ module.exports = {
     }
   ],
   globals: {
-    defineProps: "readonly",
-    defineEmits: "readonly",
-    defineExpose: "readonly",
-    withDefaults: "readonly"
+    defineProps: 'readonly',
+    defineEmits: 'readonly',
+    defineExpose: 'readonly',
+    withDefaults: 'readonly',
+    CanvasTextAlign: 'readonly'
   }
 };

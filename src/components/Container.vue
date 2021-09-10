@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import {toRefs, Ref, ref, onMounted, nextTick} from 'vue';
+import {toRefs, Ref, ref, onMounted} from 'vue';
 import Property from '../components/Property.vue';
 import {MemeButton} from './common';
 import {Story} from '../types';
+// import {CanvasTextAlign} from ''
 
 const props = defineProps<{
   story: Story
 }>();
+
 const emit = defineEmits(['change']);
 
 const localStory: Ref<Story> = toRefs(props).story;
 
 // console.log('container: ', localStory.value);
 
-const width = ref(0);
-const height = ref(0);
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 
 const add = () => {
@@ -37,21 +37,19 @@ const makeCanvas = () => {
   const img = new Image();
 
   img.onload = async () => {
-    width.value = img.naturalWidth;
-    height.value = img.naturalHeight;
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
 
-    console.log('width: ', width.value, height.value);
-
-    await nextTick();
+    console.log('width: ', canvas.width, canvas.height);
     ctx.drawImage(img, 0, 0);
 
-    ctx.fillStyle = 'green';
-    ctx.fillRect(10, 10, 150, 60);
+    // ctx.fillStyle = 'green';
+    // ctx.fillRect(10, 10, 150, 60);
     
-    // const {x, y, font, color, align, max} = options;
-    // ctx.font = font;
-    // ctx.fillStyle = color;
-    // ctx.textAlign = align;
+    const {x, y, font, color, align, max} = localStory.value; // eslint-disable-line
+    ctx.font = font;
+    ctx.fillStyle = color;
+    ctx.textAlign = align as CanvasTextAlign;
     // ctx.fillText(text, x, y, max || width);
 
     // base64 = canvas.toDataURL(type);
@@ -77,7 +75,7 @@ onMounted(() => {
       <meme-button label="添加" u="primary" @click="add"/>
     </div>
     <div class="container-wraper">
-      <canvas ref="canvasRef" :width="width" :height="height"/>
+      <canvas ref="canvasRef"/>
     </div>
     <property/>
     <footer class="container-footer">
