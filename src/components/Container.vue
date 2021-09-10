@@ -12,10 +12,9 @@ const props = defineProps<{
 const emit = defineEmits(['change']);
 
 const localStory: Ref<Story> = toRefs(props).story;
-
-// console.log('container: ', localStory.value);
-
 const canvasRef = ref<HTMLCanvasElement | null>(null);
+const text = ref('测试文本');
+
 
 const add = () => {
   console.log('你说更新就更新');
@@ -30,34 +29,52 @@ const update = () => {
 //   console.log('propertyChange');
 // };
 
+const img = new Image();
+
 const makeCanvas = () => {
-  const canvas = canvasRef.value as HTMLCanvasElement;
-  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-
-  const img = new Image();
-
   img.onload = async () => {
+    const canvas = canvasRef.value as HTMLCanvasElement;
     canvas.width = img.naturalWidth;
     canvas.height = img.naturalHeight;
-
     console.log('width: ', canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0);
 
-    // ctx.fillStyle = 'green';
-    // ctx.fillRect(10, 10, 150, 60);
-    
-    const {x, y, font, color, align, max} = localStory.value; // eslint-disable-line
-    ctx.font = font;
-    ctx.fillStyle = color;
-    ctx.textAlign = align as CanvasTextAlign;
-    // ctx.fillText(text, x, y, max || width);
-
-    // base64 = canvas.toDataURL(type);
+    renderImage();
+    renderDragLayer();
   };
   img.onerror = err => {
     console.error(err);
   };
+
   img.src = localStory.value.image;
+};
+
+const renderImage = () => {
+  const canvas = canvasRef.value as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+  ctx.drawImage(img, 0, 0);
+
+  const {x, y, font, color, align, max} = localStory.value;
+  ctx.font = font; // TODO 处理
+  ctx.fillStyle = color;
+  ctx.textAlign = align as CanvasTextAlign;
+  ctx.textBaseline = 'top';
+  ctx.fillText(text.value, x, y, max || canvas.width);
+};
+
+setTimeout(() => { // test
+  localStory.value.x += 15;
+  localStory.value.color = 'green';
+
+  renderImage();
+}, 3000);
+
+const renderDragLayer = () => {
+  // canvas.addEventListener('click', (event: Event) => {
+  //   console.log(event);
+  // });
+  // div 拖拽事件 
+  // x, y等变化更新localStory
+  // watch story 然后重新renderImage
 };
 
 onMounted(() => {
@@ -75,7 +92,7 @@ onMounted(() => {
       <meme-button label="添加" u="primary" @click="add"/>
     </div>
     <div class="container-wraper">
-      <canvas ref="canvasRef"/>
+      <canvas class="container-canvas" ref="canvasRef"/>
     </div>
     <property/>
     <footer class="container-footer">
@@ -122,7 +139,7 @@ onMounted(() => {
     border-radius: 3px;
     overflow: hidden;
   }
-  #canvas {
+  &-canvas {
     border: 1px solid #dddee4;
   }
   &-footer {

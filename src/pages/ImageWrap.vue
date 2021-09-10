@@ -13,7 +13,7 @@ const story: Story = reactive({
   image: i,
   x: 0,
   y: 0,
-  max: 0,
+  max: 200,
   font: '32px sans-serif',
   color: '#FF0000',
   align: 'start'
