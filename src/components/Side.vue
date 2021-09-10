@@ -48,7 +48,7 @@ const getCatalog = () => {
   ];
   setTimeout(() => {
     catalogList.value = list;
-  }, 1500);
+  }, 500);
 
   // Api.getCatalog().then(res => {
   //   console.log('catalog: ', res);
