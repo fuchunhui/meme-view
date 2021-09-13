@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import {toRefs, Ref, ref, onMounted} from 'vue';
+import {toRefs, Ref, ref, onMounted, nextTick} from 'vue';
 import Property from '../components/Property.vue';
 import {MemeButton} from './common';
 import {Story} from '../types';
-// import {CanvasTextAlign} from ''
 
 const props = defineProps<{
   story: Story
@@ -13,8 +12,11 @@ const emit = defineEmits(['change']);
 
 const localStory: Ref<Story> = toRefs(props).story;
 const canvasRef = ref<HTMLCanvasElement | null>(null);
+const areaRef = ref<HTMLElement | null>(null);
+const dragRef = ref<HTMLElement | null>(null);
 const text = ref('测试文本');
-
+const width = ref(0);
+const height = ref(0);
 
 const add = () => {
   console.log('你说更新就更新');
@@ -38,6 +40,9 @@ const makeCanvas = () => {
     canvas.height = img.naturalHeight;
     console.log('width: ', canvas.width, canvas.height);
 
+    width.value = canvas.width;
+    height.value = canvas.height;
+    // await nextTick();
     renderImage();
     renderDragLayer();
   };
@@ -61,20 +66,75 @@ const renderImage = () => {
   ctx.fillText(text.value, x, y, max || canvas.width);
 };
 
-setTimeout(() => { // test
-  localStory.value.x += 15;
-  localStory.value.color = 'green';
+// setTimeout(() => { // test
+//   localStory.value.x += 15;
+//   localStory.value.color = 'green';
 
-  renderImage();
-}, 3000);
+//   renderImage();
+// }, 3000);
 
 const renderDragLayer = () => {
+  const ele = areaRef.value as HTMLElement;
+  ele.style.width = `${width.value}px`;
+  ele.style.height = `${height.value}px`;
+
+  // 初始化 拖拽框 的大小
+
   // canvas.addEventListener('click', (event: Event) => {
   //   console.log(event);
   // });
   // div 拖拽事件 
   // x, y等变化更新localStory
   // watch story 然后重新renderImage
+};
+
+// 如何初始化这两个值
+let cx = 0;
+let cy = 0;
+const buffer = 10;
+let canDrag = false;
+
+const mousedown = (event: MouseEvent) => {
+  canDrag = true;
+  const {clientX, clientY} = event;
+  console.log('mousedown: ', clientX, clientY);
+  cx = clientX;
+  cy = clientY;
+};
+
+const mousemove = (event: MouseEvent) => {
+  if (!canDrag) {
+    return;
+  }
+
+  const {clientX, clientY} = event;
+  const ele = dragRef.value as HTMLElement;
+  let x = ele.offsetLeft + clientX - cx;
+  let y = ele.offsetTop + clientY - cy;
+
+  const {width: dragWidth, height: dragHeight} = ele.getBoundingClientRect();
+
+  if (x < -buffer || y < -buffer
+    || x > width.value - dragWidth + buffer
+    || y > height.value - dragHeight + buffer) {
+    canDrag = false;
+  } else {
+    cx = clientX;
+    cy = clientY;
+  }
+
+  x = Math.max(Math.min(x, width.value - dragWidth + buffer), -buffer);
+  y = Math.max(Math.min(y, height.value - dragHeight + buffer), -buffer);
+
+  ele.style.top = `${y}px`;
+  ele.style.left = `${x}px`;
+};
+
+const mouseup = () => {
+  if (!canDrag) {
+    return;
+  }
+  canDrag = false;
 };
 
 onMounted(() => {
@@ -93,6 +153,14 @@ onMounted(() => {
     </div>
     <div class="container-wraper">
       <canvas class="container-canvas" ref="canvasRef"/>
+      <div
+        class="container-area"
+        ref="areaRef"
+        @mousemove="mousemove"
+        @mouseup="mouseup"
+      >
+        <div class="container-drag" ref="dragRef" @mousedown="mousedown"/>
+      </div>
     </div>
     <property/>
     <footer class="container-footer">
@@ -133,14 +201,26 @@ onMounted(() => {
     font-weight: 500;
   }
   &-wraper {
+    position: relative;
     height: 100%;
     padding: 10px;
     background-color: #fff;
     border-radius: 3px;
     overflow: hidden;
   }
-  &-canvas {
-    border: 1px solid #dddee4;
+  &-area {
+    position: absolute;
+    top: 10px;
+    // border: 1px solid #dddee4;
+  }
+  &-drag {
+    position: absolute;
+    top: 0;
+    width: 100px;
+    height: 40px;
+    border: 1px solid red;
+    user-select: none;
+    cursor: move;
   }
   &-footer {
     height: 58px;
