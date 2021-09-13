@@ -11,11 +11,11 @@ const story: Story = reactive({
   title: '测试说明',
   feature: '测试字段',
   image: i,
-  x: 0,
-  y: 0,
+  x: 20,
+  y: 40,
   max: 200,
   font: '32px sans-serif',
-  color: '#FF0000',
+  color: '#FFFFFF',
   align: 'start'
 });
 

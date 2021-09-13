@@ -78,11 +78,15 @@ const renderDragLayer = () => {
   ele.style.width = `${width.value}px`;
   ele.style.height = `${height.value}px`;
 
-  // 初始化 拖拽框 的大小 和 位置
+  const {x, y, font, color, max} = localStory.value;
+  const dragEle = dragRef.value as HTMLElement;
+  const fontSize = font.match(/(\d{1,3})px/) || ['', '32'];
 
-  // canvas.addEventListener('click', (event: Event) => {
-  //   console.log(event);
-  // });
+  dragEle.style.width = `${max || 100}px`;
+  dragEle.style.height = `${Number(fontSize[1]) * 1 || 40}px`;
+  dragEle.style.top = `${y}px`;
+  dragEle.style.left = `${x}px`;
+  dragEle.style.borderColor = color || '#FF0000';
 };
 
 const updateStory = (x: number, y: number) => {
@@ -98,7 +102,6 @@ let canDrag = false;
 const mousedown = (event: MouseEvent) => {
   canDrag = true;
   const {clientX, clientY} = event;
-  console.log('mousedown: ', clientX, clientY);
   cx = clientX;
   cy = clientY;
 };
