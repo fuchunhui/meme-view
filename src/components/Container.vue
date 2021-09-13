@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {toRefs, Ref, ref, onMounted, nextTick} from 'vue';
+import {toRefs, Ref, ref, onMounted, watch} from 'vue';
 import Property from '../components/Property.vue';
 import {MemeButton} from './common';
 import {Story} from '../types';
@@ -42,10 +42,11 @@ const makeCanvas = () => {
 
     width.value = canvas.width;
     height.value = canvas.height;
-    // await nextTick();
+
     renderImage();
     renderDragLayer();
   };
+
   img.onerror = err => {
     console.error(err);
   };
@@ -59,6 +60,7 @@ const renderImage = () => {
   ctx.drawImage(img, 0, 0);
 
   const {x, y, font, color, align, max} = localStory.value;
+  console.log('renderImage: ', x, y);
   ctx.font = font; // TODO 处理
   ctx.fillStyle = color;
   ctx.textAlign = align as CanvasTextAlign;
@@ -66,29 +68,28 @@ const renderImage = () => {
   ctx.fillText(text.value, x, y, max || canvas.width);
 };
 
-// setTimeout(() => { // test
-//   localStory.value.x += 15;
-//   localStory.value.color = 'green';
-
-//   renderImage();
-// }, 3000);
+watch(localStory, (nv, ov) => {
+  console.log('update story: ', nv);
+  renderImage();
+}, {deep: true});
 
 const renderDragLayer = () => {
   const ele = areaRef.value as HTMLElement;
   ele.style.width = `${width.value}px`;
   ele.style.height = `${height.value}px`;
 
-  // 初始化 拖拽框 的大小
+  // 初始化 拖拽框 的大小 和 位置
 
   // canvas.addEventListener('click', (event: Event) => {
   //   console.log(event);
   // });
-  // div 拖拽事件 
-  // x, y等变化更新localStory
-  // watch story 然后重新renderImage
 };
 
-// 如何初始化这两个值
+const updateStory = (x: number, y: number) => {
+  localStory.value.x = x;
+  localStory.value.y = y;
+};
+
 let cx = 0;
 let cy = 0;
 const buffer = 10;
@@ -128,6 +129,8 @@ const mousemove = (event: MouseEvent) => {
 
   ele.style.top = `${y}px`;
   ele.style.left = `${x}px`;
+
+  updateStory(x, y);
 };
 
 const mouseup = () => {
@@ -211,13 +214,12 @@ onMounted(() => {
   &-area {
     position: absolute;
     top: 10px;
-    // border: 1px solid #dddee4;
   }
   &-drag {
     position: absolute;
     top: 0;
     width: 100px;
-    height: 40px;
+    height: 40px; // TODO 长宽初始化
     border: 1px solid red;
     user-select: none;
     cursor: move;
