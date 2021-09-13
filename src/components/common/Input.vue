@@ -1,5 +1,6 @@
 <template>
   <input
+    ref="input"
     :class="[
       'meme-input',
       {
@@ -9,12 +10,12 @@
     :title="title"
     :value="modelValue"
     @blur="blur"
-    @keyup.enter="$event.target.blur()" 
+    @keyup.enter="input?.blur()" 
   >
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import {defineComponent, ref} from 'vue';
 
 export default defineComponent({
   name: 'Input',
@@ -37,15 +38,16 @@ export default defineComponent({
   emits: ['update:modelValue', 'blur'],
 
   setup(props: any, {emit}: any) {
-    const changeValue = (event: InputEvent) => {
+    const input = ref<HTMLInputElement | null>(null);
+    const changeValue = (event: KeyboardEvent | FocusEvent) => {
       emit('update:modelValue', (event.target as HTMLInputElement).value);
     };
-    const blur = (event: InputEvent) => {
+    const blur = (event: KeyboardEvent | FocusEvent) => {
       changeValue(event);
       emit('blur');
     };
     return {
-      changeValue,
+      input,
       blur
     };
   }

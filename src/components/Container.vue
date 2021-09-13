@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {toRefs, Ref, ref, onMounted, watch} from 'vue';
+import {toRefs, Ref, ref, onMounted, watch, computed} from 'vue';
 import Property from '../components/Property.vue';
 import {MemeButton} from './common';
-import {Story} from '../types';
+import {Story, PropertyValue} from '../types';
 
 const props = defineProps<{
   story: Story
@@ -27,9 +27,15 @@ const update = () => {
   emit('change', localStory.value);
 };
 
-// const propertyChange = () => {
-//   console.log('propertyChange');
-// };
+const propertyChange = (value: PropertyValue) => {
+  // TODO 更新UI内容
+  console.log('propertyChange', value);
+};
+
+const size = computed(() => {
+  const fontSize = localStory.value.font.match(/(\d{1,3})px/) || ['', '32'];
+  return Number(fontSize[1]) * 1; // 默认行高1倍
+});
 
 const img = new Image();
 
@@ -69,7 +75,7 @@ const renderImage = () => {
 };
 
 watch(localStory, (nv, ov) => {
-  console.log('update story: ', nv);
+  console.log('update story: ', nv, ov);
   renderImage();
 }, {deep: true});
 
@@ -78,12 +84,11 @@ const renderDragLayer = () => {
   ele.style.width = `${width.value}px`;
   ele.style.height = `${height.value}px`;
 
-  const {x, y, font, color, max} = localStory.value;
+  const {x, y, color, max} = localStory.value;
   const dragEle = dragRef.value as HTMLElement;
-  const fontSize = font.match(/(\d{1,3})px/) || ['', '32'];
 
   dragEle.style.width = `${max || 100}px`;
-  dragEle.style.height = `${Number(fontSize[1]) * 1 || 40}px`;
+  dragEle.style.height = `${size.value}px`;
   dragEle.style.top = `${y}px`;
   dragEle.style.left = `${x}px`;
   dragEle.style.borderColor = color || '#FF0000';
@@ -168,7 +173,12 @@ onMounted(() => {
         <div class="container-drag" ref="dragRef" @mousedown="mousedown"/>
       </div>
     </div>
-    <property/>
+    <property
+      :max="localStory.max"
+      :color="localStory.color"
+      :size="size"
+      @change="propertyChange"
+    />
     <footer class="container-footer">
       <meme-button label="更新" u="primary" @click="update"/>
     </footer>
@@ -236,9 +246,10 @@ onMounted(() => {
     }
   }
   .property {
-    height: 100px;
+    height: 50px;
     flex-shrink: 0;
-    background: rgb(153, 153, 131);
+    background: #FFFFFF;
+    border-top: 1px solid #DDDEE4;
   }
 }
 </style>
