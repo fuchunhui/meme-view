@@ -27,14 +27,21 @@ const update = () => {
   emit('change', localStory.value);
 };
 
+const locationChange = (x: number, y: number) => {
+  localStory.value.x = x;
+  localStory.value.y = y;
+};
+
 const propertyChange = (value: PropertyValue) => {
-  // TODO 更新UI内容
-  console.log('propertyChange', value);
+  const {max, size, color} = value;
+  localStory.value.max = max;
+  localStory.value.font = `${size}px sans-serif`;
+  localStory.value.color = color;
 };
 
 const size = computed(() => {
   const fontSize = localStory.value.font.match(/(\d{1,3})px/) || ['', '32'];
-  return Number(fontSize[1]) * 1; // 默认行高1倍
+  return Number(fontSize[1]) * 1; // 默认行高1倍，也可以选择1.5
 });
 
 const img = new Image();
@@ -49,6 +56,7 @@ const makeCanvas = () => {
     width.value = canvas.width;
     height.value = canvas.height;
 
+    renderAreaLayer();
     renderImage();
     renderDragLayer();
   };
@@ -60,33 +68,28 @@ const makeCanvas = () => {
   img.src = localStory.value.image;
 };
 
+const renderAreaLayer = () => {
+  const ele = areaRef.value as HTMLElement;
+  ele.style.width = `${width.value}px`;
+  ele.style.height = `${height.value}px`;
+};
+
 const renderImage = () => {
   const canvas = canvasRef.value as HTMLCanvasElement;
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   ctx.drawImage(img, 0, 0);
 
   const {x, y, font, color, align, max} = localStory.value;
-  console.log('renderImage: ', x, y);
-  ctx.font = font; // TODO 处理
+  ctx.font = font;
   ctx.fillStyle = color;
   ctx.textAlign = align as CanvasTextAlign;
   ctx.textBaseline = 'top';
   ctx.fillText(text.value, x, y, max || canvas.width);
 };
 
-watch(localStory, (nv, ov) => {
-  console.log('update story: ', nv, ov);
-  renderImage();
-}, {deep: true});
-
 const renderDragLayer = () => {
-  const ele = areaRef.value as HTMLElement;
-  ele.style.width = `${width.value}px`;
-  ele.style.height = `${height.value}px`;
-
   const {x, y, color, max} = localStory.value;
   const dragEle = dragRef.value as HTMLElement;
-
   dragEle.style.width = `${max || 100}px`;
   dragEle.style.height = `${size.value}px`;
   dragEle.style.top = `${y}px`;
@@ -94,10 +97,10 @@ const renderDragLayer = () => {
   dragEle.style.borderColor = color || '#FF0000';
 };
 
-const updateStory = (x: number, y: number) => {
-  localStory.value.x = x;
-  localStory.value.y = y;
-};
+watch(localStory, () => {
+  renderImage();
+  renderDragLayer();
+}, {deep: true});
 
 let cx = 0;
 let cy = 0;
@@ -135,10 +138,7 @@ const mousemove = (event: MouseEvent) => {
   x = Math.max(Math.min(x, width.value - dragWidth + buffer), -buffer);
   y = Math.max(Math.min(y, height.value - dragHeight + buffer), -buffer);
 
-  ele.style.top = `${y}px`;
-  ele.style.left = `${x}px`;
-
-  updateStory(x, y);
+  locationChange(x, y);
 };
 
 const mouseup = () => {

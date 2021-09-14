@@ -11,18 +11,16 @@ const props = defineProps<{
 const emit = defineEmits(['change']);
 
 const {max, size, color} = toRefs(props);
-console.log('property: ', max.value, size.value, color.value);
 
 const maxValue = ref(max.value + '');
 const sizeValue = ref(size.value + '');
 const colorValue = ref(color.value);
 
-watch([maxValue, sizeValue, colorValue], (nv, ov) => {
-  console.log(nv, ov);
+watch([maxValue, sizeValue, colorValue], () => {
   // TODO 增加校验逻辑，保证数据的合法性
   emit('change', {
-    max: maxValue.value,
-    size: sizeValue.value,
+    max: parseInt(maxValue.value),
+    size: parseInt(sizeValue.value),
     color: colorValue.value
   });
 });
@@ -54,6 +52,5 @@ watch([maxValue, sizeValue, colorValue], (nv, ov) => {
     border: 1px solid #DDDEE4;
     margin-right: 10px;
   }
-
 }
 </style>
