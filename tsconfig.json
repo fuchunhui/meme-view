@@ -12,14 +12,22 @@
     "isolatedModules": false,
     "useDefineForClassFields": false
   },
+  "types": [
+    "node"
+  ],
   "paths": {
     "*": ["*", "src/*"],
     "@/*": ["src/*"]
   },
+  "lib": [
+    "esnext",
+    "dom"
+  ],
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "**/*.ts"
   ]
 }

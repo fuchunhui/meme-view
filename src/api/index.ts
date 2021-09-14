@@ -1,10 +1,10 @@
 import apiList from './url';
 import factory from './factory';
-import { API } from '../types';
+import {API} from '../types';
 
-const Api:API = {};
+const Api: API = {};
 
-for (let key in apiList) {
+for (const key in apiList) {
   Api[key] = factory(apiList[key]);
 }
 

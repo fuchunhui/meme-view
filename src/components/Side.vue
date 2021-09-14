@@ -1,58 +1,58 @@
 <script setup lang="ts">
 import {Ref, ref} from 'vue';
 import {Catalog, CatalogItem} from '../types';
-// import Api from '../api';
+import Api from '../api';
 
 const emit = defineEmits(['change']);
 
 const catalogList: Ref<Catalog[]> = ref([]);
 
 const getCatalog = () => {
-  const list: Catalog[] = [
-    {
-      id: 'meme_common',
-      text: 'common',
-      children: [
-        {
-          mid: 'meme_1630929517998',
-          title: 'happy'
-        },
-        {
-          mid: 'meme_1630929517999',
-          title: 'fans'
-        },
-        {
-          mid: 'meme_1630929518000',
-          title: 'weekly1'
-        }
-      ]
-    },
-    {
-      id: 'meme_mid',
-      text: 'autumn',
-      children: [
-        {
-          mid: 'meme_1630929518006',
-          title: 'new life'
-        },
-        {
-          mid: 'meme_1630929518007',
-          title: 'happy chicken'
-        },
-        {
-          mid: 'meme_1630929518008',
-          title: 'moon cake'
-        }
-      ]
-    }
-  ];
-  setTimeout(() => {
-    catalogList.value = list;
-  }, 500);
+  // const list: Catalog[] = [
+  //   {
+  //     id: 'meme_common',
+  //     text: 'common',
+  //     children: [
+  //       {
+  //         mid: 'meme_1630929517998',
+  //         title: 'happy'
+  //       },
+  //       {
+  //         mid: 'meme_1630929517999',
+  //         title: 'fans'
+  //       },
+  //       {
+  //         mid: 'meme_1630929518000',
+  //         title: 'weekly1'
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     id: 'meme_mid',
+  //     text: 'autumn',
+  //     children: [
+  //       {
+  //         mid: 'meme_1630929518006',
+  //         title: 'new life'
+  //       },
+  //       {
+  //         mid: 'meme_1630929518007',
+  //         title: 'happy chicken'
+  //       },
+  //       {
+  //         mid: 'meme_1630929518008',
+  //         title: 'moon cake'
+  //       }
+  //     ]
+  //   }
+  // ];
+  // setTimeout(() => {
+  //   catalogList.value = list;
+  // }, 500);
 
-  // Api.getCatalog().then(res => {
-  //   console.log('catalog: ', res);
-  // });
+  Api.getCatalog({}).then(res => {
+    console.log('catalog: ', res);
+  });
 };
 
 const showCell = (child: CatalogItem) => {

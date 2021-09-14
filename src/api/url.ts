@@ -1,6 +1,6 @@
-import { Net } from "../types";
+import {Net} from '../types';
 
-const urlMap:Net = {
+const urlMap: Net = {
   getCatalog: {
     url: '/image/catalog',
     method: 'get'

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { NetInfo } from '../types';
+import {NetInfo} from '../types';
 
 /**
  * errNo含义
@@ -8,7 +8,7 @@ import { NetInfo } from '../types';
  *  1 用户错误
  */
 export default (api: NetInfo) => {
-  return async (params: any, options: any) => {
+  return async (params: any = {}, options: any = {}): Promise<void> => {
     const {url, method} = api;
 
     return axios.request({
