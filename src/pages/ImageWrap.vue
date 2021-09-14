@@ -13,7 +13,7 @@ const story: Story = reactive({
   image: i,
   x: 20,
   y: 40,
-  max: 200,
+  max: 125,
   font: '32px sans-serif',
   color: '#FFFFFF',
   align: 'start'
@@ -37,6 +37,7 @@ watch(mid, (nv, ov) => {
 
 const storyChange = (value: Story) => {
   console.log('story change value: ', value);
+  // TODO 过滤image内容。
 };
 
 // console.log(story);

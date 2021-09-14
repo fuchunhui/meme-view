@@ -22,7 +22,7 @@ const add = () => {
   console.log('你说更新就更新');
 };
 
-const update = () => {
+const updateData = () => {
   // TODO 保证不过多发送数据，只在数据变化的执行
   emit('change', localStory.value);
 };
@@ -180,7 +180,7 @@ onMounted(() => {
       @change="propertyChange"
     />
     <footer class="container-footer">
-      <meme-button label="更新" u="primary" @click="update"/>
+      <meme-button label="更新" u="primary" @click="updateData"/>
     </footer>
   </div>
 </template>
@@ -238,7 +238,7 @@ onMounted(() => {
     cursor: move;
   }
   &-footer {
-    height: 58px;
+    height: 64px;
     .flex-center();
 
     .meme-button {
