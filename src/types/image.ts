@@ -14,6 +14,7 @@ export interface Story {
 export interface Catalog {
   id: string;
   text: string;
+  type: string;
   children: CatalogItem[]
 }
 

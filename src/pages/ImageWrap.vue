@@ -3,14 +3,15 @@ import {reactive, ref, watch} from 'vue';
 import Side from '../components/Side.vue';
 import Container from '../components/Container.vue';
 import {Story} from '../types';
-import i from './i';
+import Api from '../api';
 
-const mid = ref('');
-const story: Story = reactive({
-  mid: 'meme_1234567890',
+const curMid = ref('');
+const curType = ref('');
+let story: Story = reactive({
+  mid: '',
   title: '测试说明',
   feature: '测试字段',
-  image: i,
+  image: '',
   x: 20,
   y: 40,
   max: 125,
@@ -19,35 +20,40 @@ const story: Story = reactive({
   align: 'start'
 });
 
-const imageChange = (value: string) => {
-  if (mid.value !== value) {
-    mid.value = value;
+const imageChange = ({type, mid}: {type: string; mid: string}) => {
+  if (curMid.value !== mid) {
+    curMid.value = mid;
+    curType.value = type;
   }
 };
 
-const getImageData = (mid: string) => {
-  console.log(mid);
-  return '';
+const getImageData = (mid: string, type: string) => {
+  Api.openImage({
+    mid,
+    type
+  }).then(res => {
+    story = reactive(res); // TODO 如何复制更新
+  });
 };
 
-watch(mid, (nv, ov) => {
-  console.log(`new: ${nv}, old: ${ov}`);
-  getImageData(nv);
+watch([curMid, curType], () => {
+  getImageData(curMid.value, curType.value);
 });
 
 const storyChange = (value: Story) => {
   console.log('story change value: ', value);
-  // TODO 过滤image内容。
 };
-
-// console.log(story);
 </script>
 
 <template>
   <div class="image-wrap">
     <side @change="imageChange"/>
-    <container :story="story" @change="storyChange"/>
-    <!-- <container v-if="story.image && story.mid"/> -->
+    <!-- <container :story="story" @change="storyChange"/> -->
+    <container
+      v-if="story.image && story.mid"
+      :story="story"
+      @change="storyChange"
+    />
   </div>
 </template>
 

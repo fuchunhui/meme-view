@@ -8,55 +8,13 @@ const emit = defineEmits(['change']);
 const catalogList: Ref<Catalog[]> = ref([]);
 
 const getCatalog = () => {
-  // const list: Catalog[] = [
-  //   {
-  //     id: 'meme_common',
-  //     text: 'common',
-  //     children: [
-  //       {
-  //         mid: 'meme_1630929517998',
-  //         title: 'happy'
-  //       },
-  //       {
-  //         mid: 'meme_1630929517999',
-  //         title: 'fans'
-  //       },
-  //       {
-  //         mid: 'meme_1630929518000',
-  //         title: 'weekly1'
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     id: 'meme_mid',
-  //     text: 'autumn',
-  //     children: [
-  //       {
-  //         mid: 'meme_1630929518006',
-  //         title: 'new life'
-  //       },
-  //       {
-  //         mid: 'meme_1630929518007',
-  //         title: 'happy chicken'
-  //       },
-  //       {
-  //         mid: 'meme_1630929518008',
-  //         title: 'moon cake'
-  //       }
-  //     ]
-  //   }
-  // ];
-  // setTimeout(() => {
-  //   catalogList.value = list;
-  // }, 500);
-
   Api.getCatalog({}).then(res => {
-    console.log('catalog: ', res);
+    catalogList.value = res;
   });
 };
 
-const showCell = (child: CatalogItem) => {
-  emit('change', child.mid);
+const showCell = (type: string, child: CatalogItem) => {
+  emit('change', {type, ...child});
 };
 
 getCatalog();
@@ -73,7 +31,7 @@ getCatalog();
           v-for="child in item.children"
           :key="child.mid"
           class="side-content-cell"
-          @click="showCell(child)"
+          @click="showCell(item.type, child)"
         >
           {{ child.title }}
         </div>

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {NetInfo} from '../types';
+import {domain} from '../config';
 
 /**
  * errNo含义
@@ -12,8 +13,8 @@ export default (api: NetInfo) => {
     const {url, method} = api;
 
     return axios.request({
-      withCredentials: true,
-      url,
+      withCredentials: false,
+      url: domain + url,
       method,
       [method === 'get' ? 'params' : 'data']: params
     }).then(result => {
@@ -23,7 +24,7 @@ export default (api: NetInfo) => {
       }
 
       if (data.errNo === 0) {
-        return data;
+        return data.data;
       } else {
         return Promise.reject(data);
       }
