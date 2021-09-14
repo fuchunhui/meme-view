@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {toRefs, ref, watch} from 'vue';
+import {toRefs} from 'vue';
 import {MemeInput} from './common';
 
 const props = defineProps<{
@@ -12,26 +12,25 @@ const emit = defineEmits(['change']);
 
 const {max, size, color} = toRefs(props);
 
-const maxValue = ref(max.value + '');
-const sizeValue = ref(size.value + '');
-const colorValue = ref(color.value);
-
-watch([maxValue, sizeValue, colorValue], () => {
+const changeValue = (value: string, type: string) => {
   // TODO 增加校验逻辑，保证数据的合法性
-  emit('change', {
-    max: parseInt(maxValue.value),
-    size: parseInt(sizeValue.value),
-    color: colorValue.value
-  });
-});
+  const param: {[key: string]: string | number} = {
+    max: max.value,
+    size: size.value,
+    color: color.value
+  };
+  param[type] = type === 'color' ? value : parseInt(value);
+
+  emit('change', param);
+};
 
 </script>
 
 <template>
   <div class="property">
-    <meme-input class="property-max" v-model="maxValue"/>
-    <meme-input class="property-size" v-model="sizeValue"/>
-    <meme-input class="property-color" v-model="colorValue"/>
+    <meme-input class="property-max" :value="max" @update:modelValue="changeValue($event, 'max')"/>
+    <meme-input class="property-size" :value="size" @update:modelValue="changeValue($event, 'size')"/>
+    <meme-input class="property-color" :value="color" @update:modelValue="changeValue($event, 'color')"/>
   </div>
 </template>
 

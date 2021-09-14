@@ -35,7 +35,7 @@ const locationChange = (x: number, y: number) => {
 const propertyChange = (value: PropertyValue) => {
   const {max, size, color} = value;
   localStory.value.max = max;
-  localStory.value.font = `${size}px sans-serif`;
+  localStory.value.font = `${size}px sans-serif`; // 统一默认字体，均使用sans-serif
   localStory.value.color = color;
 };
 
@@ -51,7 +51,6 @@ const makeCanvas = () => {
     const canvas = canvasRef.value as HTMLCanvasElement;
     canvas.width = img.naturalWidth;
     canvas.height = img.naturalHeight;
-    console.log('width: ', canvas.width, canvas.height);
 
     width.value = canvas.width;
     height.value = canvas.height;
@@ -97,9 +96,13 @@ const renderDragLayer = () => {
   dragEle.style.borderColor = color || '#FF0000';
 };
 
-watch(localStory, () => {
-  renderImage();
-  renderDragLayer();
+watch(localStory, (nv, ov) => {
+  if (nv.mid !== ov.mid) {
+    makeCanvas();
+  } else {
+    renderImage();
+    renderDragLayer();
+  }
 }, {deep: true});
 
 let cx = 0;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {reactive, ref, watch} from 'vue';
+import {ref, watch, Ref} from 'vue';
 import Side from '../components/Side.vue';
 import Container from '../components/Container.vue';
 import {Story} from '../types';
@@ -7,14 +7,14 @@ import Api from '../api';
 
 const curMid = ref('');
 const curType = ref('');
-let story: Story = reactive({
+let story: Ref<Story> = ref({
   mid: '',
-  title: '测试说明',
-  feature: '测试字段',
+  title: '',
+  feature: '',
   image: '',
-  x: 20,
-  y: 40,
-  max: 125,
+  x: 0,
+  y: 0,
+  max: 100,
   font: '32px sans-serif',
   color: '#FFFFFF',
   align: 'start'
@@ -27,28 +27,31 @@ const imageChange = ({type, mid}: {type: string; mid: string}) => {
   }
 };
 
+watch([curMid, curType], () => {
+  getImageData(curMid.value, curType.value);
+});
+
 const getImageData = (mid: string, type: string) => {
   Api.openImage({
     mid,
     type
   }).then(res => {
-    story = reactive(res); // TODO 如何复制更新
+    story.value = res;
   });
 };
 
-watch([curMid, curType], () => {
-  getImageData(curMid.value, curType.value);
-});
-
 const storyChange = (value: Story) => {
   console.log('story change value: ', value);
+  // TODO 过滤，不需要上传image字段，因为不涉及到image字段的调整
+  Api.saveImage(value).then(res => {
+    console.log('save: ', res);
+  });
 };
 </script>
 
 <template>
   <div class="image-wrap">
     <side @change="imageChange"/>
-    <!-- <container :story="story" @change="storyChange"/> -->
     <container
       v-if="story.image && story.mid"
       :story="story"
