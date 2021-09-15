@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, toRefs} from 'vue';
+import {computed, toRefs, inject} from 'vue';
 import {MemeInput, MemeRadio} from './common';
 
 const props = defineProps<{
@@ -10,6 +10,9 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['change']);
+
+const injectTtext = inject('text');
+const injectUpdateText: () => void = inject('updateText') as () => void;
 
 const {max, size, color, align} = toRefs(props);
 
@@ -38,6 +41,7 @@ const changeValue = (value: string, type: string) => {
     <meme-input class="property-color" :value="color" @update:modelValue="changeValue($event, 'color')"/>
     <meme-radio label="start" name="align" value="start" :checked="alignValue" @toggle="changeValue($event, 'align')"/>
     <meme-radio label="end" name="align" value="end" :checked="!alignValue" @toggle="changeValue($event, 'align')"/>
+    <meme-input class="property-text" :value="injectTtext" @update:modelValue="injectUpdateText"/>
   </div>
 </template>
 
@@ -51,12 +55,16 @@ const changeValue = (value: string, type: string) => {
 
   &-max,
   &-size,
-  &-color {
+  &-color,
+  &-text {
     width: 100px;
     height: 30px;
     background: #FFFFFF;
     border: 1px solid #DDDEE4;
     margin-right: 10px;
+  }
+  &-text {
+    width: 120px;
   }
   .meme-radio {
     margin-right: 8px;

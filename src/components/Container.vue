@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {toRefs, Ref, ref, onMounted, watch, computed} from 'vue';
+import {toRefs, Ref, ref, onMounted, watch, computed, provide} from 'vue';
 import Property from '../components/Property.vue';
 import {MemeButton} from './common';
 import {Story, PropertyValue} from '../types';
@@ -14,7 +14,15 @@ const localStory: Ref<Story> = toRefs(props).story;
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const areaRef = ref<HTMLElement | null>(null);
 const dragRef = ref<HTMLElement | null>(null);
-const text = ref('测试文本');
+
+const text = ref('金馆长');
+const updateText = (value: string) => {
+  text.value = value;
+  renderImage();
+};
+provide('text', text);
+provide('updateText', updateText);
+
 const width = ref(0);
 const height = ref(0);
 
@@ -108,7 +116,7 @@ watch(localStory, (nv, ov) => {
 
 let cx = 0;
 let cy = 0;
-const buffer = 10;
+const buffer = 20;
 let canDrag = false;
 
 const mousedown = (event: MouseEvent) => {
