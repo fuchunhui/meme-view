@@ -42,7 +42,6 @@ const getImageData = (mid: string, type: string) => {
 
 const storyChange = (value: Story) => {
   console.log('story change value: ', {...value});
-
   const params = {...value, image: ''};
   Api.saveImage(params).then(res => {
     console.log('save: ', res);

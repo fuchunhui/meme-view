@@ -91,18 +91,16 @@ const renderImage = () => {
   ctx.font = font;
   ctx.fillStyle = color;
   ctx.textAlign = align as CanvasTextAlign;
-  ctx.textBaseline = 'top';
   ctx.fillText(text.value, x, y, max || canvas.width);
 };
 
 const renderDragLayer = () => {
-  const {x, y, color, max, align} = localStory.value;
+  const {x, y, max, align} = localStory.value;
   const dragEle = dragRef.value as HTMLElement;
   dragEle.style.width = `${max}px`;
   dragEle.style.height = `${size.value}px`;
-  dragEle.style.top = `${y}px`;
+  dragEle.style.top = `${y - size.value + 2}px`;
   dragEle.style.left = align === 'start' ? `${x}px` : `${x - max}px`;
-  dragEle.style.borderColor = color || '#FF0000';
 };
 
 watch(localStory, (nv, ov) => {
@@ -150,8 +148,10 @@ const mousemove = (event: MouseEvent) => {
   x = Math.max(Math.min(x, width.value - dragWidth + buffer), -buffer);
   y = Math.max(Math.min(y, height.value - dragHeight + buffer), -buffer);
 
+  // 调节x, y的位置，与canvas中保持一致
   const {align, max} = localStory.value;
   x += (align === 'end' ? max : 0);
+  y += size.value - 2;
 
   locationChange(x, y);
 };
@@ -248,8 +248,7 @@ onMounted(() => {
     position: absolute;
     top: 0;
     width: 100px;
-    height: 40px; // TODO 长宽初始化
-    border: 1px solid red;
+    height: 32px;
     user-select: none;
     cursor: move;
   }
