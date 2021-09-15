@@ -12,6 +12,10 @@ const urlMap: Net = {
   saveImage: {
     url: '/image/save',
     method: 'post'
+  },
+  createImage: {
+    url: '/image/create',
+    method: 'post'
   }
 };
 

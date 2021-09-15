@@ -89,12 +89,11 @@ const renderImage = () => {
 
 const renderDragLayer = () => {
   const {x, y, color, max, align} = localStory.value;
-  const defaultMax = max || 100;
   const dragEle = dragRef.value as HTMLElement;
-  dragEle.style.width = `${defaultMax}px`;
+  dragEle.style.width = `${max}px`;
   dragEle.style.height = `${size.value}px`;
   dragEle.style.top = `${y}px`;
-  dragEle.style.left = align === 'start' ? `${x}px` : `${x - defaultMax}px`;
+  dragEle.style.left = align === 'start' ? `${x}px` : `${x - max}px`;
   dragEle.style.borderColor = color || '#FF0000';
 };
 
@@ -126,10 +125,10 @@ const mousemove = (event: MouseEvent) => {
 
   const {clientX, clientY} = event;
   const ele = dragRef.value as HTMLElement;
-  let x = ele.offsetLeft + clientX - cx;
-  let y = ele.offsetTop + clientY - cy;
 
   const {width: dragWidth, height: dragHeight} = ele.getBoundingClientRect();
+  let x = ele.offsetLeft + clientX - cx;
+  let y = ele.offsetTop + clientY - cy;
 
   if (x < -buffer || y < -buffer
     || x > width.value - dragWidth + buffer
@@ -142,6 +141,9 @@ const mousemove = (event: MouseEvent) => {
 
   x = Math.max(Math.min(x, width.value - dragWidth + buffer), -buffer);
   y = Math.max(Math.min(y, height.value - dragHeight + buffer), -buffer);
+
+  const {align, max} = localStory.value;
+  x += (align === 'end' ? max : 0);
 
   locationChange(x, y);
 };
