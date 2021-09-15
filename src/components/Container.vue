@@ -33,10 +33,11 @@ const locationChange = (x: number, y: number) => {
 };
 
 const propertyChange = (value: PropertyValue) => {
-  const {max, size, color} = value;
+  const {max, size, color, align} = value;
   localStory.value.max = max;
   localStory.value.font = `${size}px sans-serif`; // 统一默认字体，均使用sans-serif
   localStory.value.color = color;
+  localStory.value.align = align;
 };
 
 const size = computed(() => {
@@ -165,7 +166,7 @@ onMounted(() => {
       </div>
       <meme-button label="添加" u="primary" @click="add"/>
     </div>
-    <div class="container-wraper">
+    <div class="container-wraper" v-show="false">
       <canvas class="container-canvas" ref="canvasRef"/>
       <div
         class="container-area"
@@ -180,6 +181,7 @@ onMounted(() => {
       :max="localStory.max"
       :color="localStory.color"
       :size="size"
+      :align="localStory.align"
       @change="propertyChange"
     />
     <footer class="container-footer">

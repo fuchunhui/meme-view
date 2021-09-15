@@ -27,4 +27,5 @@ export interface PropertyValue {
   max: number;
   size: number;
   color: string;
+  align: string;
 }

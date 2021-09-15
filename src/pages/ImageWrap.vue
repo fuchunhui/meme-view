@@ -41,9 +41,10 @@ const getImageData = (mid: string, type: string) => {
 };
 
 const storyChange = (value: Story) => {
-  console.log('story change value: ', value);
-  // TODO 过滤，不需要上传image字段，因为不涉及到image字段的调整
-  Api.saveImage(value).then(res => {
+  console.log('story change value: ', {...value});
+
+  const params = {...value, image: ''};
+  Api.saveImage(params).then(res => {
     console.log('save: ', res);
   });
 };
