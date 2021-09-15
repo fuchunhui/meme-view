@@ -26,7 +26,6 @@ const changeValue = (value: string, type: string) => {
     align: align.value
   };
   param[type] = ['color', 'align'].includes(type) ? value : parseInt(value);
-  console.log('property: ', {...param});
   emit('change', param);
 };
 

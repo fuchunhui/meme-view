@@ -88,12 +88,13 @@ const renderImage = () => {
 };
 
 const renderDragLayer = () => {
-  const {x, y, color, max} = localStory.value;
+  const {x, y, color, max, align} = localStory.value;
+  const defaultMax = max || 100;
   const dragEle = dragRef.value as HTMLElement;
-  dragEle.style.width = `${max || 100}px`;
+  dragEle.style.width = `${defaultMax}px`;
   dragEle.style.height = `${size.value}px`;
   dragEle.style.top = `${y}px`;
-  dragEle.style.left = `${x}px`;
+  dragEle.style.left = align === 'start' ? `${x}px` : `${x - defaultMax}px`;
   dragEle.style.borderColor = color || '#FF0000';
 };
 
@@ -166,7 +167,7 @@ onMounted(() => {
       </div>
       <meme-button label="添加" u="primary" @click="add"/>
     </div>
-    <div class="container-wraper" v-show="false">
+    <div class="container-wraper">
       <canvas class="container-canvas" ref="canvasRef"/>
       <div
         class="container-area"
