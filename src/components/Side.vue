@@ -6,6 +6,7 @@ import Api from '../api';
 const emit = defineEmits(['change']);
 
 const catalogList: Ref<Catalog[]> = ref([]);
+const cur = ref('');
 
 const getCatalog = () => {
   Api.getCatalog({}).then(res => {
@@ -14,6 +15,7 @@ const getCatalog = () => {
 };
 
 const showCell = (type: string, child: CatalogItem) => {
+  cur.value = child.mid;
   emit('change', {type, ...child});
 };
 
@@ -30,7 +32,10 @@ getCatalog();
         <div
           v-for="child in item.children"
           :key="child.mid"
-          class="side-content-cell"
+          :class="{
+            'side-content-cell': true,
+            'side-content-cell-active': cur === child.mid
+          }"
           @click="showCell(item.type, child)"
         >
           {{ child.title }}
@@ -71,6 +76,7 @@ getCatalog();
       padding-left: 10px;
       color: #3f3f3f;
       cursor: pointer;
+      &-active,
       &:hover {
         background: #edf4fe;
         color: #4B98F8;
