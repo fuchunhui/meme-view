@@ -2,7 +2,9 @@
   "name": "meme-view",
   "version": "0.2.0",
   "description": "custom view for meme.",
-  "main": "index.ts",
+  "repository": "fuchunhui/meme-view",
+  "main": "dist/imeme.cjs.js",
+  "module": "dist/imeme.es.js",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
@@ -37,8 +39,21 @@
     "vite": "^2.5.10",
     "vue-tsc": "^0.3.0"
   },
-  "keywords": [],
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "imeme",
+    "meme",
+    "vite",
+    "lib",
+    "robot"
+  ],
   "author": "",
   "bugs": {},
-  "homepage": ""
+  "homepage": "",
+  "engines": {
+    "node": ">=12.0"
+  }
 }
