@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vue-tsc --noEmit && vite build --mode lib",
     "serve": "vite preview",
     "release": "node scripts/release.js",
     "commitlint": "node scripts/verify-commit.js"
