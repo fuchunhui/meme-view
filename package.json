@@ -1,6 +1,6 @@
 {
   "name": "meme-view",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "custom view for meme.",
   "repository": "fuchunhui/meme-view",
   "main": "dist/imeme.cjs.js",
@@ -15,8 +15,7 @@
     "commitlint": "node scripts/verify-commit.js"
   },
   "dependencies": {
-    "axios": "^0.21.4",
-    "vue": "^3.2.13"
+    "axios": "^0.21.4"
   },
   "devDependencies": {
     "@types/estree": "^0.0.50",
@@ -37,6 +36,7 @@
     "semver": "^7.3.5",
     "typescript": "^4.4.3",
     "vite": "^2.5.10",
+    "vue": "^3.2.13",
     "vue-tsc": "^0.3.0"
   },
   "files": [
