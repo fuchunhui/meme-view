@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {NetInfo} from '../types';
+import {getDomain} from '../config';
 
 /**
  * errNo含义
@@ -10,10 +11,11 @@ import {NetInfo} from '../types';
 export default (api: NetInfo) => {
   return async (params: any = {}, options: any = {}): Promise<void> => {
     const {url, method} = api;
+    const base = getDomain();
 
     return axios.request({
       withCredentials: false,
-      url: import.meta.env.VITE_APP_DOMAIN + url,
+      url: base + url,
       method,
       [method === 'get' ? 'params' : 'data']: params
     }).then(result => {
