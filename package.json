@@ -15,6 +15,7 @@
     "vue": "^3.2.13"
   },
   "devDependencies": {
+    "@types/estree": "^0.0.50",
     "@types/node": "^16.9.6",
     "@typescript-eslint/eslint-plugin": "^4.31.2",
     "@typescript-eslint/parser": "^4.31.2",
