@@ -26,15 +26,6 @@ provide('updateText', updateText);
 const width = ref(0);
 const height = ref(0);
 
-const add = () => {
-  console.log('你说更新就更新');
-};
-
-const updateData = () => {
-  // TODO 保证不过多发送数据，只在数据变化的执行
-  emit('change', localStory.value);
-};
-
 const locationChange = (x: number, y: number) => {
   localStory.value.x = x;
   localStory.value.y = y;
@@ -163,6 +154,21 @@ const mouseup = () => {
   canDrag = false;
 };
 
+const add = () => {
+  console.log('你说更新就更新');
+};
+
+const download = () => {
+  console.log('你想要下载就下载');
+  const canvas = canvasRef.value as HTMLCanvasElement;
+  console.log(canvas.toDataURL());
+};
+
+const updateData = () => {
+  // TODO 保证不过多发送数据，只在数据变化的执行 目前点击就同步
+  emit('change', localStory.value);
+};
+
 onMounted(() => {
   makeCanvas();
 });
@@ -176,6 +182,7 @@ onMounted(() => {
         {{ localStory.title }}
       </div>
       <meme-button label="添加" u="primary" @click="add"/>
+      <meme-button label="下载" u="primary" @click="download"/>
     </div>
     <div class="container-wraper">
       <canvas class="container-canvas" ref="canvasRef"/>
@@ -216,6 +223,7 @@ onMounted(() => {
     flex-shrink: 0;
     height: 46px;
     margin: 0 -1px 6px;
+    padding-right: 10px;
     background-color: #fff;
     border: 1px solid #dddee4;
     border-radius: 4px;
@@ -223,6 +231,7 @@ onMounted(() => {
     .meme-button {
       width: 80px;
       min-width: 80px;
+      margin-left: 10px;
     }
   }
   &-title {
