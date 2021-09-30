@@ -19,11 +19,11 @@
   },
   "devDependencies": {
     "@types/estree": "^0.0.50",
-    "@types/node": "^16.9.6",
-    "@typescript-eslint/eslint-plugin": "^4.31.2",
-    "@typescript-eslint/parser": "^4.31.2",
-    "@vitejs/plugin-vue": "^1.9.0",
-    "@vue/compiler-sfc": "^3.2.14",
+    "@types/node": "^16.10.2",
+    "@typescript-eslint/eslint-plugin": "^4.32.0",
+    "@typescript-eslint/parser": "^4.32.0",
+    "@vitejs/plugin-vue": "^1.9.2",
+    "@vue/compiler-sfc": "^3.2.19",
     "chalk": "^4.1.2",
     "enquirer": "^2.3.6",
     "eslint": "^7.32.0",
@@ -35,8 +35,8 @@
     "rollup-plugin-copy": "^3.4.0",
     "semver": "^7.3.5",
     "typescript": "^4.4.3",
-    "vite": "^2.5.10",
-    "vue": "^3.2.14",
+    "vite": "^2.6.1",
+    "vue": "^3.2.19",
     "vue-tsc": "^0.3.0"
   },
   "files": [
