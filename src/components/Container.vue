@@ -161,7 +161,13 @@ const add = () => {
 const download = () => {
   console.log('你想要下载就下载');
   const canvas = canvasRef.value as HTMLCanvasElement;
-  console.log(canvas.toDataURL());
+  const base64 = canvas.toDataURL();
+
+  const ele = document.createElement('a');
+  ele.setAttribute('download', 'testName');
+  ele.setAttribute('href', base64);
+  ele.setAttribute('target', '_blank');
+  ele.click();
 };
 
 const updateData = () => {
