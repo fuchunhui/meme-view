@@ -161,10 +161,11 @@ const add = () => {
 const download = () => {
   console.log('你想要下载就下载');
   const canvas = canvasRef.value as HTMLCanvasElement;
-  const base64 = canvas.toDataURL();
+  const base64 = canvas.toDataURL(); // TODO 增加格式，检测，及格式
+  const fileName = `imeme_${localStory.value.title}_${text.value}`; // TODO 优化名称显示
 
   const ele = document.createElement('a');
-  ele.setAttribute('download', 'testName');
+  ele.setAttribute('download', fileName);
   ele.setAttribute('href', base64);
   ele.setAttribute('target', '_blank');
   ele.click();
