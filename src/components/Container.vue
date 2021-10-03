@@ -47,7 +47,7 @@ const size = computed(() => {
 const type = computed(() => {
   const base64 = localStory.value.image;
   const parts = base64.split(';base64,');
-  const type = parts[0].match(/[a-z]+$/g)?.[0];
+  const type = parts[0].match(/[a-z]+$/g)?.[0] || 'png';
   return type;
 });
 
@@ -166,10 +166,11 @@ const add = () => {
 };
 
 const download = () => {
-  console.log('你想要下载就下载');
   const canvas = canvasRef.value as HTMLCanvasElement;
-  const base64 = canvas.toDataURL(); // TODO 增加格式，检测，及格式
-  const fileName = `imeme_${localStory.value.title}_${text.value}`; // TODO 优化名称显示
+  const isJPEG = ['jpeg', 'jpg'].includes(type.value);
+  let imageType = `image/${isJPEG ? 'jpeg' : 'png'}`;
+  const base64 = canvas.toDataURL(imageType);
+  const fileName = `imeme_${localStory.value.title}_${text.value}`;
 
   const ele = document.createElement('a');
   ele.setAttribute('download', fileName);
