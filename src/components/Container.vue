@@ -44,6 +44,13 @@ const size = computed(() => {
   return Number(fontSize[1]) * 1; // 默认行高1倍，也可以选择1.5
 });
 
+const type = computed(() => {
+  const base64 = localStory.value.image;
+  const parts = base64.split(';base64,');
+  const type = parts[0].match(/[a-z]+$/g)?.[0];
+  return type;
+});
+
 const img = new Image();
 
 const makeCanvas = () => {
@@ -186,7 +193,7 @@ onMounted(() => {
   <div class="container">
     <div class="container-header">
       <div class="container-title">
-        {{ localStory.title }}
+        {{ `${localStory.title}.${type}` }}
       </div>
       <meme-button label="添加" u="primary" @click="add"/>
       <meme-button label="下载" u="primary" @click="download"/>
