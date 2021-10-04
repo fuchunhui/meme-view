@@ -15,6 +15,7 @@ const canvasRef = ref<HTMLCanvasElement | null>(null);
 const areaRef = ref<HTMLElement | null>(null);
 const dragRef = ref<HTMLElement | null>(null);
 const updateStatus = ref(true);
+const noImage = ref(true);
 
 const text = ref('金馆长');
 const updateText = (value: string) => {
@@ -213,24 +214,33 @@ onMounted(() => {
       <meme-button :label="updateStatus ? '添加' : '取消添加'" u="primary" @click="add"/>
       <meme-button label="下载" u="primary" @click="download"/>
     </div>
-    <div class="container-wraper">
-      <canvas class="container-canvas" ref="canvasRef"/>
-      <div
-        class="container-area"
-        ref="areaRef"
-        @mousemove="mousemove"
-        @mouseup="mouseup"
-      >
-        <div class="container-drag" ref="dragRef" @mousedown="mousedown"/>
-      </div>
+    <!-- 如何调整结构，保证新增的时候，覆盖如下两个内容，当选择好图片后，即可替换为下面的逻辑 -->
+    <div
+      class="container-wall"
+      v-if="!updateStatus && noImage"
+    >
+      新增未选择图片的时候显示
     </div>
-    <property
-      :max="localStory.max"
-      :color="localStory.color"
-      :size="size"
-      :align="localStory.align"
-      @change="propertyChange"
-    />
+    <template v-else>
+      <div class="container-wraper">
+        <canvas class="container-canvas" ref="canvasRef"/>
+        <div
+          class="container-area"
+          ref="areaRef"
+          @mousemove="mousemove"
+          @mouseup="mouseup"
+        >
+          <div class="container-drag" ref="dragRef" @mousedown="mousedown"/>
+        </div>
+      </div>
+      <property
+        :max="localStory.max"
+        :color="localStory.color"
+        :size="size"
+        :align="localStory.align"
+        @change="propertyChange"
+      />
+    </template>
     <footer class="container-footer">
       <meme-button :label="updateStatus ? '更新' : '添加'" u="primary" @click="updateData"/>
     </footer>
@@ -270,13 +280,17 @@ onMounted(() => {
     color: #3f3f3f;
     font-weight: 500;
   }
-  &-wraper {
+  &-wraper,
+  &-wall {
     position: relative;
     height: 100%;
     padding: 10px;
     background-color: #fff;
     border-radius: 3px;
     overflow: hidden;
+  }
+  &-wall {
+    background: rgb(160, 211, 211); // TODO test
   }
   &-area {
     position: absolute;
