@@ -14,6 +14,7 @@ const localStory: Ref<Story> = toRefs(props).story;
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const areaRef = ref<HTMLElement | null>(null);
 const dragRef = ref<HTMLElement | null>(null);
+const updateStatus = ref(true);
 
 const text = ref('金馆长');
 const updateText = (value: string) => {
@@ -162,7 +163,14 @@ const mouseup = () => {
 };
 
 const add = () => {
-  console.log('你说更新就更新');
+  console.log('你说更新就更新？？你这么拽？？');
+  if (updateStatus.value) {
+    // 更新状态，此时显示为“添加”， 点击后，执行添加的逻辑
+    updateStatus.value = false;
+  } else {
+    // 此时为添加状态中，标签显示为“取消添加”，点击后，执行取消添加的逻辑，重置所有状态
+    updateStatus.value = true;
+  }
 };
 
 const download = () => {
@@ -181,7 +189,13 @@ const download = () => {
 
 const updateData = () => {
   // TODO 保证不过多发送数据，只在数据变化的执行 目前点击就同步
-  emit('change', localStory.value);
+  if (updateStatus.value) {
+    emit('change', localStory.value);
+  } else {
+    // 执行新增的逻辑
+    // 存储新内容到数据库中
+    console.log('保存添加内容。');
+  }
 };
 
 onMounted(() => {
@@ -196,7 +210,7 @@ onMounted(() => {
       <div class="container-title">
         {{ `${localStory.title}.${type}` }}
       </div>
-      <meme-button label="添加" u="primary" @click="add"/>
+      <meme-button :label="updateStatus ? '添加' : '取消添加'" u="primary" @click="add"/>
       <meme-button label="下载" u="primary" @click="download"/>
     </div>
     <div class="container-wraper">
@@ -218,7 +232,7 @@ onMounted(() => {
       @change="propertyChange"
     />
     <footer class="container-footer">
-      <meme-button label="更新" u="primary" @click="updateData"/>
+      <meme-button :label="updateStatus ? '更新' : '添加'" u="primary" @click="updateData"/>
     </footer>
   </div>
 </template>
