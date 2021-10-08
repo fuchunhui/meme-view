@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {toRefs, Ref, ref, onMounted, watch, computed, provide} from 'vue';
 import Property from '../components/Property.vue';
-import {MemeButton} from './common';
+import {MemeButton, MemeFileUpload} from './common';
 import {Story, PropertyValue} from '../types';
 
 const props = defineProps<{
@@ -168,10 +168,13 @@ const add = () => {
   if (updateStatus.value) {
     // 更新状态，此时显示为“添加”， 点击后，执行添加的逻辑
     updateStatus.value = false;
+    // 如果添加图片，noImage状态变化，则需要保存上一次图片的历史信息及状态，放置取消的时候，重绘出错。
   } else {
+    // 取消添加
     // 此时为添加状态中，标签显示为“取消添加”，点击后，执行取消添加的逻辑，重置所有状态
     updateStatus.value = true;
     // 增加重置渲染逻辑，把添加之前的内容，给画一遍？？或者只是物理覆盖？？？
+    makeCanvas();
   }
 };
 
@@ -220,7 +223,7 @@ onMounted(() => {
       class="container-wall"
       v-if="!updateStatus && noImage"
     >
-      新增未选择图片的时候显示
+      <meme-file-upload/>
     </div>
     <template v-else>
       <div class="container-wraper">
