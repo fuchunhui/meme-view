@@ -1,18 +1,11 @@
 <script setup lang="ts">
-
-// 响应button事件
-// drop区域增加图标提示
-// drop事件
-// 拷贝响应
-// 图片格式检查
-
 const fileChange = (event: Event) => {
   const fileList = (event.target as HTMLInputElement).files;
-  if (!fileList || fileList.length < 1) {
+  if (!fileList) {
     return false;
   }
 
-  handleFile(fileList[0]);
+  handleFiles(fileList);
 };
 
 const dragenter = (event: DragEvent) => {
@@ -30,12 +23,7 @@ const fileDrop = (event: DragEvent) => {
   event.preventDefault();
 
   const fileList = (event.dataTransfer as DataTransfer).files;
-  if (fileList.length > 1) {
-    toast('不支持多个文件同时操作，请仅拖放单个文件');
-    return false;
-  }
-
-  handleFile(fileList[0]);
+  handleFiles(fileList);
 };
 
 const filePaste = (event: ClipboardEvent) => {
@@ -43,22 +31,22 @@ const filePaste = (event: ClipboardEvent) => {
   event.preventDefault();
 
   const fileList = (event.clipboardData as DataTransfer).files;
-  console.log(fileList);
-  if (fileList.length > 1) {
-    toast('不支持多个文件同时操作，请仅拖放单个文件');
-    return false;
-  }
-  handleFile(fileList[0]);
+  handleFiles(fileList);
 };
 
 const MAX_SIZE = 2 * 1024 * 1024;
+const IMAGE_TYPE = /^image\//;
 
-const handleFile = (file: File) => {
-  console.log('file: ', file);
-
+const handleFiles = (fileList: FileList) => {
+  if (fileList.length !== 1) {
+    toast('不支持多个文件同时操作，请仅选择单个文件');
+    return false;
+  }
+  
+  const file = fileList[0];
   const {name, size, type} = file;
-  const imageType = /^image\//;
-  if (!imageType.test(type)) {
+
+  if (!IMAGE_TYPE.test(type)) {
     toast(`当前文件类型为${type}，类型不符，请选择图片类型！`);
     return false;
   }
@@ -71,7 +59,7 @@ const handleFile = (file: File) => {
   const reader = new FileReader();
   reader.onload = (event: Event) => {
     const base64 = (event.target as FileReader).result as string;
-    handleImage(base64, name);
+    handleImage(name, base64);
   };
   reader.onerror = () => {
     toast((reader.error as DOMException).message);
@@ -83,7 +71,7 @@ const toast = (msg: string) => {
   alert(msg);
 };
 
-const handleImage = (base64: string, name: string) => {
+const handleImage = (name: string, base64: string) => {
   console.log(name, base64);
 };
 </script>
