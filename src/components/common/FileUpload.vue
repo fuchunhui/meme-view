@@ -5,6 +5,74 @@
 // drop事件
 // 拷贝响应
 // 图片格式检查
+
+const fileChange = (event: Event) => {
+  const fileList = (event.target as HTMLInputElement).files;
+  if (!fileList || fileList.length < 1) {
+    return false;
+  }
+
+  handleFile(fileList[0]);
+};
+
+const dragenter = (event: DragEvent) => {
+  event.stopPropagation();
+  event.preventDefault();
+};
+
+const dragover = (event: DragEvent) => {
+  event.stopPropagation();
+  event.preventDefault();
+};
+
+const fileDrop = (event: DragEvent) => {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const fileList = (event.dataTransfer as DataTransfer).files;
+  if (fileList.length > 1) {
+    toast('不支持多个文件同时操作，请仅拖放单个文件');
+    return false;
+  }
+
+  handleFile(fileList[0]);
+};
+
+const MAX_SIZE = 2 * 1024 * 1024;
+
+const handleFile = (file: File) => {
+  console.log('file: ', file);
+
+  const {name, size, type} = file;
+  const imageType = /^image\//;
+  if (!imageType.test(type)) {
+    toast(`当前文件类型为${type}，类型不符，请选择图片类型！`);
+    return false;
+  }
+
+  if (size > MAX_SIZE) {
+    toast('文件超过最大限制2M，请重新选择');
+    return false;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (event: Event) => {
+    const base64 = (event.target as FileReader).result as string;
+    handleImage(base64, name);
+  };
+  reader.onerror = () => {
+    toast((reader.error as DOMException).message);
+  };
+  reader.readAsDataURL(file);
+};
+
+const toast = (msg: string) => {
+  alert(msg);
+};
+
+const handleImage = (base64: string, name: string) => {
+  console.log(name, base64);
+};
 </script>
 
 <template>
@@ -12,9 +80,15 @@
     <div class="file-button">
       <i class="file-glyphicon"/>
       <span>UPLOAD FILE</span>
-      <input class="file-input" type="file" name="file">
+      <input class="file-input" type="file" name="file" accept="image/*" @change="fileChange">
     </div>
-    <div class="file-area">
+    <div
+      class="file-area"
+      :draggable="true"
+      @dragenter="dragenter"
+      @dragover="dragover"
+      @drop="fileDrop"
+    >
       <i class="file-tips">Drop files here to upload</i>
     </div>
   </div>
@@ -72,7 +146,7 @@
   }
   .file-area {
     flex: 1;
-    border: dotted;
+    border: thin dotted;
     border-radius: 10px;
     margin: 10px 0;
     text-align: center;
