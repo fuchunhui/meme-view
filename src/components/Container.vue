@@ -2,7 +2,7 @@
 import {toRefs, Ref, ref, onMounted, watch, computed, provide} from 'vue';
 import Property from '../components/Property.vue';
 import {MemeButton, MemeFileUpload} from './common';
-import {Story, PropertyValue} from '../types';
+import {Story, PropertyValue, BaseFile} from '../types';
 
 const props = defineProps<{
   story: Story
@@ -203,6 +203,10 @@ const updateData = () => {
   }
 };
 
+const fileChange = ({name, base64}: BaseFile) => {
+  console.log('change', name, base64);
+};
+
 onMounted(() => {
   makeCanvas();
 });
@@ -223,7 +227,7 @@ onMounted(() => {
       class="container-wall"
       v-if="!updateStatus && noImage"
     >
-      <meme-file-upload/>
+      <meme-file-upload @change="fileChange"/>
     </div>
     <template v-else>
       <div class="container-wraper">

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const emit = defineEmits(['change']);
+
 const fileChange = (event: Event) => {
   const fileList = (event.target as HTMLInputElement).files;
   if (!fileList) {
@@ -72,7 +74,10 @@ const toast = (msg: string) => {
 };
 
 const handleImage = (name: string, base64: string) => {
-  console.log(name, base64);
+  emit('change', {
+    name,
+    base64
+  });
 };
 </script>
 
