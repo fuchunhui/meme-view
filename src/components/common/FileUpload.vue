@@ -26,8 +26,8 @@ const dragover = (event: DragEvent) => {
 };
 
 const fileDrop = (event: DragEvent) => {
-  event.preventDefault();
   event.stopPropagation();
+  event.preventDefault();
 
   const fileList = (event.dataTransfer as DataTransfer).files;
   if (fileList.length > 1) {
@@ -35,6 +35,19 @@ const fileDrop = (event: DragEvent) => {
     return false;
   }
 
+  handleFile(fileList[0]);
+};
+
+const filePaste = (event: ClipboardEvent) => {
+  event.stopPropagation();
+  event.preventDefault();
+
+  const fileList = (event.clipboardData as DataTransfer).files;
+  console.log(fileList);
+  if (fileList.length > 1) {
+    toast('不支持多个文件同时操作，请仅拖放单个文件');
+    return false;
+  }
   handleFile(fileList[0]);
 };
 
@@ -85,9 +98,11 @@ const handleImage = (base64: string, name: string) => {
     <div
       class="file-area"
       :draggable="true"
+      :contenteditable="true"
       @dragenter="dragenter"
       @dragover="dragover"
       @drop="fileDrop"
+      @paste="filePaste"
     >
       <i class="file-tips">Drop files here to upload</i>
     </div>
