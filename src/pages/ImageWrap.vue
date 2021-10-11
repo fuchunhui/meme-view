@@ -6,7 +6,6 @@ import {Story, Catalog} from '../types';
 import Api from '../api';
 
 const catalogList: Ref<Catalog[]> = ref([]);
-
 const current = ref('');
 const curType = ref('');
 let story: Ref<Story> = ref({
@@ -22,10 +21,9 @@ let story: Ref<Story> = ref({
   align: 'start'
 });
 
-const getCatalog = () => {
-  Api.getCatalog({}).then(res => {
-    catalogList.value = res;
-  });
+const getCatalog = async () => {
+  const res = await Api.getCatalog({});
+  catalogList.value = res;
 };
 
 const imageChange = ({type, mid}: {type: string; mid: string}) => {
@@ -49,7 +47,6 @@ const getImageData = (mid: string, type: string) => {
 };
 
 const storyChange = (value: Story) => {
-  console.log('story change value: ', {...value});
   const params = {...value, image: ''};
   Api.saveImage(params);
 };
@@ -58,10 +55,11 @@ const replace = (value: Story) => {
   story.value = value;
 };
 
-const createImage = (value: Story) => {
-  Api.createImage(value).then(res => {
-    console.log(res);
-  });
+const createImage = async (value: Story) => {
+  const res = await Api.createImage(value);
+
+  await getCatalog();
+  current.value = res.mid;
 };
 
 onMounted(() => {

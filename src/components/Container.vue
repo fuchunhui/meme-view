@@ -165,7 +165,6 @@ const mouseup = () => {
 };
 
 const toggleAdd = () => {
-  console.log('你说更新就更新？？你这么拽？？');
   if (updateStatus.value) {
     updateStatus.value = false;
   } else {
@@ -196,9 +195,7 @@ const updateData = () => {
   } else {
     if (!noImage.value) {
       emit('create', localStory.value);
-      // 同步后的逻辑
-      // 本地数据状态处理
-      // 如何保证不重复点击
+      updateStatus.value = true;
     }
   }
 };
