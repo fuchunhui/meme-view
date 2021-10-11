@@ -1,25 +1,19 @@
 <script setup lang="ts">
-import {Ref, ref} from 'vue';
+import {Ref, toRefs} from 'vue';
 import {Catalog, CatalogItem} from '../types';
-import Api from '../api';
+
+const props = defineProps<{
+  catalogList: Catalog[];
+  current: string;
+}>();
 
 const emit = defineEmits(['change']);
 
-const catalogList: Ref<Catalog[]> = ref([]);
-const cur = ref('');
-
-const getCatalog = () => {
-  Api.getCatalog({}).then(res => {
-    catalogList.value = res;
-  });
-};
+const catalogList: Ref<Catalog[]> = toRefs(props).catalogList;
 
 const showCell = (type: string, child: CatalogItem) => {
-  cur.value = child.mid;
   emit('change', {type, ...child});
 };
-
-getCatalog();
 </script>
 
 <template>
@@ -34,7 +28,7 @@ getCatalog();
           :key="child.mid"
           :class="{
             'side-content-cell': true,
-            'side-content-cell-active': cur === child.mid
+            'side-content-cell-active': current === child.mid
           }"
           @click="showCell(item.type, child)"
         >

@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import {ref, watch, Ref} from 'vue';
+import {ref, watch, Ref, onMounted} from 'vue';
 import Side from '../components/Side.vue';
 import Container from '../components/Container.vue';
-import {Story} from '../types';
+import {Story, Catalog} from '../types';
 import Api from '../api';
 
-const curMid = ref('');
+const catalogList: Ref<Catalog[]> = ref([]);
+
+const current = ref('');
 const curType = ref('');
 let story: Ref<Story> = ref({
   mid: '',
@@ -20,15 +22,21 @@ let story: Ref<Story> = ref({
   align: 'start'
 });
 
+const getCatalog = () => {
+  Api.getCatalog({}).then(res => {
+    catalogList.value = res;
+  });
+};
+
 const imageChange = ({type, mid}: {type: string; mid: string}) => {
-  if (curMid.value !== mid) {
-    curMid.value = mid;
+  if (current.value !== mid) {
+    current.value = mid;
     curType.value = type;
   }
 };
 
-watch([curMid, curType], () => {
-  getImageData(curMid.value, curType.value);
+watch([current, curType], () => {
+  getImageData(current.value, curType.value);
 });
 
 const getImageData = (mid: string, type: string) => {
@@ -51,15 +59,24 @@ const replace = (value: Story) => {
 };
 
 const createImage = (value: Story) => {
-  // db
-  console.log('db story', value);
+  Api.createImage(value).then(res => {
+    console.log(res);
+  });
 };
+
+onMounted(() => {
+  getCatalog();
+});
 
 </script>
 
 <template>
   <div class="image-wrap">
-    <side @change="imageChange"/>
+    <side
+      :current="current"
+      :catalog-list="catalogList"
+      @change="imageChange"
+    />
     <container
       v-if="story.image && story.mid"
       :story="story"
