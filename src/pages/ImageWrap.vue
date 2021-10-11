@@ -45,6 +45,10 @@ const storyChange = (value: Story) => {
   const params = {...value, image: ''};
   Api.saveImage(params);
 };
+
+const updateImage = (value: Story) => {
+  story.value = value;
+};
 </script>
 
 <template>
@@ -54,6 +58,7 @@ const storyChange = (value: Story) => {
       v-if="story.image && story.mid"
       :story="story"
       @change="storyChange"
+      @create="updateImage"
     />
   </div>
 </template>

@@ -8,7 +8,7 @@ const props = defineProps<{
   story: Story
 }>();
 
-const emit = defineEmits(['change']);
+const emit = defineEmits(['change', 'create']);
 
 const localStory: Ref<Story> = toRefs(props).story;
 const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -16,6 +16,7 @@ const areaRef = ref<HTMLElement | null>(null);
 const dragRef = ref<HTMLElement | null>(null);
 const updateStatus = ref(true);
 const noImage = ref(true);
+let backStory: Story | null = null;
 
 const text = ref('金馆长');
 const updateText = (value: string) => {
@@ -104,9 +105,13 @@ const renderDragLayer = () => {
 };
 
 watch(localStory, (nv, ov) => {
+  // console.log(`nv.mid: ${nv.mid}, ov.mid: ${ov.mid}`);
+  // console.log({...nv}, {...ov});
   if (nv.mid !== ov.mid) {
+    console.log('1');
     makeCanvas();
   } else {
+    console.log('2');
     renderImage();
     renderDragLayer();
   }
@@ -163,18 +168,16 @@ const mouseup = () => {
   canDrag = false;
 };
 
-const add = () => {
+const toggleAdd = () => {
   console.log('你说更新就更新？？你这么拽？？');
   if (updateStatus.value) {
     // 更新状态，此时显示为“添加”， 点击后，执行添加的逻辑
     updateStatus.value = false;
     // 如果添加图片，noImage状态变化，则需要保存上一次图片的历史信息及状态，放置取消的时候，重绘出错。
   } else {
-    // 取消添加
-    // 此时为添加状态中，标签显示为“取消添加”，点击后，执行取消添加的逻辑，重置所有状态
     updateStatus.value = true;
-    // 增加重置渲染逻辑，把添加之前的内容，给画一遍？？或者只是物理覆盖？？？
-    makeCanvas();
+    noImage.value = true;
+    updateImage(backStory as Story);
   }
 };
 
@@ -204,7 +207,32 @@ const updateData = () => {
 };
 
 const fileChange = ({name, base64}: BaseFile) => {
-  console.log('change', name, base64);
+  noImage.value = false;
+
+  const {mid, title, feature, image, x, y, max, font, color, align} = localStory.value;
+  backStory = {
+    mid, title, feature, image, x, y, max, font, color, align
+  };
+
+  console.log('backStory: ', backStory);
+
+  const ntitle = name.slice(0, name.lastIndexOf('.'));
+  updateImage({
+    mid: `meme_${new Date().getTime()}`,
+    title: ntitle,
+    feature: ntitle,
+    image: base64,
+    x: 60,
+    y: 60,
+    max: 100,
+    font: '32px sans-serif',
+    color: '#FF0000',
+    align: 'start'
+  });
+};
+
+const updateImage = (value: Story) => {
+  emit('create', value);
 };
 
 onMounted(() => {
@@ -219,7 +247,7 @@ onMounted(() => {
       <div class="container-title">
         {{ `${localStory.title}.${type}` }}
       </div>
-      <meme-button :label="updateStatus ? '添加' : '取消添加'" u="primary" @click="add"/>
+      <meme-button :label="updateStatus ? '添加' : '取消添加'" u="primary" @click="toggleAdd"/>
       <meme-button label="下载" u="primary" @click="download"/>
     </div>
     <!-- 如何调整结构，保证新增的时候，覆盖如下两个内容，当选择好图片后，即可替换为下面的逻辑 -->
