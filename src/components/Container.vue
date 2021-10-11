@@ -8,7 +8,7 @@ const props = defineProps<{
   story: Story
 }>();
 
-const emit = defineEmits(['change', 'create']);
+const emit = defineEmits(['change', 'create', 'replace']);
 
 const localStory: Ref<Story> = toRefs(props).story;
 const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -105,13 +105,9 @@ const renderDragLayer = () => {
 };
 
 watch(localStory, (nv, ov) => {
-  // console.log(`nv.mid: ${nv.mid}, ov.mid: ${ov.mid}`);
-  // console.log({...nv}, {...ov});
   if (nv.mid !== ov.mid) {
-    console.log('1');
     makeCanvas();
   } else {
-    console.log('2');
     renderImage();
     renderDragLayer();
   }
@@ -171,9 +167,7 @@ const mouseup = () => {
 const toggleAdd = () => {
   console.log('你说更新就更新？？你这么拽？？');
   if (updateStatus.value) {
-    // 更新状态，此时显示为“添加”， 点击后，执行添加的逻辑
     updateStatus.value = false;
-    // 如果添加图片，noImage状态变化，则需要保存上一次图片的历史信息及状态，放置取消的时候，重绘出错。
   } else {
     updateStatus.value = true;
     noImage.value = true;
@@ -200,9 +194,12 @@ const updateData = () => {
   if (updateStatus.value) {
     emit('change', localStory.value);
   } else {
-    // 执行新增的逻辑
-    // 存储新内容到数据库中
-    console.log('保存添加内容。');
+    if (!noImage.value) {
+      emit('create', localStory.value);
+      // 同步后的逻辑
+      // 本地数据状态处理
+      // 如何保证不重复点击
+    }
   }
 };
 
@@ -213,8 +210,6 @@ const fileChange = ({name, base64}: BaseFile) => {
   backStory = {
     mid, title, feature, image, x, y, max, font, color, align
   };
-
-  console.log('backStory: ', backStory);
 
   const ntitle = name.slice(0, name.lastIndexOf('.'));
   updateImage({
@@ -232,7 +227,7 @@ const fileChange = ({name, base64}: BaseFile) => {
 };
 
 const updateImage = (value: Story) => {
-  emit('create', value);
+  emit('replace', value);
 };
 
 onMounted(() => {
@@ -250,7 +245,6 @@ onMounted(() => {
       <meme-button :label="updateStatus ? '添加' : '取消添加'" u="primary" @click="toggleAdd"/>
       <meme-button label="下载" u="primary" @click="download"/>
     </div>
-    <!-- 如何调整结构，保证新增的时候，覆盖如下两个内容，当选择好图片后，即可替换为下面的逻辑 -->
     <div
       class="container-wall"
       v-if="!updateStatus && noImage"
@@ -324,9 +318,6 @@ onMounted(() => {
     background-color: #fff;
     border-radius: 3px;
     overflow: hidden;
-  }
-  &-wall {
-    background: rgb(160, 211, 211); // TODO test
   }
   &-area {
     position: absolute;
