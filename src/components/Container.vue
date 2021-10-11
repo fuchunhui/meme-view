@@ -269,7 +269,7 @@ onMounted(() => {
       />
     </template>
     <footer class="container-footer">
-      <meme-button :label="updateStatus ? '更新' : '添加'" u="primary" @click="updateData"/>
+      <meme-button :label="updateStatus ? '更新' : '确认'" u="primary" @click="updateData"/>
     </footer>
   </div>
 </template>
