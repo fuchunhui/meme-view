@@ -1,10 +1,11 @@
 {
   "name": "meme-view",
-  "version": "0.9.8",
+  "version": "0.9.9",
   "description": "custom view for meme.",
   "repository": "fuchunhui/meme-view",
-  "main": "dist/imeme.cjs.js",
+  "main": "dist/imeme.umd.js",
   "module": "dist/imeme.es.js",
+  "types": "index.d.ts",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
@@ -41,7 +42,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "index.d.ts"
   ],
   "keywords": [
     "imeme",
@@ -50,7 +52,7 @@
     "lib",
     "robot"
   ],
-  "author": "",
+  "author": "fuchunhui",
   "bugs": {},
   "homepage": "",
   "engines": {
