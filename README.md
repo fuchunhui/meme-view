@@ -10,11 +10,15 @@ custom view for imeme.
 1. node server 部署在[vercel](https://vercel.com/)
 2. server源码参见[meme](https://github.com/fuchunhui/meme)
 
-### 使用方式
-1. url访问。
-2. es输出，引用加载。
-
-// TODO 
-完善文档
-
+### lib库使用方式
 1. `npm install meme-view`
+2. 引入
+
+```
+import imeme from 'meme-view';
+import 'meme-view/dist/style.css';
+
+const ele = document.getElementById('app') as Element;
+imeme.load(ele, 'https://imeme.vercel.app');
+
+```
