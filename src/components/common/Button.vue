@@ -6,34 +6,22 @@
         'disabled': disabled
       }]"
   >
-    {{ localLabel }}
+    <slot>{{ label }}</slot>
   </button>
 </template>
 
-<script lang="ts">
-import {defineComponent, toRefs} from 'vue';
-
-export default defineComponent({
-  name: 'Button',
-
-  props: {
-    label: {
-      type: String,
-      default: '提交'
-    },
-    disabled: {
-      type: Boolean,
-      default: false
-    }
+<script setup lang="ts">
+defineProps({
+  label: {
+    type: String,
+    default: '提交'
   },
-
-  setup(props) {
-    const {label} = toRefs(props);
-    return {
-      localLabel: label
-    };
+  disabled: {
+    type: Boolean,
+    default: false
   }
 });
+
 </script>
 
 <style lang="less">
@@ -94,6 +82,25 @@ export default defineComponent({
     &.disabled:hover {
       background-color: #F6F6F6;
       opacity: .4;
+    }
+  }
+
+  &[u~="icon"] {
+    min-width: 28px;
+    width: 28px;
+    height: 28px;
+    // background-color: #4B98F8;
+    border-color: transparent;
+    color: #FFFFFF;
+    &:hover {
+      // background-color: #388AFA;
+      // border-color: #388AFA;
+    }
+    &.disabled,
+    &.disabled:hover {
+      // background-color: #F6F6F6;
+      // border-color: #4B98F8;
+      // color: #4B98F8;
     }
   }
 }

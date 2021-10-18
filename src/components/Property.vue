@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {computed, toRefs, inject} from 'vue';
 import {MemeInput, MemeRadio} from './common';
+import DiceButton from './block/DiceButton.vue';
 
 const props = defineProps<{
   max: number,
@@ -32,6 +33,10 @@ const changeValue = (value: string, type: string) => {
   emit('change', param);
 };
 
+const changeColor = () => {
+  const color = '#550022';
+  changeValue(color, 'color');
+};
 </script>
 
 <template>
@@ -39,6 +44,7 @@ const changeValue = (value: string, type: string) => {
     <meme-input class="property-max" :value="max" @update:modelValue="changeValue($event, 'max')"/>
     <meme-input class="property-size" :value="size" @update:modelValue="changeValue($event, 'size')"/>
     <meme-input class="property-color" :value="color" @update:modelValue="changeValue($event, 'color')"/>
+    <dice-button :color="color" @click="changeColor"/>
     <meme-radio label="start" name="align" value="start" :checked="alignValue" @toggle="changeValue($event, 'align')"/>
     <meme-radio label="end" name="align" value="end" :checked="!alignValue" @toggle="changeValue($event, 'align')"/>
     <meme-input class="property-text" :value="injectTtext" @update:modelValue="injectUpdateText"/>
@@ -68,6 +74,12 @@ const changeValue = (value: string, type: string) => {
   }
   .meme-radio {
     margin-right: 8px;
+  }
+  .property-color {
+    margin-right: 2px;
+  }
+  .meme-button {
+    margin-right: 10px;
   }
 }
 </style>
