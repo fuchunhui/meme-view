@@ -34,7 +34,7 @@ const changeValue = (value: string, type: string) => {
 };
 
 const changeColor = () => {
-  const color = '#550022';
+  const color = '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16);
   changeValue(color, 'color');
 };
 </script>

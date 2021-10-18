@@ -86,22 +86,11 @@ defineProps({
   }
 
   &[u~="icon"] {
-    min-width: 28px;
-    width: 28px;
-    height: 28px;
-    // background-color: #4B98F8;
+    min-width: 24px;
+    width: 24px;
+    height: 24px;
+    background-color: transparent;
     border-color: transparent;
-    color: #FFFFFF;
-    &:hover {
-      // background-color: #388AFA;
-      // border-color: #388AFA;
-    }
-    &.disabled,
-    &.disabled:hover {
-      // background-color: #F6F6F6;
-      // border-color: #4B98F8;
-      // color: #4B98F8;
-    }
   }
 }
 </style>
