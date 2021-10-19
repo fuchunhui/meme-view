@@ -54,6 +54,11 @@ const type = computed(() => {
   return type;
 });
 
+const localTitle = computed(() => {
+  return `${localStory.value.title}.${type.value} ${width.value} * ${height.value}`
+  + ` (${localStory.value.x}, ${localStory.value.y})`;
+});
+
 const img = new Image();
 
 const makeCanvas = () => {
@@ -237,7 +242,7 @@ onMounted(() => {
   <div class="container">
     <div class="container-header">
       <div class="container-title">
-        {{ `${localStory.title}.${type}` }}
+        {{ localTitle }}
       </div>
       <meme-button :label="updateStatus ? '添加' : '取消添加'" u="primary" @click="toggleAdd"/>
       <meme-button label="下载" u="primary" @click="download"/>
