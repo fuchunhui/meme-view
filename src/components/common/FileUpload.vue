@@ -36,7 +36,7 @@ const filePaste = (event: ClipboardEvent) => {
   handleFiles(fileList);
 };
 
-const MAX_SIZE = 2 * 1024 * 1024;
+const MAX_SIZE = 1 * 1024 * 1024;
 const IMAGE_TYPE = /^image\//;
 
 const handleFiles = (fileList: FileList) => {
@@ -54,7 +54,7 @@ const handleFiles = (fileList: FileList) => {
   }
 
   if (size > MAX_SIZE) {
-    toast('文件超过最大限制2M，请重新选择');
+    toast('文件超过最大限制1M，请重新选择');
     return false;
   }
 
