@@ -55,8 +55,8 @@ const type = computed(() => {
 });
 
 const localTitle = computed(() => {
-  return `${localStory.value.title}.${type.value} ${width.value} * ${height.value}`
-  + ` (${localStory.value.x}, ${localStory.value.y})`;
+  return `${localStory.value.title}.${type.value}`;
+  // + ` ${width.value} * ${height.value} (${localStory.value.x}, ${localStory.value.y})`;
 });
 
 const img = new Image();
@@ -175,7 +175,13 @@ const toggleAdd = () => {
   } else {
     updateStatus.value = true;
     noImage.value = true;
-    updateImage(backStory as Story);
+
+    if (backStory) {
+      updateImage(backStory as Story);
+      backStory = null;
+    } else {
+      makeCanvas();
+    }
   }
 };
 
