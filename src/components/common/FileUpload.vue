@@ -86,7 +86,7 @@ const handleImage = (name: string, base64: string) => {
     <div class="file-button">
       <i class="file-glyphicon"/>
       <span>UPLOAD FILE</span>
-      <input class="file-input" type="file" name="file" accept="image/*" @change="fileChange">
+      <input class="file-input" type="file" name="file" accept="image/*" title="" @change="fileChange">
     </div>
     <div
       class="file-area"
