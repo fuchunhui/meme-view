@@ -2,6 +2,7 @@
 import {computed, toRefs, inject} from 'vue';
 import {MemeInput, MemeRadio} from './common';
 import DiceButton from './block/DiceButton.vue';
+import PickerButton from './block/PickerButton.vue';
 
 const props = defineProps<{
   max: number,
@@ -45,6 +46,7 @@ const changeColor = () => {
     <meme-input class="property-size" :value="size" @update:modelValue="changeValue($event, 'size')"/>
     <meme-input class="property-color" :value="color" @update:modelValue="changeValue($event, 'color')"/>
     <dice-button :color="color" @click="changeColor"/>
+    <picker-button :color="color" @click="changeColor"/>
     <meme-radio label="start" name="align" value="start" :checked="alignValue" @toggle="changeValue($event, 'align')"/>
     <meme-radio label="end" name="align" value="end" :checked="!alignValue" @toggle="changeValue($event, 'align')"/>
     <meme-input class="property-text" :value="injectTtext" @update:modelValue="injectUpdateText"/>
