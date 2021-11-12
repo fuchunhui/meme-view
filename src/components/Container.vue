@@ -18,6 +18,23 @@ const updateStatus = ref(true);
 const noImage = ref(true);
 let backStory: Story | null = null;
 
+const pickStatus = ref(false);
+const showLayer = ref(false);
+const layerRef = ref<HTMLCanvasElement | null>(null);
+const SIZE = 11; // 显示格子数
+const SCALE = 14; // 倍数
+const DW = SCALE * SIZE;
+const DH = SCALE * SIZE;
+const OFFSET = SCALE;
+const points = (() => {
+  const list = [];
+  for (let i = 1; i < SIZE; i++) {
+    list.push([i, 0, i, SIZE]);
+    list.push([0, i, SIZE, i]);
+  }
+  return list.map(item => item.map(num => num * SCALE));
+})();
+
 const text = ref('金馆长');
 const updateText = (value: string) => {
   text.value = value;
@@ -207,6 +224,7 @@ const updateData = () => {
     if (!noImage.value) {
       emit('create', localStory.value);
       updateStatus.value = true;
+      noImage.value = true;
     }
   }
 };
@@ -238,6 +256,97 @@ const updateImage = (value: Story) => {
   emit('replace', value);
 };
 
+const pick = () => {
+  pickStatus.value = true;
+};
+
+const drawGrid = (ctx: CanvasRenderingContext2D) => {
+  ctx.imageSmoothingEnabled = false;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.strokeStyle ='#000000';
+  ctx.arc(SIZE * SCALE / 2, SIZE * SCALE / 2, SIZE * SCALE / 2 - 1, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.clip();
+
+  ctx.strokeStyle = '#D6D6D6';
+  points.forEach(item => {
+    const {0: sx, 1: sy, 2: dx, 3: dy} = item;
+    ctx.moveTo(sx, sy);
+    ctx.lineTo(dx, dy);
+  });
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.strokeStyle = '#FF0000';
+  ctx.rect((SIZE - 1) * SCALE / 2, (SIZE - 1) * SCALE / 2, 1 * SCALE, 1 * SCALE); // 红点固定到圆心，对于源canvas的边缘像素，圆心值和实际值就不匹配，可通过把源canvas再封装一层解决，不计划调整。
+  ctx.stroke();
+};
+
+const drawLayer = (x: number, y: number) => {
+  const canvas = canvasRef.value as HTMLCanvasElement;
+  const targetCanvas = layerRef.value as HTMLCanvasElement;
+  targetCanvas.style.left = `${x + OFFSET}px`;
+  targetCanvas.style.top = `${y + OFFSET}px`;
+
+  const ctx = targetCanvas.getContext('2d') as CanvasRenderingContext2D;
+  const sx = Math.min(Math.max(0, x - 5), canvas.width - SIZE);
+  const sy = Math.min(Math.max(0, y - 5), canvas.height - SIZE);
+
+  ctx.clearRect(0, 0, DW, DH);
+  ctx.drawImage(canvas, sx, sy, SIZE, SIZE, 0, 0, DW, DH);
+  drawGrid(ctx);
+};
+
+const pickMousemove = async (event: MouseEvent) => {
+  if (!pickStatus.value) {
+    return false;
+  }
+  const {offsetX, offsetY} = event;
+  if (offsetX < 0 || offsetY < 0) {
+    return;
+  }
+
+  showLayer.value = true;
+  drawLayer(offsetX, offsetY);
+};
+
+const pickMouseleave = () => {
+  if (!pickStatus.value) {
+    return false;
+  }
+  showLayer.value = false;
+};
+
+const hexConvert = (imageData: ImageData) => {
+  const hex = (num: number) => num.toString(16).padStart(2, '0');
+  const {0: r, 1: g, 2: b, 3: a} = imageData.data;
+  return `#${hex(r)}${hex(g)}${hex(b)}${hex(a)}`.toUpperCase();
+};
+
+const computedData = (x: number, y: number) => {
+  const canvas = canvasRef.value as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+  const imageData = ctx.getImageData(x, y, 1, 1);
+  return hexConvert(imageData);
+};
+
+const pickColor = (event: MouseEvent) => {
+  if (!pickStatus.value) {
+    return false;
+  }
+
+  const {offsetX, offsetY} = event;
+  if (offsetX < 0 || offsetY < 0) {
+    return;
+  }
+
+  const color = computedData(offsetX, offsetY);
+  localStory.value.color = color;
+  showLayer.value = false;
+  pickStatus.value = false;
+};
+
 onMounted(() => {
   makeCanvas();
 });
@@ -261,8 +370,18 @@ onMounted(() => {
     </div>
     <template v-else>
       <div class="container-wraper">
-        <canvas class="container-canvas" ref="canvasRef"/>
+        <canvas
+          ref="canvasRef"
+          :class="{
+            'container-canvas': true,
+            'container-pointer': pickStatus
+          }"
+          @mousemove="pickMousemove"
+          @mouseleave="pickMouseleave"
+          @click="pickColor"
+        />
         <div
+          v-show="!pickStatus"
           class="container-area"
           ref="areaRef"
           @mousemove="mousemove"
@@ -270,6 +389,16 @@ onMounted(() => {
         >
           <div class="container-drag" ref="dragRef" @mousedown="mousedown"/>
         </div>
+        <canvas
+          v-show="pickStatus && showLayer"
+          ref="layerRef"
+          class="container-layer"
+          :style="{
+            borderRadius: `${SIZE * SCALE}px`
+          }"
+          :width="DW"
+          :height="DH"
+        />
       </div>
       <property
         :max="localStory.max"
@@ -277,6 +406,7 @@ onMounted(() => {
         :size="size"
         :align="localStory.align"
         @change="propertyChange"
+        @pick="pick"
       />
     </template>
     <footer class="container-footer">
@@ -338,6 +468,12 @@ onMounted(() => {
     height: 32px;
     user-select: none;
     cursor: move;
+  }
+  &-pointer {
+    cursor: pointer;
+  }
+  &-layer {
+    position: absolute;
   }
   &-footer {
     height: 64px;
