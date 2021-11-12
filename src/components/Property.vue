@@ -11,7 +11,7 @@ const props = defineProps<{
   align: string
 }>();
 
-const emit = defineEmits(['change']);
+const emit = defineEmits(['change', 'pick']);
 
 const injectTtext = inject('text');
 const injectUpdateText: () => void = inject('updateText') as () => void;
@@ -38,6 +38,10 @@ const changeColor = () => {
   const color = '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16);
   changeValue(color, 'color');
 };
+
+const pickColor = () => {
+  emit('pick');
+};
 </script>
 
 <template>
@@ -46,7 +50,7 @@ const changeColor = () => {
     <meme-input class="property-size" :value="size" @update:modelValue="changeValue($event, 'size')"/>
     <meme-input class="property-color" :value="color" @update:modelValue="changeValue($event, 'color')"/>
     <dice-button :color="color" @click="changeColor"/>
-    <picker-button :color="color" @click="changeColor"/>
+    <picker-button :color="color" @click="pickColor"/>
     <meme-radio label="start" name="align" value="start" :checked="alignValue" @toggle="changeValue($event, 'align')"/>
     <meme-radio label="end" name="align" value="end" :checked="!alignValue" @toggle="changeValue($event, 'align')"/>
     <meme-input class="property-text" :value="injectTtext" @update:modelValue="injectUpdateText"/>

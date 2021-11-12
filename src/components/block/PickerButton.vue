@@ -22,7 +22,7 @@ const change = () => {
 
 <template>
   <meme-button
-    class="dice-button"
+    class="picker-button"
     u="icon"
     @click="change"
   >
