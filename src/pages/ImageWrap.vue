@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, watch, Ref, onMounted} from 'vue';
+import {ref, watch, Ref, onMounted, provide} from 'vue';
 import Side from '../components/Side.vue';
 import Container from '../components/Container.vue';
 import {Story, Catalog} from '../types';
@@ -62,8 +62,17 @@ const createImage = async (value: Story) => {
   current.value = res.mid;
 };
 
+const commands = ref([]);
+provide('commands', commands);
+
+const getCommands = async () => {
+  const res = await Api.getCommands({});
+  commands.value = res;
+};
+
 onMounted(() => {
   getCatalog();
+  getCommands();
 });
 
 </script>

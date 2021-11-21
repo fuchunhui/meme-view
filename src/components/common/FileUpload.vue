@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import {inject, Ref} from 'vue';
+
+const commands = inject('commands') as Ref<[string]>;
 const emit = defineEmits(['change']);
 
 const fileChange = (event: Event) => {
@@ -50,6 +53,12 @@ const handleFiles = (fileList: FileList) => {
 
   if (!IMAGE_TYPE.test(type)) {
     toast(`当前文件类型为${type}，类型不符，请选择图片类型！`);
+    return false;
+  }
+
+  const fileName = name.replace(/\.\w*$/g, '');
+  if (commands.value.includes(fileName)) {
+    toast(`当前文件名称【${name}】与系统默认关键指令【${fileName}】冲突，请重命名上传文件！`);
     return false;
   }
 
