@@ -2,7 +2,7 @@
 import {toRefs, Ref, ref, onMounted, watch, computed, provide} from 'vue';
 import Property from '../components/Property.vue';
 import {MemeButton, MemeFileUpload} from './common';
-import {breakLines} from '../utils/canvas';
+// import {breakLines} from '../utils/canvas';
 import {Story, PropertyValue, BaseFile} from '../types';
 
 const props = defineProps<{
@@ -78,6 +78,16 @@ const localTitle = computed(() => {
     + ` ${width.value} * ${height.value} (${localStory.value.x}, ${localStory.value.y})`;
 });
 
+const offsetWidth = computed(() => {
+  const max = localStory.value.max || width.value;
+  const alignMap: Record<string, number> = {
+    'start': 0,
+    'center': Math.floor(max / 2),
+    'end': max,
+  };
+  return alignMap[localStory.value.align];
+});
+
 const img = new Image();
 
 const makeCanvas = () => {
@@ -125,12 +135,12 @@ const renderImage = () => {
 };
 
 const renderDragLayer = () => {
-  const {x, y, max, align} = localStory.value;
+  const {x, y, max} = localStory.value;
   const dragEle = dragRef.value as HTMLElement;
   dragEle.style.width = `${max}px`;
   dragEle.style.height = `${size.value * LINE_HEIGHT}px`;
   dragEle.style.top = `${y - size.value + 2}px`;
-  dragEle.style.left = align === 'start' ? `${x}px` : `${x - max}px`;
+  dragEle.style.left = `${x - offsetWidth.value}px`;
 };
 
 watch(localStory, (nv, ov) => {
@@ -178,9 +188,8 @@ const mousemove = (event: MouseEvent) => {
   x = Math.max(Math.min(x, width.value - dragWidth + buffer), -buffer);
   y = Math.max(Math.min(y, height.value - dragHeight + buffer), -buffer);
 
-  // 调节x, y的位置，与canvas中保持一致
-  const {align, max} = localStory.value;
-  x += (align === 'end' ? max : 0);
+  // 调节浮层x, y的位置，与canvas中保持一致
+  x += offsetWidth.value;
   y += size.value - 2;
 
   locationChange(x, y);
@@ -475,6 +484,7 @@ onMounted(() => {
     height: 32px;
     user-select: none;
     cursor: move;
+    border: 1px solid red;
   }
   &-pointer {
     cursor: pointer;

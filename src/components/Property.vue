@@ -18,10 +18,6 @@ const injectUpdateText: () => void = inject('updateText') as () => void;
 
 const {max, size, color, align} = toRefs(props);
 
-const alignValue = computed(() => {
-  return align.value === 'start';
-});
-
 const changeValue = (value: string, type: string) => {
   // TODO 增加校验逻辑，保证数据的合法性
   const param: {[key: string]: string | number} = {
@@ -51,8 +47,9 @@ const pickColor = () => {
     <meme-input class="property-color" :value="color" @update:modelValue="changeValue($event, 'color')"/>
     <dice-button :color="color" @click="changeColor"/>
     <picker-button :color="color" @click="pickColor"/>
-    <meme-radio label="start" name="align" value="start" :checked="alignValue" @toggle="changeValue($event, 'align')"/>
-    <meme-radio label="end" name="align" value="end" :checked="!alignValue" @toggle="changeValue($event, 'align')"/>
+    <meme-radio label="start" name="align" value="start" :checked="align === 'start'" @toggle="changeValue($event, 'align')"/>
+    <meme-radio label="center" name="align" value="center" :checked="align === 'center'" @toggle="changeValue($event, 'align')"/>
+    <meme-radio label="end" name="align" value="end" :checked="align === 'end'" @toggle="changeValue($event, 'align')"/>
     <meme-input class="property-text" :value="injectTtext" @update:modelValue="injectUpdateText"/>
   </div>
 </template>
