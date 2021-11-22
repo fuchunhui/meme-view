@@ -2,6 +2,7 @@
 import {toRefs, Ref, ref, onMounted, watch, computed, provide} from 'vue';
 import Property from '../components/Property.vue';
 import {MemeButton, MemeFileUpload} from './common';
+import {breakLines} from '../utils/canvas';
 import {Story, PropertyValue, BaseFile} from '../types';
 
 const props = defineProps<{
@@ -9,6 +10,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['change', 'create', 'replace']);
+const LINE_HEIGHT = 1.5;
 
 const localStory: Ref<Story> = toRefs(props).story;
 const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -61,7 +63,7 @@ const propertyChange = (value: PropertyValue) => {
 
 const size = computed(() => {
   const fontSize = localStory.value.font.match(/(\d{1,3})px/) || ['', '32'];
-  return Number(fontSize[1]) * 1; // 默认行高1倍，也可以选择1.5
+  return Number(fontSize[1]);
 });
 
 const type = computed(() => {
@@ -72,8 +74,8 @@ const type = computed(() => {
 });
 
 const localTitle = computed(() => {
-  return `${localStory.value.title}.${type.value}`;
-  // + ` ${width.value} * ${height.value} (${localStory.value.x}, ${localStory.value.y})`;
+  return `${localStory.value.title}.${type.value}`
+    + ` ${width.value} * ${height.value} (${localStory.value.x}, ${localStory.value.y})`;
 });
 
 const img = new Image();
@@ -115,13 +117,18 @@ const renderImage = () => {
   ctx.fillStyle = color;
   ctx.textAlign = align as CanvasTextAlign;
   ctx.fillText(text.value, x, y, max || canvas.width);
+  // const maxWidth = max || canvas.width; // 多行绘制，暂时注释
+  // const lines = breakLines(text.value, maxWidth, ctx);
+  // lines.forEach((item, index) => {
+  //   ctx.fillText(item, x, y + size.value * index * LINE_HEIGHT, maxWidth); // 默认向下延展，是否需要增加属性，选择超出一行的文字排列方式？
+  // });
 };
 
 const renderDragLayer = () => {
   const {x, y, max, align} = localStory.value;
   const dragEle = dragRef.value as HTMLElement;
   dragEle.style.width = `${max}px`;
-  dragEle.style.height = `${size.value}px`;
+  dragEle.style.height = `${size.value * LINE_HEIGHT}px`;
   dragEle.style.top = `${y - size.value + 2}px`;
   dragEle.style.left = align === 'start' ? `${x}px` : `${x - max}px`;
 };
