@@ -54,11 +54,12 @@ const locationChange = (x: number, y: number) => {
 };
 
 const propertyChange = (value: PropertyValue) => {
-  const {max, size, color, align} = value;
+  const {max, size, color, align, direction} = value;
   localStory.value.max = max;
   localStory.value.font = `${size}px sans-serif`; // 统一默认字体，均使用sans-serif
   localStory.value.color = color;
   localStory.value.align = align;
+  localStory.value.direction = direction;
 };
 
 const size = computed(() => {
@@ -122,11 +123,12 @@ const renderImage = () => {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   ctx.drawImage(img, 0, 0);
 
-  const {x, y, font, color, align, max} = localStory.value;
+  const {x, y, font, color, align, max, direction} = localStory.value;
   ctx.font = font;
   ctx.fillStyle = color;
   ctx.textAlign = align as CanvasTextAlign;
   ctx.fillText(text.value, x, y, max || canvas.width);
+  console.log('direction-------->', direction);
   // const maxWidth = max || canvas.width; // 多行绘制，暂时注释
   // const lines = breakLines(text.value, maxWidth, ctx);
   // lines.forEach((item, index) => {
@@ -248,9 +250,9 @@ const updateData = () => {
 const fileChange = ({name, base64}: BaseFile) => {
   noImage.value = false;
 
-  const {mid, title, feature, image, x, y, max, font, color, align} = localStory.value;
+  const {mid, title, feature, image, x, y, max, font, color, align, direction} = localStory.value;
   backStory = {
-    mid, title, feature, image, x, y, max, font, color, align
+    mid, title, feature, image, x, y, max, font, color, align, direction
   };
 
   const ntitle = name.slice(0, name.lastIndexOf('.'));
@@ -264,7 +266,8 @@ const fileChange = ({name, base64}: BaseFile) => {
     max: 100,
     font: '32px sans-serif',
     color: '#FF0000',
-    align: 'start'
+    align: 'start',
+    direction: 'down'
   });
 };
 
@@ -421,6 +424,7 @@ onMounted(() => {
         :color="localStory.color"
         :size="size"
         :align="localStory.align"
+        :direction="localStory.direction"
         @change="propertyChange"
         @pick="pick"
       />

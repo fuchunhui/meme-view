@@ -9,6 +9,7 @@ export interface Story {
   font: string;
   color: string;
   align: string;
+  direction: string;
 }
 
 export interface Catalog {
@@ -28,6 +29,7 @@ export interface PropertyValue {
   size: number;
   color: string;
   align: string;
+  direction: string;
 }
 
 export interface BaseFile {

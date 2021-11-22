@@ -18,7 +18,8 @@ let story: Ref<Story> = ref({
   max: 100,
   font: '32px sans-serif',
   color: '#FFFFFF',
-  align: 'start'
+  align: 'start',
+  direction: 'down'
 });
 
 const getCatalog = async () => {

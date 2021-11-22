@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, toRefs, inject} from 'vue';
+import {toRefs, inject} from 'vue';
 import {MemeInput, MemeRadio} from './common';
 import DiceButton from './block/DiceButton.vue';
 import PickerButton from './block/PickerButton.vue';
@@ -8,7 +8,8 @@ const props = defineProps<{
   max: number,
   size: number,
   color: string,
-  align: string
+  align: string,
+  direction: string
 }>();
 
 const emit = defineEmits(['change', 'pick']);
@@ -16,7 +17,7 @@ const emit = defineEmits(['change', 'pick']);
 const injectTtext = inject('text');
 const injectUpdateText: () => void = inject('updateText') as () => void;
 
-const {max, size, color, align} = toRefs(props);
+const {max, size, color, align, direction} = toRefs(props);
 
 const changeValue = (value: string, type: string) => {
   // TODO 增加校验逻辑，保证数据的合法性
@@ -24,9 +25,10 @@ const changeValue = (value: string, type: string) => {
     max: max.value,
     size: size.value,
     color: color.value,
-    align: align.value
+    align: align.value,
+    direction: direction.value
   };
-  param[type] = ['color', 'align'].includes(type) ? value : parseInt(value);
+  param[type] = ['color', 'align', 'direction'].includes(type) ? value : parseInt(value);
   emit('change', param);
 };
 
@@ -51,6 +53,8 @@ const pickColor = () => {
     <meme-radio label="center" name="align" value="center" :checked="align === 'center'" @toggle="changeValue($event, 'align')"/>
     <meme-radio label="end" name="align" value="end" :checked="align === 'end'" @toggle="changeValue($event, 'align')"/>
     <meme-input class="property-text" :value="injectTtext" @update:modelValue="injectUpdateText"/>
+    <meme-radio label="up" name="direction" value="up" :checked="direction === 'up'" @toggle="changeValue($event, 'direction')"/>
+    <meme-radio label="down" name="direction" value="down" :checked="direction === 'down'" @toggle="changeValue($event, 'direction')"/>
   </div>
 </template>
 
@@ -66,11 +70,17 @@ const pickColor = () => {
   &-size,
   &-color,
   &-text {
-    width: 100px;
     height: 30px;
     background: #FFFFFF;
     border: 1px solid #DDDEE4;
     margin-right: 10px;
+  }
+  &-max,
+  &-size {
+    width: 60px;
+  }
+  &-color{
+    width: 100px;
   }
   &-text {
     width: 120px;
