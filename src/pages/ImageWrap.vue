@@ -57,7 +57,9 @@ const replace = (value: Story) => {
 };
 
 const createImage = async (value: Story) => {
-  const res = await Api.createImage(value);
+  const res = await Api.createImage(value).catch(response => {
+    alert(response.message);
+  });
 
   await getCatalog();
   current.value = res.mid;

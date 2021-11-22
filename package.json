@@ -1,6 +1,6 @@
 {
   "name": "meme-view",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "custom view for meme.",
   "repository": "fuchunhui/meme-view",
   "main": "dist/imeme.umd.js",
