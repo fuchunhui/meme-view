@@ -16,7 +16,8 @@
     "commitlint": "node scripts/verify-commit.js"
   },
   "dependencies": {
-    "axios": "^0.24.0"
+    "axios": "^0.24.0",
+    "vue-router": "^4.0.12"
   },
   "devDependencies": {
     "@types/estree": "^0.0.50",

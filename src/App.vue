@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import ImageWrap from './pages/ImageWrap.vue';
+
 </script>
 
 <template>
-  <ImageWrap/>
+  <router-view/>
 </template>
 
 <style lang="less">

@@ -1,4 +1,5 @@
-module.exports = {
+// module.exports = {
+export default {
   root: true,
   env: {
     browser: true,
@@ -6,7 +7,7 @@ module.exports = {
   },
   parser: 'vue-eslint-parser',
   parserOptions: {
-    ecmaVersion: 2021,
+    ecmaVersion: 2022,
     parser: '@typescript-eslint/parser'
   },
   extends: [
@@ -49,16 +50,14 @@ module.exports = {
     'vue/html-indent': ['error', 2],
     'vue/max-attributes-per-line': ['error', {
       'singleline': 10,
-      'multiline': {
-        'max': 1,
-        'allowFirstLine': false
-      }
+      'multiline': 5
     }],
     'vue/html-closing-bracket-spacing': ['error', {
       'startTag': 'never',
       'endTag': 'never',
       'selfClosingTag': 'never'
     }],
+    'vue/multi-word-component-names': ['off'],
 
     '@typescript-eslint/semi': ['error', 'always'],
     '@typescript-eslint/indent': ['error', 2, {
