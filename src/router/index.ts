@@ -1,8 +1,7 @@
 import {createRouter, createWebHistory} from 'vue-router';
 
-const Home = {template: '<div>Home</div>'};
-
 import ImageWrap from '../pages/ImageWrap.vue';
+import MaterialCenter from '../pages/MaterialCenter.vue';
 
 const routes = [
   {
@@ -10,8 +9,8 @@ const routes = [
     component: ImageWrap
   },
   {
-    path: '/about',
-    component: Home
+    path: '/center',
+    component: MaterialCenter
   },
 ];
 
