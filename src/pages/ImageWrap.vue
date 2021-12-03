@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import {ref, watch, Ref, onMounted, provide} from 'vue';
+import {ref, watch, Ref, onMounted, provide, computed} from 'vue';
 import Side from '../components/Side.vue';
 import Container from '../components/Container.vue';
+import FeatureContainer from '../components/FeatureContainer.vue';
 import {Story, Catalog, CatalogItem} from '../types';
 import Api from '../api';
 
@@ -21,7 +22,8 @@ let story: Ref<Story> = ref({
   font: '32px sans-serif',
   color: '#FFFFFF',
   align: 'start',
-  direction: 'down'
+  direction: 'down',
+  senior: 0
 });
 
 const getCatalog = async () => {
@@ -76,6 +78,10 @@ const getCommands = async () => {
   commands.value = res;
 };
 
+const showContainer = computed(() => {
+  return ['STORY', 'SERIES', 'SPECIAL'].includes(curType.value);
+});
+
 onMounted(() => {
   getCatalog();
   getCommands();
@@ -90,13 +96,22 @@ onMounted(() => {
       :catalog-list="catalogList"
       @change="imageChange"
     />
-    <container
-      v-if="story.image && story.mid"
-      :story="story"
-      @change="storyChange"
-      @replace="replace"
-      @create="createImage"
-    />
+    <template v-if="story.image && story.mid">
+      <container
+        v-if="showContainer"
+        :story="story"
+        @change="storyChange"
+        @replace="replace"
+        @create="createImage"
+      />
+      <feature-container
+        v-if="curType === 'FEATURE'"
+        :story="story"
+        @change="storyChange"
+        @replace="replace"
+        @create="createImage"
+      />
+    </template>
   </div>
 </template>
 

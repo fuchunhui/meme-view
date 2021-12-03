@@ -249,9 +249,9 @@ const updateData = () => {
 const fileChange = ({name, base64}: BaseFile) => {
   noImage.value = false;
 
-  const {mid, title, feature, image, x, y, max, font, color, align, direction} = localStory.value;
+  const {mid, title, feature, image, x, y, max, font, color, align, direction, senior} = localStory.value;
   backStory = {
-    mid, title, feature, image, x, y, max, font, color, align, direction
+    mid, title, feature, image, x, y, max, font, color, align, direction, senior
   };
 
   const ntitle = name.slice(0, name.lastIndexOf('.'));
@@ -266,7 +266,8 @@ const fileChange = ({name, base64}: BaseFile) => {
     font: '32px sans-serif',
     color: '#FF0000',
     align: 'start',
-    direction: 'down'
+    direction: 'down',
+    senior: 0
   });
 };
 

@@ -10,6 +10,7 @@ export interface Story {
   color: string;
   align: string;
   direction: string;
+  senior: number;
 }
 
 export interface Catalog {
