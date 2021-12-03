@@ -19,10 +19,7 @@ export interface Catalog {
   children: CatalogItem[]
 }
 
-export interface CatalogItem {
-  mid: string;
-  title: string;
-}
+export type CatalogItem = Record<string, string | number>;
 
 export interface PropertyValue {
   max: number;

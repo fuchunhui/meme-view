@@ -2,12 +2,14 @@
 import {ref, watch, Ref, onMounted, provide} from 'vue';
 import Side from '../components/Side.vue';
 import Container from '../components/Container.vue';
-import {Story, Catalog} from '../types';
+import {Story, Catalog, CatalogItem} from '../types';
 import Api from '../api';
 
 const catalogList: Ref<Catalog[]> = ref([]);
 const current = ref('');
 const curType = ref('');
+const curCell = ref({});
+
 let story: Ref<Story> = ref({
   mid: '',
   title: '',
@@ -27,10 +29,11 @@ const getCatalog = async () => {
   catalogList.value = res;
 };
 
-const imageChange = ({type, mid}: {type: string; mid: string}) => {
-  if (current.value !== mid) {
-    current.value = mid;
+const imageChange = ({type, child}: {type: string; child: CatalogItem}) => {
+  if (current.value !== child.mid) {
+    current.value = child.mid as string;
     curType.value = type;
+    curCell.value = child;
   }
 };
 

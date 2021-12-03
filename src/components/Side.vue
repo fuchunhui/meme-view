@@ -12,7 +12,7 @@ const emit = defineEmits(['change']);
 const catalogList: Ref<Catalog[]> = toRefs(props).catalogList;
 
 const showCell = (type: string, child: CatalogItem) => {
-  emit('change', {type, ...child});
+  emit('change', {type, child});
 };
 </script>
 
