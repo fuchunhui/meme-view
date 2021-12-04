@@ -3,13 +3,18 @@ import {ref, watch, Ref, onMounted, provide, computed} from 'vue';
 import Side from '../components/Side.vue';
 import Container from '../components/Container.vue';
 import FeatureContainer from '../components/FeatureContainer.vue';
-import {Story, Catalog, CatalogItem} from '../types';
+import {
+  Story,
+  Catalog,
+  CatalogItem,
+  FeatureImage,
+  FeatureText
+} from '../types';
 import Api from '../api';
 
 const catalogList: Ref<Catalog[]> = ref([]);
 const current = ref('');
 const curType = ref('');
-const curCell = ref({});
 
 let story: Ref<Story> = ref({
   mid: '',
@@ -26,6 +31,9 @@ let story: Ref<Story> = ref({
   senior: 0
 });
 
+let featureImage: Ref<FeatureImage | null> = ref(null);
+let featureText: Ref<FeatureText | null> = ref(null);
+
 const getCatalog = async () => {
   const res = await Api.getCatalog({});
   catalogList.value = res;
@@ -35,7 +43,6 @@ const imageChange = ({type, child}: {type: string; child: CatalogItem}) => {
   if (current.value !== child.mid) {
     current.value = child.mid as string;
     curType.value = type;
-    curCell.value = child;
   }
 };
 
@@ -44,12 +51,25 @@ watch([current, curType], () => {
 });
 
 const getImageData = (mid: string, type: string) => {
-  Api.openImage({
-    mid,
-    type
-  }).then(res => {
-    story.value = res;
-  });
+  if (showContainer.value) {
+    Api.openImage({
+      mid,
+      type
+    }).then(res => {
+      story.value = res;
+    });
+  } else {
+    Api.getFeatureImage({
+      mid
+    }).then(res => {
+      console.log(res);
+      if (res.type === 'IMAGE') {
+        featureImage.value = res;
+      } else if(res.type === 'TEXT') {
+        featureText.value = res;
+      }
+    });
+  }
 };
 
 const storyChange = (value: Story) => {
@@ -82,6 +102,10 @@ const showContainer = computed(() => {
   return ['STORY', 'SERIES', 'SPECIAL'].includes(curType.value);
 });
 
+const featureChange = () => {
+  console.log('更新feature 数据');
+};
+
 onMounted(() => {
   getCatalog();
   getCommands();
@@ -96,22 +120,19 @@ onMounted(() => {
       :catalog-list="catalogList"
       @change="imageChange"
     />
-    <template v-if="story.image && story.mid">
-      <container
-        v-if="showContainer"
-        :story="story"
-        @change="storyChange"
-        @replace="replace"
-        @create="createImage"
-      />
-      <feature-container
-        v-if="curType === 'FEATURE'"
-        :story="story"
-        @change="storyChange"
-        @replace="replace"
-        @create="createImage"
-      />
-    </template>
+    <container
+      v-if="showContainer && story.image && story.mid"
+      :story="story"
+      @change="storyChange"
+      @replace="replace"
+      @create="createImage"
+    />
+    <feature-container
+      v-if="curType === 'FEATURE' && (featureImage?.mid || featureText?.mid)"
+      :featureImage="featureImage"
+      :featureText="featureText"
+      @change="featureChange"
+    />
   </div>
 </template>
 

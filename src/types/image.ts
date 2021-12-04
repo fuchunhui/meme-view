@@ -3,6 +3,7 @@ export interface Story {
   title: string;
   feature: string;
   image: string;
+  senior: number;
   x: number;
   y: number;
   max: number;
@@ -10,7 +11,6 @@ export interface Story {
   color: string;
   align: string;
   direction: string;
-  senior: number;
 }
 
 export interface Catalog {
@@ -33,4 +33,37 @@ export interface PropertyValue {
 export interface BaseFile {
   name: string;
   base64: string
+}
+
+export interface ExtensionImage {
+  x: number;
+  y: number;
+  wdith: number;
+  height: number;
+  ipath: string
+}
+
+export interface ExtensionText {
+  mid: string;
+  x: number;
+  y: number;
+  max: number;
+  font: string;
+  color: string;
+  align: string;
+  direction: string;
+}
+
+interface Feature {
+  mid: string;
+  feature: string;
+  type: string;
+  story: Story;
+}
+export interface FeatureImage extends Feature {
+  ei: ExtensionImage;
+}
+
+export interface FeatureText extends Feature {
+  et: ExtensionText;
 }

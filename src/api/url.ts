@@ -20,6 +20,10 @@ const urlMap: Net = {
   getCommands: {
     url: '/image/commands',
     method: 'get'
+  },
+  getFeatureImage: {
+    url: '/image/feature/open',
+    method: 'get'
   }
 };
 
