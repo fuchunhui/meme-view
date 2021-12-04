@@ -54,16 +54,11 @@ export interface ExtensionText {
   direction: string;
 }
 
-interface Feature {
+export interface Feature {
   mid: string;
   feature: string;
   type: string;
   story: Story;
-}
-export interface FeatureImage extends Feature {
-  ei: ExtensionImage;
-}
-
-export interface FeatureText extends Feature {
-  et: ExtensionText;
+  ei?: ExtensionImage;
+  et?: ExtensionText;
 }

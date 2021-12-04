@@ -7,8 +7,7 @@ import {
   Story,
   Catalog,
   CatalogItem,
-  FeatureImage,
-  FeatureText
+  Feature
 } from '../types';
 import Api from '../api';
 
@@ -31,8 +30,12 @@ let story: Ref<Story> = ref({
   senior: 0
 });
 
-let featureImage: Ref<FeatureImage | null> = ref(null);
-let featureText: Ref<FeatureText | null> = ref(null);
+let feature: Ref<Feature> = ref({
+  mid: '',
+  feature: '',
+  type: '',
+  story
+});
 
 const getCatalog = async () => {
   const res = await Api.getCatalog({});
@@ -62,12 +65,7 @@ const getImageData = (mid: string, type: string) => {
     Api.getFeatureImage({
       mid
     }).then(res => {
-      console.log(res);
-      if (res.type === 'IMAGE') {
-        featureImage.value = res;
-      } else if(res.type === 'TEXT') {
-        featureText.value = res;
-      }
+      feature.value = res;
     });
   }
 };
@@ -128,9 +126,8 @@ onMounted(() => {
       @create="createImage"
     />
     <feature-container
-      v-if="curType === 'FEATURE' && (featureImage?.mid || featureText?.mid)"
-      :featureImage="featureImage"
-      :featureText="featureText"
+      v-if="curType === 'FEATURE' && feature.mid"
+      :feature="feature"
       @change="featureChange"
     />
   </div>
