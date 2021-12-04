@@ -2,7 +2,7 @@
 import {toRefs, Ref, ref, onMounted, watch, computed, provide} from 'vue';
 import Property from '../components/Property.vue';
 import {MemeButton, MemeFileUpload} from './common';
-import {breakLines} from '../utils/canvas';
+import {fillText, LINE_HEIGHT} from '../utils/canvas';
 import {Story, PropertyValue, BaseFile} from '../types';
 
 const props = defineProps<{
@@ -10,7 +10,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['change', 'create', 'replace']);
-const LINE_HEIGHT = 1.2;
 
 const localStory: Ref<Story> = toRefs(props).story;
 const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -123,16 +122,7 @@ const renderImage = () => {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   ctx.drawImage(img, 0, 0);
 
-  const {x, y, font, color, align, max, direction} = localStory.value;
-  ctx.font = font;
-  ctx.fillStyle = color;
-  ctx.textAlign = align as CanvasTextAlign;
-  const maxWidth = max || canvas.width;
-  const lines = breakLines(text.value, maxWidth, ctx);
-  lines.forEach((item, index) => {
-    const dy = direction === 'down' ? index : index - (lines.length - 1);
-    ctx.fillText(item, x, y + dy * size.value * LINE_HEIGHT, maxWidth);
-  });
+  fillText(ctx, canvas.width, text.value, localStory.value);
 };
 
 const renderDragLayer = () => {

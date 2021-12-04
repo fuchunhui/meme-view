@@ -13,6 +13,16 @@ export interface Story {
   direction: string;
 }
 
+export interface FillText {
+  x: number;
+  y: number;
+  max: number;
+  font: string;
+  color: string;
+  align: string;
+  direction: string;
+}
+
 export interface Catalog {
   id: string;
   text: string;

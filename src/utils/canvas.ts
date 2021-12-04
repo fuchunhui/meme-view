@@ -1,3 +1,7 @@
+import {FillText} from '../types/image';
+
+export const LINE_HEIGHT = 1.2;
+
 const _findBreakPoint = (text: string, width: number, ctx: CanvasRenderingContext2D) => {
   let min = 0;
   let max = text.length - 1;
@@ -43,6 +47,23 @@ const breakLines = (text: string, width: number, ctx: CanvasRenderingContext2D):
   return lines;
 };
 
+const fillText = (ctx: CanvasRenderingContext2D, width: number, text: string, options: FillText) => {
+  const {x, y, font, color, align, max, direction} = options;
+  ctx.font = font || '32px sans-serif';
+  ctx.fillStyle = color || '#000000';
+  ctx.textAlign = (align || 'center') as CanvasTextAlign; 
+
+  const maxWidth = max || width;
+  const fontSize = font.match(/(\d{1,3})px/) || ['', '32'];
+  const size = Number(fontSize[1]);
+  const lines = breakLines(text, maxWidth, ctx);
+  lines.forEach((item, index) => {
+    const dy = direction === 'down' ? index : index - (lines.length - 1);
+    ctx.fillText(item, x, y + dy * size * LINE_HEIGHT, maxWidth);
+  });
+};
+
 export {
-  breakLines
+  breakLines,
+  fillText
 };
