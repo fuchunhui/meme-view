@@ -43,16 +43,6 @@ const isText = computed(() => {
   return localFeature.value.type === 'TEXT';
 });
 
-// TODO 
-const propertyChange = (value: PropertyValue) => {
-  const {max, size, color, align, direction} = value;
-  localFeature.value.max = max;
-  localFeature.value.font = `${size}px sans-serif`; // 统一默认字体，均使用sans-serif
-  localFeature.value.color = color;
-  localFeature.value.align = align;
-  localFeature.value.direction = direction;
-};
-
 const size = computed(() => {
   if (isText.value) {
     const fontSize = localFeature.value.et?.font.match(/(\d{1,3})px/) || ['', '32'];
@@ -71,7 +61,7 @@ const type = computed(() => {
 // TODO 目前只考虑TEXT类型
 const localTitle = computed(() => {
   return `${localFeature.value.story.title}.${type.value}`
-    + ` ${width.value} * ${height.value} (${localFeature.value.et?.x}, ${localFeature.value.et?.y})`;
+    + ` ${width.value} * ${height.value} (${textProperty.value.x}, ${textProperty.value.y})`;
 });
 
 // TODO 检查下，当IMAGE类型下，这个计算属性的内容是什么，是否还有用。
@@ -83,16 +73,25 @@ const textProperty = computed(() => {
 // 暂时只考虑TEXT场景，候补补充Image再调整
 const offsetWidth = computed(() => {
   if (isText.value) {
-    const max = localFeature.value.et?.max || width.value;
+    const max = textProperty.value.max || width.value;
     const alignMap: Record<string, number> = {
       'start': 0,
       'center': Math.floor(max / 2),
       'end': max,
     };
-    return alignMap[(localFeature.value.et as ExtensionText).align];
+    return alignMap[textProperty.value.align];
   }
   return 0;
 });
+
+const textPropertyChange = (value: PropertyValue) => {
+  const {max, size, color, align, direction} = value;
+  (localFeature.value.et as ExtensionText).max = max;
+  (localFeature.value.et as ExtensionText).font = `${size}px sans-serif`; // 统一默认字体，均使用sans-serif
+  (localFeature.value.et as ExtensionText).color = color;
+  (localFeature.value.et as ExtensionText).align = align;
+  (localFeature.value.et as ExtensionText).direction = direction;
+};
 
 const img = new Image();
 
@@ -133,11 +132,13 @@ const renderImage = () => {
 
   fillText(ctx, canvas.width, STORY_TEXT, localFeature.value.story);
   // TODO 补充图片和文字的内容。
+  // !!!!! 写着里，把文字的画法，加上。
+  // ！！！！
 };
 
 const renderDragLayer = () => {
   if (isText.value) {
-    const {x, y, max} = localFeature.value.et as ExtensionText;
+    const {x, y, max} = textProperty.value;
     const dragEle = dragRef.value as HTMLElement;
     dragEle.style.width = `${max}px`;
     dragEle.style.height = `${size.value * LINE_HEIGHT}px`;
@@ -228,8 +229,8 @@ const mousemove = (event: MouseEvent) => {
 };
 
 const locationChange = (x: number, y: number) => {
-  (localFeature.value.et as ExtensionText).x = x;
-  (localFeature.value.et as ExtensionText).y = y;
+  textProperty.value.x = x;
+  textProperty.value.y = y;
 };
 
 const mouseup = () => {
@@ -369,7 +370,7 @@ onMounted(() => {
       :size="size"
       :align="textProperty.align"
       :direction="textProperty.direction"
-      @change="propertyChange"
+      @change="textPropertyChange"
       @pick="pick"
     />
     <footer class="container-footer">
