@@ -7,7 +7,8 @@ import {
   Story,
   Catalog,
   CatalogItem,
-  Feature
+  Feature,
+  FeatureText
 } from '../types';
 import Api from '../api';
 
@@ -100,8 +101,11 @@ const showContainer = computed(() => {
   return ['STORY', 'SERIES', 'SPECIAL'].includes(curType.value);
 });
 
-const featureChange = () => {
-  console.log('更新feature 数据');
+const featureChange = ({mid, type, options}: FeatureText) => {
+  console.log('更新feature 数据', mid, type, options);
+  if (type === 'TEXT') {
+    Api.saveImage(options);
+  }
 };
 
 onMounted(() => {

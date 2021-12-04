@@ -72,3 +72,9 @@ export interface Feature {
   ei?: ExtensionImage;
   et?: ExtensionText;
 }
+
+export interface FeatureText {
+  mid: string;
+  type: string;
+  options: ExtensionText;
+}
