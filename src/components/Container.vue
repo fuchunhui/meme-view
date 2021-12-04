@@ -8,6 +8,7 @@ import {
   LINE_HEIGHT,
   RANK
 } from '../utils/canvas';
+import {download} from '../utils/download';
 import {Story, PropertyValue, BaseFile} from '../types';
 
 const props = defineProps<{
@@ -201,18 +202,10 @@ const toggleAdd = () => {
   }
 };
 
-const download = () => {
+const _download = () => {
   const canvas = canvasRef.value as HTMLCanvasElement;
-  const isJPEG = ['jpeg', 'jpg'].includes(type.value);
-  let imageType = `image/${isJPEG ? 'jpeg' : 'png'}`;
-  const base64 = canvas.toDataURL(imageType);
   const fileName = `imeme_${localStory.value.title}_${text.value}`;
-
-  const ele = document.createElement('a');
-  ele.setAttribute('download', fileName);
-  ele.setAttribute('href', base64);
-  ele.setAttribute('target', '_blank');
-  ele.click();
+  download(canvas, type.value, fileName);
 };
 
 const updateData = () => {
@@ -329,7 +322,7 @@ onMounted(() => {
         {{ localTitle }}
       </div>
       <meme-button :label="updateStatus ? '添加' : '取消添加'" u="primary" @click="toggleAdd"/>
-      <meme-button label="下载" u="primary" @click="download"/>
+      <meme-button label="下载" u="primary" @click="_download"/>
     </div>
     <div
       class="container-wall"
