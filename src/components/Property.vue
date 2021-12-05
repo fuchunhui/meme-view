@@ -51,7 +51,14 @@ const pickColor = () => {
     <picker-button :color="color" @click="pickColor"/>
     <meme-radio label="start" name="align" value="start" :checked="align === 'start'" @toggle="changeValue($event, 'align')"/>
     <meme-radio label="center" name="align" value="center" :checked="align === 'center'" @toggle="changeValue($event, 'align')"/>
-    <meme-radio label="end" name="align" value="end" :checked="align === 'end'" @toggle="changeValue($event, 'align')"/>
+    <meme-radio
+      class="property-end"
+      label="end"
+      name="align"
+      value="end"
+      :checked="align === 'end'"
+      @toggle="changeValue($event, 'align')"
+    />
     <meme-input class="property-text" :value="injectTtext" @update:modelValue="injectUpdateText"/>
     <meme-radio label="up" name="direction" value="up" :checked="direction === 'up'" @toggle="changeValue($event, 'direction')"/>
     <meme-radio label="down" name="direction" value="down" :checked="direction === 'down'" @toggle="changeValue($event, 'direction')"/>
@@ -91,7 +98,13 @@ const pickColor = () => {
   .property-color {
     margin-right: 2px;
   }
-  .meme-button {
+  .dice-button {
+    margin-right: 8px;
+  }
+  .picker-button {
+    margin-right: 10px;
+  }
+  .meme-radio.property-end {
     margin-right: 10px;
   }
 }

@@ -134,6 +134,30 @@ const renderImage = () => {
   // TODO 补充图片和文字的内容。
   // !!!!! 写着里，把文字的画法，加上。
   // ！！！！
+  // !!!!!!!!!!!!
+  if (isText.value) {
+    ctx.restore();
+    fillText(ctx, canvas.width, text.value, textProperty.value);
+  }
+
+  // TODO picker的颜色内容 拾取后不正确。
+
+
+  // if (extensions) {
+  //   const {picture, text: eText, options: eOptions} = extensions;
+  //   if (picture) {
+  //     const {image: eBase64, x: ex, y: ey, width: ewidth, height: eheight} = eOptions;
+  //     extImg.onload = () => {
+  //       ctx.drawImage(extImg, ex, ey, ewidth, eheight);
+  //       base64 = canvas.toDataURL(type);
+  //       return base64;
+  //     };
+  //     extImg.src = eBase64;
+  //   } else {
+  //     ctx.restore();
+  //     fillText(ctx, width, eText, eOptions);
+  //   }
+  // }
 };
 
 const renderDragLayer = () => {
@@ -313,7 +337,7 @@ const pickColor = (event: MouseEvent) => {
   }
 
   const color = computedData(offsetX, offsetY);
-  localFeature.value.story.color = color;
+  (localFeature.value.et as ExtensionText).color = color;
   showLayer.value = false;
   pickStatus.value = false;
 };
