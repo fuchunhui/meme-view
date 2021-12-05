@@ -9,7 +9,12 @@ import {
   RANK
 } from '../utils/canvas';
 import {download} from '../utils/download';
-import {Feature, ExtensionText, PropertyValue} from '../types';
+import {
+  Feature,
+  ExtensionText,
+  ExtensionImage,
+  PropertyValue
+} from '../types';
 
 const props = defineProps<{
   feature: Feature
@@ -58,15 +63,18 @@ const type = computed(() => {
   return type;
 });
 
-// TODO 目前只考虑TEXT类型
 const localTitle = computed(() => {
+  const property = isText.value ? textProperty.value : imageProperty.value;
   return `${localFeature.value.story.title}.${type.value}`
-    + ` ${width.value} * ${height.value} (${textProperty.value.x}, ${textProperty.value.y})`;
+    + ` ${width.value} * ${height.value} (${property.x}, ${property.y})`;
 });
 
-// TODO 检查下，当IMAGE类型下，这个计算属性的内容是什么，是否还有用。
 const textProperty = computed(() => {
   return localFeature.value.et as ExtensionText;
+});
+
+const imageProperty = computed(() => {
+  return localFeature.value.ei as ExtensionImage;
 });
 
 // TODO 
@@ -87,7 +95,7 @@ const offsetWidth = computed(() => {
 const textPropertyChange = (value: PropertyValue) => {
   const {max, size, color, align, direction} = value;
   (localFeature.value.et as ExtensionText).max = max;
-  (localFeature.value.et as ExtensionText).font = `${size}px sans-serif`; // 统一默认字体，均使用sans-serif
+  (localFeature.value.et as ExtensionText).font = `${size}px sans-serif`;
   (localFeature.value.et as ExtensionText).color = color;
   (localFeature.value.et as ExtensionText).align = align;
   (localFeature.value.et as ExtensionText).direction = direction;
@@ -133,15 +141,12 @@ const renderImage = () => {
   fillText(ctx, canvas.width, STORY_TEXT, localFeature.value.story);
   // TODO 补充图片和文字的内容。
   // !!!!! 写着里，把文字的画法，加上。
-  // ！！！！
-  // !!!!!!!!!!!!
   if (isText.value) {
     ctx.restore();
     fillText(ctx, canvas.width, text.value, textProperty.value);
   }
 
   // TODO picker的颜色内容 拾取后不正确。
-
 
   // if (extensions) {
   //   const {picture, text: eText, options: eOptions} = extensions;
