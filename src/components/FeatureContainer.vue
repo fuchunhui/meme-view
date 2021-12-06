@@ -260,7 +260,7 @@ const _download = () => {
 };
 
 const updateData = () => {
-  const {mid, type, et, ei} = localFeature.value
+  const {mid, type, et, ei} = localFeature.value;
   emit('change', {
     mid,
     type,

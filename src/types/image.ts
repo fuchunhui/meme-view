@@ -78,3 +78,8 @@ export interface FeatureText {
   type: string;
   options: ExtensionText;
 }
+export interface FeatureImage {
+  mid: string;
+  type: string;
+  options: ExtensionImage;
+}

@@ -8,7 +8,8 @@ import {
   Catalog,
   CatalogItem,
   Feature,
-  FeatureText
+  FeatureText,
+  FeatureImage
 } from '../types';
 import Api from '../api';
 
@@ -101,12 +102,15 @@ const showContainer = computed(() => {
   return ['STORY', 'SERIES', 'SPECIAL'].includes(curType.value);
 });
 
-const featureChange = ({mid, type, options}: FeatureText) => {
-  console.log('更新feature 数据', mid, type, options);
+const featureChange = ({mid, type, options}: FeatureText | FeatureImage) => {
   if (type === 'TEXT') {
     Api.saveImage(options);
   } else {
-    Api.saveFeatureImage({mid, type, ...options});
+    Api.saveFeatureImage({
+      mid,
+      type,
+      ...options
+    });
   }
 };
 
