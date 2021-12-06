@@ -24,6 +24,10 @@ const urlMap: Net = {
   getFeatureImage: {
     url: '/image/feature/open',
     method: 'get'
+  },
+  saveFeatureImage: {
+    url: '/image/feature/save',
+    method: 'post'
   }
 };
 

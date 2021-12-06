@@ -114,9 +114,7 @@ const makeCanvas = () => {
 
     renderAreaLayer();
     renderImage();
-    if (isText.value) {
-      renderDragLayer();
-    }
+    renderDragLayer();
   };
 
   img.onerror = err => {
@@ -140,13 +138,10 @@ const renderImage = () => {
 
   fillText(ctx, canvas.width, STORY_TEXT, localFeature.value.story);
   // TODO 补充图片和文字的内容。
-  // !!!!! 写着里，把文字的画法，加上。
   if (isText.value) {
     ctx.restore();
     fillText(ctx, canvas.width, text.value, textProperty.value);
   }
-
-  // TODO picker的颜色内容 拾取后不正确。
 
   // if (extensions) {
   //   const {picture, text: eText, options: eOptions} = extensions;
@@ -166,43 +161,31 @@ const renderImage = () => {
 };
 
 const renderDragLayer = () => {
+  let _width = 0;
+  let _height = 0;
+  let _top = 0;
+  let _left = 0;
+
   if (isText.value) {
     const {x, y, max} = textProperty.value;
-    const dragEle = dragRef.value as HTMLElement;
-    dragEle.style.width = `${max}px`;
-    dragEle.style.height = `${size.value * LINE_HEIGHT}px`;
-    dragEle.style.top = `${y - size.value + 2}px`;
-    dragEle.style.left = `${x - offsetWidth.value}px`;
+    _width = max;
+    _height = size.value * LINE_HEIGHT;
+    _top = y - size.value + 2;
+    _left = x - offsetWidth.value;
+  } else {
+    const {x, y, width, height} = imageProperty.value;
+    _width = width;
+    _height = height;
+    _top = y;
+    _left = x;
   }
+
+  const dragEle = dragRef.value as HTMLElement;
+  dragEle.style.width = `${_width}px`;
+  dragEle.style.height = `${_height}px`;
+  dragEle.style.top = `${_top}px`;
+  dragEle.style.left = `${_left}px`;
 };
-
-// TODO
-// const renderDragLay1er = () => {
-//   // 获取四个值x y width height
-
-//   let x = 0;
-//   let y = 0;
-//   let width = 0;
-//   let height = 0;
-
-//   if (isText.value) {
-//     // TEXT
-//     const {x: _x, y: _y, max} = localFeature.value.;
-//     x = _x;
-//     y = _y;
-//     width = max;
-//     height = size.value * LINE_HEIGHT;
-//   } else {
-//     // IMAGE
-//   }
-
-//   // const {x, y, max} = localFeature.value.story;
-//   const dragEle = dragRef.value as HTMLElement;
-//   dragEle.style.width = `${width}px`;
-//   dragEle.style.height = `${height}px`;
-//   dragEle.style.top = `${y - size.value + 2}px`;
-//   dragEle.style.left = `${x - offsetWidth.value}px`;
-// };
 
 // TODO 跟踪内容的变化，是否有影响。
 watch(localFeature, (nv, ov) => {
@@ -250,16 +233,17 @@ const mousemove = (event: MouseEvent) => {
   x = Math.max(Math.min(x, width.value - dragWidth + buffer), -buffer);
   y = Math.max(Math.min(y, height.value - dragHeight + buffer), -buffer);
 
-  // 调节浮层x, y的位置，与canvas中保持一致
-  x += offsetWidth.value;
-  y += size.value - 2;
-
   locationChange(x, y);
 };
 
 const locationChange = (x: number, y: number) => {
-  textProperty.value.x = x;
-  textProperty.value.y = y;
+  if (isText.value) {
+    textProperty.value.x = x + offsetWidth.value;
+    textProperty.value.y = y + size.value - 2;
+  } else {
+    imageProperty.value.x = x;
+    imageProperty.value.y = y;
+  }
 };
 
 const mouseup = () => {
@@ -276,15 +260,11 @@ const _download = () => {
 };
 
 const updateData = () => {
-  // TODO 如何提交这里的数据内容
-  // emit('change', localFeature.value);
-
-  // TEXT
-  const {mid, type, et} = localFeature.value
+  const {mid, type, et, ei} = localFeature.value
   emit('change', {
-    mid: localFeature.value.mid,
-    type: localFeature.value.type,
-    options: localFeature.value.et
+    mid,
+    type,
+    options: isText.value ? et : ei
   });
 };
 
@@ -442,7 +422,7 @@ onMounted(() => {
     font-weight: 500;
   }
   &-canvas {
-    border: thin dashed #333;
+    border: thin dashed #333; // TODO 测试属性，影响x y 坐标，如果不移除，需要调整x y
   }
   &-wraper {
     position: relative;

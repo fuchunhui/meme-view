@@ -48,7 +48,7 @@ export interface BaseFile {
 export interface ExtensionImage {
   x: number;
   y: number;
-  wdith: number;
+  width: number;
   height: number;
   ipath: string
 }

@@ -105,6 +105,8 @@ const featureChange = ({mid, type, options}: FeatureText) => {
   console.log('更新feature 数据', mid, type, options);
   if (type === 'TEXT') {
     Api.saveImage(options);
+  } else {
+    Api.saveFeatureImage({mid, type, ...options});
   }
 };
 
