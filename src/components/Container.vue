@@ -200,6 +200,13 @@ const toggleAdd = () => {
   }
 };
 
+const cancelCreate = () => {
+  if (backStory) {
+    updateImage(backStory as Story);
+    backStory = null;
+  }
+};
+
 const _download = () => {
   const canvas = canvasRef.value as HTMLCanvasElement;
   const fileName = `imeme_${localStory.value.title}_${text.value}`;
@@ -212,7 +219,7 @@ const updateData = () => {
     emit('change', localStory.value);
   } else {
     if (!noImage.value) {
-      emit('create', localStory.value);
+      emit('create', localStory.value, cancelCreate);
       updateStatus.value = true;
       noImage.value = true;
     }
