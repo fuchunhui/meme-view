@@ -92,6 +92,22 @@ const createImage = async (value: Story) => {
 
 const commands = ref([]);
 provide('commands', commands);
+// const paths = ref<{label: string; value: string}[]>();
+// provide('paths', paths);
+provide('paths', [
+  {
+    label: 'ABC',
+    value: 'abc'
+  },
+  {
+    label: 'SVG',
+    value: 'SVG'
+  },
+  {
+    label: 'rfc',
+    value: 'rfc'
+  }
+]);
 
 const getCommands = async () => {
   const res = await Api.getCommands({});
