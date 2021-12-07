@@ -77,8 +77,6 @@ const imageProperty = computed(() => {
   return localFeature.value.ei as ExtensionImage;
 });
 
-// TODO 
-// 暂时只考虑TEXT场景，候补补充Image再调整
 const offsetWidth = computed(() => {
   if (isText.value) {
     const max = textProperty.value.max || width.value;
@@ -327,6 +325,58 @@ const pickColor = (event: MouseEvent) => {
   pickStatus.value = false;
 };
 
+const cornerRef = ref<HTMLElement | null>(null);
+let corx = 0;
+let cory = 0;
+let cornerDrag = false;
+
+const cornerMouseDown = (event: MouseEvent) => {
+  cornerDrag = true;
+  const {clientX, clientY} = event;
+  corx = clientX;
+  cory = clientY;
+};
+
+const cornerMouseMove = (event: MouseEvent) => {
+  if (!cornerDrag) {
+    return;
+  }
+
+  const {clientX, clientY} = event;
+
+  const areaEle = areaRef.value as HTMLElement;
+  const {x, y, width: areaWidth, height: areaHeight} = areaEle.getBoundingClientRect();
+
+  if (clientX < x || clientY < y || clientX > x + areaWidth || clientY > y + areaHeight) {
+    cornerDrag = false;
+    return;
+  }
+
+  const offX = clientX - corx;
+  const offY = clientY - cory;
+
+  const {width, height} = imageProperty.value;
+  const dragEle = dragRef.value as HTMLElement;
+  dragEle.style.width = `${width + offX}px`;
+  dragEle.style.height = `${height + offY}px`;
+};
+
+const cornerMouseUp = (event: MouseEvent) => {
+  if (!cornerDrag) {
+    return;
+  }
+
+  cornerDrag = false;
+
+  const {clientX, clientY} = event;
+  const x = clientX - corx;
+  const y = clientY - cory;
+
+  const {width, height} = imageProperty.value;
+  imageProperty.value.width = width + x;
+  imageProperty.value.height = height + y;
+};
+
 onMounted(() => {
   makeCanvas();
 });
@@ -341,7 +391,11 @@ onMounted(() => {
       </div>
       <meme-button label="下载" u="primary" @click="_download"/>
     </div>
-    <div class="container-wraper">
+    <div
+      class="container-wraper"
+      @mousemove="cornerMouseMove"
+      @mouseup="cornerMouseUp"
+    >
       <canvas
         ref="canvasRef"
         :class="{
@@ -359,7 +413,18 @@ onMounted(() => {
         @mousemove="mousemove"
         @mouseup="mouseup"
       >
-        <div class="container-drag" ref="dragRef" @mousedown="mousedown"/>
+        <div
+          class="container-drag"
+          ref="dragRef"
+          @mousedown="mousedown"
+        >
+          <div
+            v-if="!isText"
+            ref="cornerRef"
+            class="container-drag-corner"
+            @mousedown.stop.prevent="cornerMouseDown"
+          />
+        </div>
       </div>
       <canvas
         v-show="pickStatus && showLayer"
@@ -390,6 +455,7 @@ onMounted(() => {
 
 <style lang="less">
 @import url('src/assets/css/mixins.less');
+@length: 8px;
 
 .container {
   height: 100%;
@@ -444,6 +510,17 @@ onMounted(() => {
     user-select: none;
     cursor: move;
     border: 1px solid red;
+  }
+  &-drag-corner {
+    position: absolute;
+    background: white;
+    border: 1px solid #0099ff;
+    width: @length;
+    height: @length;
+    bottom: calc(-@length / 2);
+    right: calc(-@length / 2);
+    border-radius: 100%;
+    cursor: se-resize;
   }
   &-pointer {
     cursor: pointer;
