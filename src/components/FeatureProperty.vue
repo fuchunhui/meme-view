@@ -52,6 +52,7 @@ const changeValue = (value: string, type: string) => {
   padding: 0 10px;
 
   &-size,
+  &-path,
   &-text {
     height: 30px;
     background: #FFFFFF;
@@ -63,7 +64,7 @@ const changeValue = (value: string, type: string) => {
     width: 60px;
   }
   &-path {
-    background-color: red;
+    width: 100px;
   }
   &-text {
     width: 120px;

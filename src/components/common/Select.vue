@@ -27,6 +27,7 @@ const emit = defineEmits(['change', 'update:model-value']);
 
 const selectedChange = (event: Event) => {
   const _value = (event.target as HTMLInputElement).value;
+  (event.target as HTMLInputElement).blur();
   emit('update:model-value', _value);
   emit('change', _value);
 };
@@ -34,15 +35,19 @@ const selectedChange = (event: Event) => {
 
 <style lang="less">
 .meme-select {
-  // min-width: 98px;
-  // height: 32px;
-  // background-color: #FFFFFF;
-  // border: 1px solid #D9D9D9;
-  // border-radius: 4px;
-  // font-size: 12px;
-  // cursor: pointer;
-  // user-select: none;
-  // vertical-align: middle;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: #666;
+  font-size: 12px;
+  text-indent: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  user-select: none;
+  vertical-align: middle;
+  appearance: none;
 
   &:hover {
     border-color: #4B98F8;
@@ -56,40 +61,6 @@ const selectedChange = (event: Event) => {
       color: rgba(102, 102, 102, 0.4);
       opacity: 1;
       cursor: default;
-    }
-  }
-
-  &[u~="primary"] {
-    background-color: #4B98F8;
-    border-color: transparent;
-    color: #FFFFFF;
-    &:hover {
-      background-color: #388AFA;
-      border-color: #388AFA;
-    }
-    &.disabled,
-    &.disabled:hover {
-      background-color: #F6F6F6;
-      border-color: #4B98F8;
-      color: #4B98F8;
-    }
-  }
-
-  &[u~="grey"] {
-    background-color: #F6F6F6;
-    color: #666666;
-
-    &:hover {
-      background-color: #F0F0F0;
-    }
-    &:active {
-      background-color: #ECECEC;
-    }
-
-    &.disabled,
-    &.disabled:hover {
-      background-color: #F6F6F6;
-      opacity: .4;
     }
   }
 }

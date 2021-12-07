@@ -1,24 +1,28 @@
 textarea,
-input {
+input,
+select {
   background-color: #f6f7fa;
   color: #666;
   outline: none;
 }
 
 textarea[disabled],
-input[disabled] {
+input[disabled],
+select {
   background-color: #F2F2F2;
   color: #DDDDDD;
   cursor: not-allowed;
 }
 
 textarea::placeholder,
-input::placeholder {
+input::placeholder,
+select::placeholder {
   color: #BCBCBC;
 }
 
 textarea:focus,
-input:focus {
+input:focus,
+select:focus {
   border-color: #3A87FF;
   box-shadow: 0 0 3px 1px rgba(30, 113, 242, 0.32);
 }
