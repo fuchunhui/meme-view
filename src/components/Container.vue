@@ -6,8 +6,10 @@ import {
   fillText,
   drawLayer,
   LINE_HEIGHT,
+  getFontSize,
   RANK
 } from '../utils/canvas';
+import {getExt} from '../utils/file';
 import {download} from '../utils/download';
 import {Story, PropertyValue, BaseFile} from '../types';
 
@@ -55,15 +57,11 @@ const propertyChange = (value: PropertyValue) => {
 };
 
 const size = computed(() => {
-  const fontSize = localStory.value.font.match(/(\d{1,3})px/) || ['', '32'];
-  return Number(fontSize[1]);
+  return getFontSize(localStory.value.font);
 });
 
 const type = computed(() => {
-  const base64 = localStory.value.image;
-  const parts = base64.split(';base64,');
-  const type = parts[0].match(/[a-z]+$/g)?.[0] || 'png';
-  return type;
+  return getExt(localStory.value.image);
 });
 
 const localTitle = computed(() => {

@@ -28,6 +28,10 @@ const urlMap: Net = {
   saveFeatureImage: {
     url: '/image/feature/save',
     method: 'post'
+  },
+  getMaterialBase64: {
+    url: '/material/base64',
+    method: 'get'
   }
 };
 

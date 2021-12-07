@@ -6,9 +6,11 @@ import {MemeButton} from './common';
 import {
   fillText,
   drawLayer,
+  getFontSize,
   LINE_HEIGHT,
   RANK
 } from '../utils/canvas';
+import {getExt} from '../utils/file';
 import {download} from '../utils/download';
 import {
   Feature,
@@ -17,6 +19,7 @@ import {
   PropertyValue,
   ImagePropertyValue
 } from '../types';
+import Api from '../api';
 
 const props = defineProps<{
   feature: Feature
@@ -36,9 +39,24 @@ const layerRef = ref<HTMLCanvasElement | null>(null);
 
 const STORY_TEXT = '金馆长';
 const text = ref('金馆长');
+const imageBase64 = ref('');
 const updateText = (value: string) => {
   text.value = value;
-  renderImage();
+  if (isText.value) {
+    renderImage();
+  } else {
+    Api.getMaterialBase64({
+      ipath: imageProperty.value.ipath,
+      value
+    }).then(res => {
+      imageBase64.value = res;
+      if (res) {
+        extImg.src = res;
+      } else {
+        renderImage();
+      }
+    });
+  }
 };
 provide('text', text);
 provide('updateText', updateText);
@@ -52,17 +70,13 @@ const isText = computed(() => {
 
 const size = computed(() => {
   if (isText.value) {
-    const fontSize = localFeature.value.et?.font.match(/(\d{1,3})px/) || ['', '32'];
-    return Number(fontSize[1]);
+    return getFontSize(localFeature.value.et?.font as string);
   }
   return 0;
 });
 
 const type = computed(() => {
-  const base64 = localFeature.value.story.image;
-  const parts = base64.split(';base64,');
-  const type = parts[0].match(/[a-z]+$/g)?.[0] || 'png';
-  return type;
+  return getExt(localFeature.value.story.image);
 });
 
 const localTitle = computed(() => {
@@ -92,6 +106,21 @@ const offsetWidth = computed(() => {
   return 0;
 });
 
+const imageTextOption = computed(() => {
+  const {font, color, direction} = localFeature.value.story;
+  const {x, y, width} = imageProperty.value;
+  const options = {
+    x: x + width / 2,
+    y: y + getFontSize(font),
+    max: width,
+    font,
+    color,
+    align: 'center',
+    direction
+  };
+  return options;
+});
+
 const textPropertyChange = (value: PropertyValue) => {
   const {max, size, color, align, direction} = value;
   (localFeature.value.et as ExtensionText).max = max;
@@ -99,6 +128,14 @@ const textPropertyChange = (value: PropertyValue) => {
   (localFeature.value.et as ExtensionText).color = color;
   (localFeature.value.et as ExtensionText).align = align;
   (localFeature.value.et as ExtensionText).direction = direction;
+};
+
+const extImg = new Image();
+extImg.onerror = err => {
+  console.error(err);
+};
+extImg.onload = () => {
+  renderImage();
 };
 
 const img = new Image();
@@ -137,28 +174,15 @@ const renderImage = () => {
   ctx.save();
 
   fillText(ctx, canvas.width, STORY_TEXT, localFeature.value.story);
-  // TODO 补充图片和文字的内容。
-  if (isText.value) {
-    ctx.restore();
-    fillText(ctx, canvas.width, text.value, textProperty.value);
-  }
 
-  // 考虑图片是否存在的场景，不存在应该绘制文本内容
-  // if (extensions) {
-  //   const {picture, text: eText, options: eOptions} = extensions;
-  //   if (picture) {
-  //     const {image: eBase64, x: ex, y: ey, width: ewidth, height: eheight} = eOptions;
-  //     extImg.onload = () => {
-  //       ctx.drawImage(extImg, ex, ey, ewidth, eheight);
-  //       base64 = canvas.toDataURL(type);
-  //       return base64;
-  //     };
-  //     extImg.src = eBase64;
-  //   } else {
-  //     ctx.restore();
-  //     fillText(ctx, width, eText, eOptions);
-  //   }
-  // }
+  if (isText.value || (!isText.value && !imageBase64.value)) {
+    const options = isText.value ? textProperty.value : imageTextOption.value;
+    ctx.restore();
+    fillText(ctx, canvas.width, text.value, options);
+  } else {
+    const {x, y, width, height} = imageProperty.value;
+    ctx.drawImage(extImg, x, y, width, height);
+  }
 };
 
 const renderDragLayer = () => {
@@ -188,7 +212,6 @@ const renderDragLayer = () => {
   dragEle.style.left = `${_left}px`;
 };
 
-// TODO 跟踪内容的变化，是否有影响。
 watch(localFeature, (nv, ov) => {
   if (nv.mid !== ov.mid) {
     makeCanvas();
@@ -503,9 +526,6 @@ onMounted(() => {
     font-size: 16px;
     color: #3f3f3f;
     font-weight: 500;
-  }
-  &-canvas {
-    border: thin dashed #333; // TODO 测试属性，影响x y 坐标，如果不移除，需要调整x y
   }
   &-wraper {
     position: relative;
