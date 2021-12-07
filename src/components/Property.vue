@@ -44,9 +44,9 @@ const pickColor = () => {
 
 <template>
   <div class="property">
-    <meme-input class="property-max" :value="max" @update:modelValue="changeValue($event, 'max')"/>
-    <meme-input class="property-size" :value="size" @update:modelValue="changeValue($event, 'size')"/>
-    <meme-input class="property-color" :value="color" @update:modelValue="changeValue($event, 'color')"/>
+    <meme-input class="property-max" :value="max" @update:model-value="changeValue($event, 'max')"/>
+    <meme-input class="property-size" :value="size" @update:model-value="changeValue($event, 'size')"/>
+    <meme-input class="property-color" :value="color" @update:model-value="changeValue($event, 'color')"/>
     <dice-button :color="color" @click="changeColor"/>
     <picker-button :color="color" @click="pickColor"/>
     <meme-radio label="start" name="align" value="start" :checked="align === 'start'" @toggle="changeValue($event, 'align')"/>
@@ -59,7 +59,7 @@ const pickColor = () => {
       :checked="align === 'end'"
       @toggle="changeValue($event, 'align')"
     />
-    <meme-input class="property-text" :value="injectTtext" @update:modelValue="injectUpdateText"/>
+    <meme-input class="property-text" :value="injectTtext" @update:model-value="injectUpdateText"/>
     <meme-radio label="up" name="direction" value="up" :checked="direction === 'up'" @toggle="changeValue($event, 'direction')"/>
     <meme-radio label="down" name="direction" value="down" :checked="direction === 'down'" @toggle="changeValue($event, 'direction')"/>
   </div>

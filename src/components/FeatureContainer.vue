@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {toRefs, Ref, ref, onMounted, watch, computed, provide} from 'vue';
 import Property from '../components/Property.vue';
+import FeatureProperty from '../components/FeatureProperty.vue';
 import {MemeButton} from './common';
 import {
   fillText,
@@ -13,7 +14,8 @@ import {
   Feature,
   ExtensionText,
   ExtensionImage,
-  PropertyValue
+  PropertyValue,
+  ImagePropertyValue
 } from '../types';
 
 const props = defineProps<{
@@ -141,6 +143,7 @@ const renderImage = () => {
     fillText(ctx, canvas.width, text.value, textProperty.value);
   }
 
+  // 考虑图片是否存在的场景，不存在应该绘制文本内容
   // if (extensions) {
   //   const {picture, text: eText, options: eOptions} = extensions;
   //   if (picture) {
@@ -377,6 +380,13 @@ const cornerMouseUp = (event: MouseEvent) => {
   imageProperty.value.height = height + y;
 };
 
+const imagePropertyChange = (value: ImagePropertyValue) => {
+  const {width, height, ipath} = value;
+  (localFeature.value.ei as ExtensionImage).width = width;
+  (localFeature.value.ei as ExtensionImage).height = height;
+  (localFeature.value.ei as ExtensionImage).ipath = ipath;
+};
+
 onMounted(() => {
   makeCanvas();
 });
@@ -446,6 +456,13 @@ onMounted(() => {
       :direction="textProperty.direction"
       @change="textPropertyChange"
       @pick="pick"
+    />
+    <feature-property
+      v-else
+      :width="imageProperty.width"
+      :height="imageProperty.height"
+      :ipath="imageProperty.ipath"
+      @change="imagePropertyChange"
     />
     <footer class="container-footer">
       <meme-button label="更新" u="primary" @click="updateData"/>
@@ -536,7 +553,8 @@ onMounted(() => {
       width: 130px;
     }
   }
-  .property {
+  .property,
+  .feature-property {
     height: 50px;
     flex-shrink: 0;
     background: #FFFFFF;

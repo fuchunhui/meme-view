@@ -83,3 +83,9 @@ export interface FeatureImage {
   type: string;
   options: ExtensionImage;
 }
+
+export interface ImagePropertyValue {
+  width: number;
+  height: number;
+  ipath: string;
+}
