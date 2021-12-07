@@ -1,4 +1,4 @@
-const download = (canvas: HTMLCanvasElement, type: string, fileName: string) => {
+const download = (canvas: HTMLCanvasElement, type: string, fileName: string): void => {
   const isJPEG = ['jpeg', 'jpg'].includes(type);
   const imageType = `image/${isJPEG ? 'jpeg' : 'png'}`;
   const base64 = canvas.toDataURL(imageType);

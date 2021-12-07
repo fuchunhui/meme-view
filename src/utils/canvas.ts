@@ -62,15 +62,14 @@ const breakLines = (text: string, width: number, ctx: CanvasRenderingContext2D):
   return lines;
 };
 
-const fillText = (ctx: CanvasRenderingContext2D, width: number, text: string, options: FillText) => {
+const fillText = (ctx: CanvasRenderingContext2D, width: number, text: string, options: FillText): void => {
   const {x, y, font, color, align, max, direction} = options;
   ctx.font = font || '32px sans-serif';
   ctx.fillStyle = color || '#000000';
   ctx.textAlign = (align || 'center') as CanvasTextAlign; 
 
   const maxWidth = max || width;
-  const fontSize = font.match(/(\d{1,3})px/) || ['', '32'];
-  const size = Number(fontSize[1]);
+  const size = getFontSize(font);
   const lines = breakLines(text, maxWidth, ctx);
   lines.forEach((item, index) => {
     const dy = direction === 'down' ? index : index - (lines.length - 1);
@@ -101,7 +100,7 @@ const _drawGrid = (ctx: CanvasRenderingContext2D) => {
   ctx.stroke();
 };
 
-const drawLayer = (canvas: HTMLCanvasElement, targetCanvas: HTMLCanvasElement, x: number, y: number) => {
+const drawLayer = (canvas: HTMLCanvasElement, targetCanvas: HTMLCanvasElement, x: number, y: number): void => {
   targetCanvas.style.left = `${x + OFFSET}px`;
   targetCanvas.style.top = `${y + OFFSET}px`;
 
@@ -114,10 +113,16 @@ const drawLayer = (canvas: HTMLCanvasElement, targetCanvas: HTMLCanvasElement, x
   _drawGrid(ctx);
 };
 
+const getFontSize = (font: string): number => {
+  const fontSize = font.match(/(\d{1,3})px/) || ['', '32'];
+  return Number(fontSize[1]);
+};
+
 export {
   LINE_HEIGHT,
   RANK,
   breakLines,
   fillText,
-  drawLayer
+  drawLayer,
+  getFontSize
 };
