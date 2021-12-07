@@ -14,7 +14,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['change', 'pick']);
 
-const injectTtext = inject('text');
+const injectText = inject('text');
 const injectUpdateText: () => void = inject('updateText') as () => void;
 
 const {max, size, color, align, direction} = toRefs(props);
@@ -59,7 +59,7 @@ const pickColor = () => {
       :checked="align === 'end'"
       @toggle="changeValue($event, 'align')"
     />
-    <meme-input class="property-text" :value="injectTtext" @update:model-value="injectUpdateText"/>
+    <meme-input class="property-text" :value="injectText" @update:model-value="injectUpdateText"/>
     <meme-radio label="up" name="direction" value="up" :checked="direction === 'up'" @toggle="changeValue($event, 'direction')"/>
     <meme-radio label="down" name="direction" value="down" :checked="direction === 'down'" @toggle="changeValue($event, 'direction')"/>
   </div>
