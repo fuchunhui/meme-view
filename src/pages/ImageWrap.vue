@@ -9,7 +9,8 @@ import {
   CatalogItem,
   Feature,
   FeatureText,
-  FeatureImage
+  FeatureImage,
+  OPTION
 } from '../types';
 import Api from '../api';
 
@@ -91,27 +92,19 @@ const createImage = async (value: Story) => {
 };
 
 const commands = ref([]);
+const paths = ref<OPTION[]>();
 provide('commands', commands);
-// const paths = ref<{label: string; value: string}[]>();
-// provide('paths', paths);
-provide('paths', [
-  {
-    label: 'ABC',
-    value: 'abc'
-  },
-  {
-    label: 'SVG',
-    value: 'SVG'
-  },
-  {
-    label: 'rfc',
-    value: 'rfc'
-  }
-]);
+provide('paths', paths);
 
-const getCommands = async () => {
-  const res = await Api.getCommands({});
-  commands.value = res;
+const getConfig = async () => {
+  const {commands: _commands, paths: _paths} = await Api.getConfig({});
+  commands.value = _commands;
+  paths.value = _paths.map((item: string) => {
+    return {
+      label: item,
+      value: item
+    };
+  });
 };
 
 const showContainer = computed(() => {
@@ -132,7 +125,7 @@ const featureChange = ({mid, type, options}: FeatureText | FeatureImage) => {
 
 onMounted(() => {
   getCatalog();
-  getCommands();
+  getConfig();
 });
 
 </script>
