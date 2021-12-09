@@ -30,6 +30,7 @@ let story: Ref<Story> = ref({
   color: '#FFFFFF',
   align: 'start',
   direction: 'down',
+  blur: 0,
   senior: 0
 });
 
@@ -157,6 +158,7 @@ onMounted(() => {
 
 <style lang="less">
 @import url('src/assets/css/mixins.less');
+@width: 180px;
 
 .image-wrap {
   width: 100%;
@@ -164,14 +166,14 @@ onMounted(() => {
   display: flex;
 
   .side {
-    min-width: 200px;
-    width: 200px;
+    min-width: @width;
+    width: @width;
     background: #FFFFFF;
     flex-shrink: 0;
   }
   .container {
     flex: 1;
-    width: calc(100% - 200px);
+    width: calc(100% - @width);
     padding: 0 6px;
   }
 }

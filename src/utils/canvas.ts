@@ -63,9 +63,12 @@ const breakLines = (text: string, width: number, ctx: CanvasRenderingContext2D):
 };
 
 const fillText = (ctx: CanvasRenderingContext2D, width: number, text: string, options: FillText): void => {
-  const {x, y, font, color, align, max, direction} = options;
+  const {x, y, font, color, align, max, direction, blur} = options;
   ctx.font = font || '32px sans-serif';
   ctx.fillStyle = color || '#000000';
+  if (blur) {
+    ctx.filter = `blur(${blur}px)`;
+  }
   ctx.textAlign = (align || 'center') as CanvasTextAlign; 
 
   const maxWidth = max || width;

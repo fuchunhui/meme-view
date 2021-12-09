@@ -48,12 +48,13 @@ const locationChange = (x: number, y: number) => {
 };
 
 const propertyChange = (value: PropertyValue) => {
-  const {max, size, color, align, direction} = value;
+  const {max, size, color, align, direction, blur} = value;
   localStory.value.max = max;
   localStory.value.font = `${size}px sans-serif`; // 统一默认字体，均使用sans-serif
   localStory.value.color = color;
   localStory.value.align = align;
   localStory.value.direction = direction;
+  localStory.value.blur = blur;
 };
 
 const size = computed(() => {
@@ -229,9 +230,9 @@ const updateData = () => {
 const fileChange = ({name, base64}: BaseFile) => {
   noImage.value = false;
 
-  const {mid, title, feature, image, x, y, max, font, color, align, direction, senior} = localStory.value;
+  const {mid, title, feature, image, x, y, max, font, color, align, direction, senior, blur} = localStory.value;
   backStory = {
-    mid, title, feature, image, x, y, max, font, color, align, direction, senior
+    mid, title, feature, image, x, y, max, font, color, align, direction, senior, blur
   };
 
   const ntitle = name.slice(0, name.lastIndexOf('.'));
@@ -247,6 +248,7 @@ const fileChange = ({name, base64}: BaseFile) => {
     color: '#FF0000',
     align: 'start',
     direction: 'down',
+    blur: 0,
     senior: 0
   });
 };
@@ -373,6 +375,7 @@ onMounted(() => {
         :size="size"
         :align="localStory.align"
         :direction="localStory.direction"
+        :blur="localStory.blur"
         @change="propertyChange"
         @pick="pick"
       />
