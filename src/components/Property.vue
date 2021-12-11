@@ -61,7 +61,11 @@ const pickColor = () => {
       :checked="align === 'end'"
       @toggle="changeValue($event, 'align')"
     />
-    <meme-input class="property-text" :value="injectText" @update:model-value="injectUpdateText"/>
+    <meme-input
+      class="property-text"
+      :value="injectText"
+      @update:model-value="injectUpdateText"
+    />
     <meme-radio label="up" name="direction" value="up" :checked="direction === 'up'" @toggle="changeValue($event, 'direction')"/>
     <meme-radio label="down" name="direction" value="down" :checked="direction === 'down'" @toggle="changeValue($event, 'direction')"/>
   </div>
