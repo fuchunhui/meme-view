@@ -6,6 +6,7 @@
   "main": "dist/imeme.umd.js",
   "module": "dist/imeme.es.js",
   "types": "index.d.ts",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
