@@ -2,6 +2,21 @@
 // 素材管理中心
 // 物料库
 // 视图列表，可编辑的名字，删除，可调整的图片，可新增
+
+import {onMounted} from 'vue';
+import Api from '../api';
+
+const getCatalog = () => {
+  Api.getMaterialCatalog({
+    type: 'DB'.toLowerCase()
+  }).then(res => {
+    console.log(res);
+  });
+};
+
+onMounted(() => {
+  getCatalog();
+});
 </script>
 
 <template>

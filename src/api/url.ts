@@ -32,6 +32,10 @@ const urlMap: Net = {
   getMaterialBase64: {
     url: '/material/base64',
     method: 'get'
+  },
+  getMaterialCatalog: {
+    url: '/material/catalog',
+    method: 'get'
   }
 };
 
