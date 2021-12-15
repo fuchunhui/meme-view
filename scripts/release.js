@@ -1,18 +1,22 @@
-/*eslint-disable*/
-const execa = require('execa');
-const path = require('path');
-const fs = require('fs');
-const args = require('minimist')(process.argv.slice(2));
-const semver = require('semver');
-const chalk = require('chalk');
-const { prompt } = require('enquirer');
+import execa from 'execa';
+import path from 'path';
+import * as fs from 'fs';
+
+import semver from 'semver';
+import chalk from 'chalk';
+import enquirer from 'enquirer';
+const {prompt} = enquirer;
+
+
+// const args = require('minimist')(process.argv.slice(2));
 
 const pkgDir = process.cwd();
 const pkgPath = path.resolve(pkgDir, 'package.json');
 /**
  * @type {{ name: string, version: string }}
  */
-const pkg = require(pkgPath);
+// const pkg = require(pkgPath);
+const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
 const pkgName = pkg.name;
 const currentVersion = pkg.version;
 
@@ -24,48 +28,46 @@ const versionIncrements = ['patch', 'minor', 'major', 'prepatch', 'preminor', 'p
 /**
  * @param {import('semver').ReleaseType} i
  */
-const inc = (i) => semver.inc(currentVersion, i);
+const inc = i => semver.inc(currentVersion, i);
 
 /**
  * @param {string} bin
  * @param {string[]} args
  * @param {object} opts
  */
-const run = (bin, args, opts = {}) => execa(bin, args, { stdio: 'inherit', ...opts });
+const run = (bin, args, opts = {}) => execa(bin, args, {stdio: 'inherit', ...opts});
 
 /**
  * @param {string} msg
  */
-const step = (msg) => console.log(chalk.cyan(msg));
+const step = msg => console.log(chalk.cyan(msg));
 
 async function main() {
-  let targetVersion = args._[0];
+  let targetVersion = '';
 
-  if (!targetVersion) {
+  /**
+   * @type {{ release: string }}
+   */
+  const {release} = await prompt({
+    type: 'select',
+    name: 'release',
+    message: 'Select release type',
+    choices: versionIncrements.map(i => `${i} (${inc(i)})`).concat(['custom'])
+  });
+
+  if (release === 'custom') {
     /**
-     * @type {{ release: string }}
+     * @type {{ version: string }}
      */
-    const { release } = await prompt({
-      type: 'select',
-      name: 'release',
-      message: 'Select release type',
-      choices: versionIncrements.map((i) => `${i} (${inc(i)})`).concat(['custom'])
+    const customVersion = await prompt({
+      type: 'input',
+      name: 'version',
+      message: 'Input custom version',
+      initial: currentVersion
     });
-
-    if (release === 'custom') {
-      /**
-       * @type {{ version: string }}
-       */
-      const customVersion = await prompt({
-        type: 'input',
-        name: 'version',
-        message: 'Input custom version',
-        initial: currentVersion
-      });
-      targetVersion = customVersion.version;
-    } else {
-      targetVersion = release.match(/\((.*)\)/)[1];
-    }
+    targetVersion = customVersion.version;
+  } else {
+    targetVersion = release.match(/\((.*)\)/)[1];
   }
 
   if (!semver.valid(targetVersion)) {
@@ -77,7 +79,7 @@ async function main() {
   /**
    * @type {{ yes: boolean }}
    */
-  const { yes } = await prompt({
+  const {yes} = await prompt({
     type: 'confirm',
     name: 'yes',
     message: `Releasing ${tag}. Confirm?`
@@ -90,7 +92,7 @@ async function main() {
   step('\nUpdating package version...');
   updateVersion(targetVersion);
 
-  const { stdout } = await run('git', ['diff'], { stdio: 'pipe' });
+  const {stdout} = await run('git', ['diff'], {stdio: 'pipe'});
   if (stdout) {
     step('\nCommitting changes...');
     await run('git', ['add', '-A']);
@@ -114,7 +116,7 @@ async function main() {
  * @param {string} version
  */
 function updateVersion(version) {
-  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+  // const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
   pkg.version = version;
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
 }
@@ -125,9 +127,9 @@ function updateVersion(version) {
  */
 async function publishPackage(version, run) {
   const publicArgs = ['publish', '--access', 'public'];
-  if (args.tag) {
-    publicArgs.push(`--tag`, args.tag);
-  }
+  // if (args.tag) {
+  //   publicArgs.push(`--tag`, args.tag);
+  // }
   try {
     await run('npm', publicArgs, {
       stdio: 'pipe'
@@ -142,6 +144,6 @@ async function publishPackage(version, run) {
   }
 }
 
-main().catch((err) => {
+main().catch(err => {
   console.error(err);
 });

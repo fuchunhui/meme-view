@@ -1,8 +1,12 @@
-/*eslint-disable*/
-const chalk = require('chalk');
-const path = require('path');
-const msgPath = path.resolve(__dirname, '../.git/COMMIT_EDITMSG');
-const msg = require('fs').readFileSync(msgPath, 'utf-8').trim();
+import chalk from 'chalk';
+import path from 'path';
+import * as fs from 'fs';
+
+const __dirname = path.resolve();
+
+const msgPath = path.resolve(__dirname, '.git/COMMIT_EDITMSG');
+
+const msg = fs.readFileSync(msgPath, 'utf-8').trim();
 const rule = /^(revert: )?(feat|fix|docs|style|refactor|test|build|ci|chore|types|wip|release|perf)(\(.+\))?: .{1,50}/;
 
 if (!rule.test(msg)) {
