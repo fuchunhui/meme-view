@@ -1,21 +1,13 @@
 import execa from 'execa';
 import path from 'path';
 import * as fs from 'fs';
-
 import semver from 'semver';
 import chalk from 'chalk';
 import enquirer from 'enquirer';
 const {prompt} = enquirer;
 
-
-// const args = require('minimist')(process.argv.slice(2));
-
 const pkgDir = process.cwd();
 const pkgPath = path.resolve(pkgDir, 'package.json');
-/**
- * @type {{ name: string, version: string }}
- */
-// const pkg = require(pkgPath);
 const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
 const pkgName = pkg.name;
 const currentVersion = pkg.version;
@@ -116,7 +108,6 @@ async function main() {
  * @param {string} version
  */
 function updateVersion(version) {
-  // const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
   pkg.version = version;
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
 }
@@ -127,9 +118,6 @@ function updateVersion(version) {
  */
 async function publishPackage(version, run) {
   const publicArgs = ['publish', '--access', 'public'];
-  // if (args.tag) {
-  //   publicArgs.push(`--tag`, args.tag);
-  // }
   try {
     await run('npm', publicArgs, {
       stdio: 'pipe'
