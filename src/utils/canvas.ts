@@ -63,7 +63,7 @@ const breakLines = (text: string, width: number, ctx: CanvasRenderingContext2D):
 };
 
 const fillText = (ctx: CanvasRenderingContext2D, width: number, text: string, options: FillText): void => {
-  const {x, y, font, color, align, max, direction, blur} = options;
+  const {x, y, font, color, align, max, direction, blur, degree} = options;
   ctx.font = font || '32px sans-serif';
   ctx.fillStyle = color || '#000000';
   if (blur) {
@@ -76,7 +76,15 @@ const fillText = (ctx: CanvasRenderingContext2D, width: number, text: string, op
   const lines = breakLines(text, maxWidth, ctx);
   lines.forEach((item, index) => {
     const dy = direction === 'down' ? index : index - (lines.length - 1);
-    ctx.fillText(item, x, y + dy * size * LINE_HEIGHT, maxWidth);
+    ctx.save();
+    if (degree) {
+      ctx.translate(x, y + dy * size * LINE_HEIGHT);
+      ctx.rotate(degree * Math.PI / 180);
+      ctx.fillText(item, 0, 0, maxWidth);
+    } else {
+      ctx.fillText(item, x, y + dy * size * LINE_HEIGHT, maxWidth);
+    }
+    ctx.restore();
   });
 };
 

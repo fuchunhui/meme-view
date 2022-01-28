@@ -10,7 +10,8 @@ const props = defineProps<{
   color: string,
   align: string,
   direction: string,
-  blur: number
+  blur: number,
+  degree: number
 }>();
 
 const emit = defineEmits(['change', 'pick']);
@@ -18,7 +19,7 @@ const emit = defineEmits(['change', 'pick']);
 const injectText = inject('text');
 const injectUpdateText: () => void = inject('updateText') as () => void;
 
-const {max, size, color, align, direction, blur} = toRefs(props);
+const {max, size, color, align, direction, blur, degree} = toRefs(props);
 
 const changeValue = (value: string, type: string) => {
   // TODO 增加校验逻辑，保证数据的合法性
@@ -28,7 +29,8 @@ const changeValue = (value: string, type: string) => {
     color: color.value,
     align: align.value,
     direction: direction.value,
-    blur: blur.value
+    blur: blur.value,
+    degree: degree.value
   };
   param[type] = ['color', 'align', 'direction'].includes(type) ? value : parseInt(value);
   emit('change', param);

@@ -12,6 +12,7 @@ export interface Story {
   align: string;
   direction: string;
   blur: number;
+  degree: number;
 }
 
 export interface FillText {
@@ -23,6 +24,7 @@ export interface FillText {
   align: string;
   direction: string;
   blur: number;
+  degree: number;
 }
 
 export interface Catalog {
@@ -41,6 +43,7 @@ export interface PropertyValue {
   align: string;
   direction: string;
   blur: number;
+  degree: number;
 }
 
 export interface BaseFile {
@@ -66,6 +69,7 @@ export interface ExtensionText {
   align: string;
   direction: string;
   blur: number;
+  degree: number;
 }
 
 export interface Feature {

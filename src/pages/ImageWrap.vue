@@ -31,7 +31,8 @@ let story: Ref<Story> = ref({
   align: 'start',
   direction: 'down',
   blur: 0,
-  senior: 0
+  senior: 0,
+  degree: 0
 });
 
 let feature: Ref<Feature> = ref({

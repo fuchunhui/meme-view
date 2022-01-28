@@ -107,7 +107,7 @@ const offsetWidth = computed(() => {
 });
 
 const imageTextOption = computed(() => {
-  const {font, color, direction, blur} = localFeature.value.story;
+  const {font, color, direction, blur, degree} = localFeature.value.story;
   const {x, y, width} = imageProperty.value;
   const options = {
     x: x + width / 2,
@@ -117,19 +117,21 @@ const imageTextOption = computed(() => {
     color,
     align: 'center',
     direction,
-    blur
+    blur,
+    degree
   };
   return options;
 });
 
 const textPropertyChange = (value: PropertyValue) => {
-  const {max, size, color, align, direction, blur} = value;
+  const {max, size, color, align, direction, blur, degree} = value;
   (localFeature.value.et as ExtensionText).max = max;
   (localFeature.value.et as ExtensionText).font = `${size}px sans-serif`;
   (localFeature.value.et as ExtensionText).color = color;
   (localFeature.value.et as ExtensionText).align = align;
   (localFeature.value.et as ExtensionText).direction = direction;
   (localFeature.value.et as ExtensionText).blur = blur;
+  (localFeature.value.et as ExtensionText).degree = degree;
 };
 
 const extImg = new Image();
@@ -480,6 +482,7 @@ onMounted(() => {
       :align="textProperty.align"
       :direction="textProperty.direction"
       :blur="textProperty.blur"
+      :degree="textProperty.degree"
       @change="textPropertyChange"
       @pick="pick"
     />
