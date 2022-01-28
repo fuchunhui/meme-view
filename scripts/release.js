@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execa} from 'execa';
 import path from 'path';
 import * as fs from 'fs';
 import semver from 'semver';
