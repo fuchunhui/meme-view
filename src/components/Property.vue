@@ -70,6 +70,7 @@ const pickColor = () => {
     />
     <meme-radio label="up" name="direction" value="up" :checked="direction === 'up'" @toggle="changeValue($event, 'direction')"/>
     <meme-radio label="down" name="direction" value="down" :checked="direction === 'down'" @toggle="changeValue($event, 'direction')"/>
+    <meme-input class="property-degree" :value="degree" @update:model-value="changeValue($event, 'degree')"/>
   </div>
 </template>
 
@@ -84,14 +85,16 @@ const pickColor = () => {
   &-max,
   &-size,
   &-color,
-  &-text {
+  &-text,
+  &-degree {
     height: 30px;
     background: #FFFFFF;
     border: 1px solid #DDDEE4;
     margin-right: 10px;
   }
   &-max,
-  &-size {
+  &-size,
+  &-degree {
     width: 60px;
   }
   &-color{
