@@ -119,7 +119,7 @@ function updateVersion(version) {
 async function publishPackage(version, run) {
   const publicArgs = ['publish', '--access', 'public'];
   try {
-    await run('npm', publicArgs, {
+    await run('pnpm', publicArgs, {
       stdio: 'pipe'
     });
     console.log(chalk.green(`Successfully published ${pkgName}@${version}`));

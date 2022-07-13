@@ -1,6 +1,6 @@
 {
   "name": "meme-view",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "custom view for meme.",
   "repository": "fuchunhui/meme-view",
   "main": "dist/imeme.umd.js",
@@ -13,7 +13,7 @@
     "lib": "vue-tsc --noEmit && vite build --mode lib --config vite.lib.config.ts",
     "serve": "vite preview",
     "deploy": "",
-    "release": "npm run lib && node scripts/release.js",
+    "release": "pnpm run lib && node scripts/release.js",
     "commitlint": "node scripts/verify-commit.js"
   },
   "dependencies": {
