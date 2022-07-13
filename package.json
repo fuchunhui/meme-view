@@ -1,6 +1,6 @@
 {
   "name": "meme-view",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "custom view for meme.",
   "repository": "fuchunhui/meme-view",
   "main": "dist/imeme.umd.js",
@@ -21,6 +21,7 @@
     "vue-router": "^4.0.16"
   },
   "devDependencies": {
+    "@babel/types": "^7.18.8",
     "@types/estree": "^0.0.52",
     "@types/node": "^18.0.0",
     "@types/ws": "^8.5.3",

@@ -20,6 +20,7 @@ import {
   ImagePropertyValue
 } from '../types';
 import Api from '../api';
+import { FEATURE_TYPE } from '../config/constant';
 
 const props = defineProps<{
   feature: Feature
@@ -65,7 +66,7 @@ const width = ref(0);
 const height = ref(0);
 
 const isText = computed(() => {
-  return localFeature.value.type === 'TEXT';
+  return [FEATURE_TYPE.TEXT, FEATURE_TYPE.REPEAT].includes(localFeature.value.type);
 });
 
 const size = computed(() => {
