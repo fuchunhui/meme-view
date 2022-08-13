@@ -13,6 +13,7 @@ import {
   OPTION
 } from '../types';
 import Api from '../api';
+import { FEATURE_TYPE } from '../config/constant';
 
 const catalogList: Ref<Catalog[]> = ref([]);
 const current = ref('');
@@ -117,7 +118,7 @@ const showContainer = computed(() => {
 });
 
 const featureChange = ({mid, type, options}: FeatureText | FeatureImage) => {
-  if (type === 'TEXT') {
+  if ([FEATURE_TYPE.TEXT, FEATURE_TYPE.REPEAT].includes(type)) {
     Api.saveImage(options);
   } else {
     Api.saveFeatureImage({
