@@ -75,14 +75,22 @@ const fillText = (ctx: CanvasRenderingContext2D, width: number, text: string, op
   const size = getFontSize(font);
   const lines = breakLines(text, maxWidth, ctx);
   lines.forEach((item, index) => {
-    const dy = direction === 'down' ? index : index - (lines.length - 1);
+    let offset = 0;
+    if (direction === 'down') {
+      offset = index;
+    } else if (direction === 'center') {
+      offset = index - (lines.length - 1) / 2;
+    } else { // up
+      offset = index - (lines.length - 1);
+    }
+
     ctx.save();
     if (degree) {
-      ctx.translate(x, y + dy * size * LINE_HEIGHT);
+      ctx.translate(x, y + offset * size * LINE_HEIGHT);
       ctx.rotate(degree * Math.PI / 180);
       ctx.fillText(item, 0, 0, maxWidth);
     } else {
-      ctx.fillText(item, x, y + dy * size * LINE_HEIGHT, maxWidth);
+      ctx.fillText(item, x, y + offset * size * LINE_HEIGHT, maxWidth);
     }
     ctx.restore();
   });
