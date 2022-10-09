@@ -8,21 +8,23 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": ["esnext", "dom"],
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+    "types": [
+      "node"
+    ],
     "isolatedModules": false,
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["*", "src/*"],
+      "@/*": ["src/*"]
+    }
   },
-  "types": [
-    "node"
-  ],
-  "paths": {
-    "*": ["*", "src/*"],
-    "@/*": ["src/*"]
-  },
-  "lib": [
-    "esnext",
-    "dom"
-  ],
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",

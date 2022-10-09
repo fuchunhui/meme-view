@@ -1,6 +1,6 @@
 {
   "name": "meme-view",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "custom view for meme.",
   "repository": "fuchunhui/meme-view",
   "main": "dist/imeme.umd.js",
@@ -59,6 +59,6 @@
   "bugs": {},
   "homepage": "",
   "engines": {
-    "node": ">=12.0"
+    "node": ">=16.0"
   }
 }

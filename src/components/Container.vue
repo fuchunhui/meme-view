@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {toRefs, Ref, ref, onMounted, watch, computed, provide} from 'vue';
 import Property from '../components/Property.vue';
-import {MemeButton, MemeFileUpload} from './common';
+import {MemeButton, MemeFileUpload, MemeInput} from './common';
 import {
   fillText,
   drawLayer,
@@ -12,12 +12,13 @@ import {
 import {getExt} from '../utils/file';
 import {download} from '../utils/download';
 import {Story, PropertyValue, BaseFile} from '../types';
+import {useRoute} from 'vue-router';
 
 const props = defineProps<{
   story: Story
 }>();
 
-const emit = defineEmits(['change', 'create', 'replace']);
+const emit = defineEmits(['change', 'create', 'replace', 'update']);
 
 const localStory: Ref<Story> = toRefs(props).story;
 const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -318,6 +319,16 @@ const pickColor = (event: MouseEvent) => {
   pickStatus.value = false;
 };
 
+const route = useRoute();
+const canEdit = computed(() => {
+  return route.path === '/edit';
+});
+
+const changeTitle = (value: string) => {
+  localStory.value.title = value;
+  emit('update', localStory.value);
+};
+
 onMounted(() => {
   makeCanvas();
 });
@@ -328,7 +339,12 @@ onMounted(() => {
   <div class="container">
     <div class="container-header">
       <div class="container-title">
-        {{ localTitle }}
+        <template v-if="canEdit">
+          <meme-input class="container-title-label" :value="localStory.title" @update:model-value="changeTitle($event)"/>
+        </template>
+        <template v-else>
+          {{ localTitle }}
+        </template>
       </div>
       <meme-button :label="updateStatus ? '添加' : '取消添加'" u="primary" @click="toggleAdd"/>
       <meme-button label="下载" u="primary" @click="_download"/>
@@ -417,10 +433,15 @@ onMounted(() => {
   }
   &-title {
     width: calc(100% - 90px);
+    height: calc(100% - 10px);
     padding-left: 10px;
     font-size: 16px;
     color: #3f3f3f;
     font-weight: 500;
+    &-label {
+      width: 200px;
+      height: 100%;
+    }
   }
   &-wraper,
   &-wall {

@@ -12,6 +12,10 @@ const routes = [
     path: '/center',
     component: MaterialCenter
   },
+  {
+    path: '/edit',
+    component: ImageWrap
+  },
 ];
 
 const router = createRouter({

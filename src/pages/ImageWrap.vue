@@ -129,6 +129,10 @@ const featureChange = ({mid, type, options}: FeatureText | FeatureImage) => {
   }
 };
 
+const updateImage = (value: Story) => {
+  Api.updateImage(value);
+};
+
 onMounted(() => {
   getCatalog();
   getConfig();
@@ -149,6 +153,7 @@ onMounted(() => {
       @change="storyChange"
       @replace="replace"
       @create="createImage"
+      @update="updateImage"
     />
     <feature-container
       v-if="curType === 'FEATURE' && feature.mid"
