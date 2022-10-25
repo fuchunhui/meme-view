@@ -7,5 +7,8 @@ export default defineConfig({
   server: {
     host: true,
     port: 3030
+  },
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
   }
 });

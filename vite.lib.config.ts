@@ -21,5 +21,8 @@ export default defineConfig({
       formats: ['es', 'cjs', 'umd', 'iife'],
       fileName: (format: string) => `imeme.${format}.js`
     }
+  },
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
   }
 });
