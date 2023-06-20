@@ -44,6 +44,10 @@ const urlMap: Net = {
   getAdditional: {
     url: '/image/additional',
     method: 'get'
+  },
+  updateAdditional: {
+    url: '/image/additional/update',
+    method: 'post'
   }
 };
 

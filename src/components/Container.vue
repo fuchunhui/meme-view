@@ -19,7 +19,7 @@ const props = defineProps<{
   additional: Additional
 }>();
 
-const emit = defineEmits(['change', 'create', 'replace', 'update']);
+const emit = defineEmits(['change', 'create', 'replace', 'update', 'additional']);
 
 const localStory: Ref<Story> = toRefs(props).story;
 const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -326,8 +326,21 @@ const canEdit = computed(() => {
 });
 
 const changeTitle = (value: string) => {
+  if (value === localStory.value.title) {
+    return;
+  }
   localStory.value.title = value;
   emit('update', localStory.value);
+};
+
+const localAdditional: Ref<Additional> = toRefs(props).additional;
+const changeAdditional = (value: string) => {
+  if (value === localAdditional.value.text) {
+    return;
+  }
+  console.log(value);
+  localAdditional.value.text = value;
+  emit('additional', localAdditional.value);
 };
 
 onMounted(() => {
@@ -400,7 +413,7 @@ onMounted(() => {
         @pick="pick"
       />
       <div v-if="localStory.senior === 2">
-        {{additional.text}}
+        <meme-input class="container-title-label" :value="localAdditional.text" @update:model-value="changeAdditional($event)"/>
       </div>
     </template>
     <footer class="container-footer">
