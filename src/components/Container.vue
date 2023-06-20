@@ -117,7 +117,11 @@ const renderImage = () => {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   ctx.drawImage(img, 0, 0);
 
-  fillText(ctx, canvas.width, text.value, localStory.value);
+  let content = text.value;
+  if (localStory.value.senior === 2) { // 附加文本类型，后置处理
+    content += localAdditional.value.text;
+  }
+  fillText(ctx, canvas.width, content, localStory.value);
 };
 
 const renderDragLayer = () => {
@@ -338,8 +342,8 @@ const changeAdditional = (value: string) => {
   if (value === localAdditional.value.text) {
     return;
   }
-  console.log(value);
   localAdditional.value.text = value;
+  renderImage();
   emit('additional', localAdditional.value);
 };
 
@@ -510,8 +514,11 @@ onMounted(() => {
     align-items: center;
     padding: 0 10px;
     &-label {
-      height: 30px;
       width: 200px;
+      height: 30px;
+      background: #FFFFFF;
+      border: 1px solid #DDDEE4;
+      margin-right: 10px;
     }
   }
 }
