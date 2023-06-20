@@ -412,8 +412,8 @@ onMounted(() => {
         @change="propertyChange"
         @pick="pick"
       />
-      <div v-if="localStory.senior === 2">
-        <meme-input class="container-title-label" :value="localAdditional.text" @update:model-value="changeAdditional($event)"/>
+      <div class="container-additional" v-if="localStory.senior === 2">
+        <meme-input class="container-additional-label" :value="localAdditional.text" @update:model-value="changeAdditional($event)"/>
       </div>
     </template>
     <footer class="container-footer">
@@ -497,11 +497,22 @@ onMounted(() => {
       width: 130px;
     }
   }
-  .property {
+  .property,
+  &-additional {
     height: 50px;
     flex-shrink: 0;
     background: #FFFFFF;
     border-top: 1px solid #DDDEE4;
+  }
+  &-additional {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    &-label {
+      height: 30px;
+      width: 200px;
+    }
   }
 }
 </style>
