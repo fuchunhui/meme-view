@@ -97,3 +97,8 @@ export interface ImagePropertyValue {
   height: number;
   ipath: string;
 }
+
+export interface Additional {
+  mid: string;
+  text: string;
+}

@@ -11,11 +11,12 @@ import {
 } from '../utils/canvas';
 import {getExt} from '../utils/file';
 import {download} from '../utils/download';
-import {Story, PropertyValue, BaseFile} from '../types';
+import {Story, PropertyValue, BaseFile, Additional} from '../types';
 import {useRoute} from 'vue-router';
 
 const props = defineProps<{
-  story: Story
+  story: Story,
+  additional: Additional
 }>();
 
 const emit = defineEmits(['change', 'create', 'replace', 'update']);
@@ -398,6 +399,9 @@ onMounted(() => {
         @change="propertyChange"
         @pick="pick"
       />
+      <div v-if="localStory.senior === 2">
+        {{additional.text}}
+      </div>
     </template>
     <footer class="container-footer">
       <meme-button :label="updateStatus ? '更新' : '确认'" u="primary" @click="updateData"/>

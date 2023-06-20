@@ -10,7 +10,8 @@ import {
   Feature,
   FeatureText,
   FeatureImage,
-  OPTION
+  OPTION,
+  Additional
 } from '../types';
 import Api from '../api';
 import { FEATURE_TYPE } from '../config/constant';
@@ -43,6 +44,11 @@ let feature: Ref<Feature> = ref({
   story
 });
 
+let additional: Ref<Additional> = ref({
+  mid: '',
+  text: ''
+});
+
 const getCatalog = async () => {
   const res = await Api.getCatalog({});
   catalogList.value = res;
@@ -66,6 +72,13 @@ const getImageData = (mid: string, type: string) => {
       type
     }).then(res => {
       story.value = res;
+      if (res.senior === 2) { // ADDITIONAL 类型
+        Api.getAdditional({
+          mid
+        }).then(response => {
+          additional.value = response
+        });
+      }
     });
   } else {
     Api.getFeatureImage({
@@ -150,6 +163,7 @@ onMounted(() => {
     <container
       v-if="showContainer && story.image && story.mid"
       :story="story"
+      :additional="additional"
       @change="storyChange"
       @replace="replace"
       @create="createImage"

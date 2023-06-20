@@ -40,6 +40,10 @@ const urlMap: Net = {
   getMaterialCatalog: {
     url: '/material/catalog',
     method: 'get'
+  },
+  getAdditional: {
+    url: '/image/additional',
+    method: 'get'
   }
 };
 
