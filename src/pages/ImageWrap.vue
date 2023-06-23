@@ -11,7 +11,8 @@ import {
   FeatureText,
   FeatureImage,
   OPTION,
-  Additional
+  Additional,
+  GIF
 } from '../types';
 import Api from '../api';
 import { FEATURE_TYPE } from '../config/constant';
@@ -49,6 +50,22 @@ let additional: Ref<Additional> = ref({
   text: ''
 });
 
+let gif: Ref<GIF> = ref({
+  mid: '',
+  title: '',
+  image: '',
+  x: 0,
+  y: 0,
+  max: 100,
+  font: '32px sans-serif',
+  color: '#FFFFFF',
+  stroke: 'transparent',
+  swidth: 1,
+  align: 'start',
+  direction: 'down',
+  frame: 'NORMAL'
+});
+
 const getCatalog = async () => {
   const res = await Api.getCatalog({});
   catalogList.value = res;
@@ -79,6 +96,13 @@ const getImageData = (mid: string, type: string) => {
           additional.value = response
         });
       }
+    });
+  } else if (showGif.value) {
+    Api.openGif({
+      mid,
+      type
+    }).then(res => {
+      gif.value = res;
     });
   } else {
     Api.getFeatureImage({
@@ -128,6 +152,10 @@ const getConfig = async () => {
 
 const showContainer = computed(() => {
   return ['STORY', 'SERIES', 'SPECIAL'].includes(curType.value);
+});
+
+const showGif = computed(() => {
+  return ['GIF'].includes(curType.value);
 });
 
 const featureChange = ({mid, type, options}: FeatureText | FeatureImage) => {

@@ -48,6 +48,10 @@ const urlMap: Net = {
   updateAdditional: {
     url: '/image/additional/update',
     method: 'post'
+  },
+  openGif: {
+    url: '/image/gif/open',
+    method: 'get'
   }
 };
 

@@ -416,7 +416,7 @@ onMounted(() => {
         @change="propertyChange"
         @pick="pick"
       />
-      <div class="container-additional" v-if="localStory.senior === 2">
+      <div class="container-additional" v-if="localStory.senior === 2 && canEdit">
         <meme-input class="container-additional-label" :value="localAdditional.text" @update:model-value="changeAdditional($event)"/>
       </div>
     </template>

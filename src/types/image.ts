@@ -102,3 +102,19 @@ export interface Additional {
   mid: string;
   text: string;
 }
+
+export interface GIF {
+  mid: string;
+  title: string;
+  image: string;
+  x: number;
+  y: number;
+  max: number;
+  font: string;
+  color: string;
+  stroke: string;
+  swidth: number;
+  align: string;
+  direction: string;
+  frame: string;
+}
