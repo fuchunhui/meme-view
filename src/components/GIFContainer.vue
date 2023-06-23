@@ -211,7 +211,6 @@ const cancelCreate = () => {
 };
 
 const updateData = () => {
-  // TODO 保证不过多发送数据，只在数据变化的执行 目前点击就同步
   if (updateStatus.value) {
     emit('change', localGIF.value);
   } else {
@@ -332,11 +331,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container">
-    <div class="container-header">
-      <div class="container-title">
+  <div class="gif-container">
+    <div class="gif-container-header">
+      <div class="gif-container-title">
         <template v-if="canEdit">
-          <meme-input class="container-title-label" :value="localGIF.title" @update:model-value="changeTitle($event)"/>
+          <meme-input class="gif-container-title-label" :value="localGIF.title" @update:model-value="changeTitle($event)"/>
         </template>
         <template v-else>
           {{ localTitle }}
@@ -345,18 +344,18 @@ onMounted(() => {
       <meme-button :label="updateStatus ? '添加' : '取消添加'" u="primary" @click="toggleAdd"/>
     </div>
     <div
-      class="container-wall"
+      class="gif-container-wall"
       v-if="!updateStatus && noImage"
     >
       <meme-file-upload @change="fileChange"/>
     </div>
     <template v-else>
-      <div class="container-wraper">
+      <div class="gif-container-wraper">
         <canvas
           ref="canvasRef"
           :class="{
-            'container-canvas': true,
-            'container-pointer': pickStatus
+            'gif-container-canvas': true,
+            'gif-container-pointer': pickStatus
           }"
           @mousemove="pickMousemove"
           @mouseleave="pickMouseleave"
@@ -364,17 +363,17 @@ onMounted(() => {
         />
         <div
           v-show="!pickStatus"
-          class="container-area"
+          class="gif-container-area"
           ref="areaRef"
           @mousemove="mousemove"
           @mouseup="mouseup"
         >
-          <div class="container-drag" ref="dragRef" @mousedown="mousedown"/>
+          <div class="gif-container-drag" ref="dragRef" @mousedown="mousedown"/>
         </div>
         <canvas
           v-show="pickStatus && showLayer"
           ref="layerRef"
-          class="container-layer"
+          class="gif-container-layer"
           :style="{
             borderRadius: `${RANK}px`
           }"
@@ -395,7 +394,7 @@ onMounted(() => {
         @pick="pick"
       />
     </template>
-    <footer class="container-footer">
+    <footer class="gif-container-footer">
       <meme-button :label="updateStatus ? '更新' : '确认'" u="primary" @click="updateData"/>
     </footer>
   </div>
@@ -404,7 +403,7 @@ onMounted(() => {
 <style lang="less">
 @import url('src/assets/css/mixins.less');
 
-.container {
+.gif-container {
   height: 100%;
   position: relative;
   display: flex;
@@ -476,7 +475,7 @@ onMounted(() => {
       width: 130px;
     }
   }
-  .property {
+  .gif-property {
     height: 50px;
     flex-shrink: 0;
     background: #FFFFFF;

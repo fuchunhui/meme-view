@@ -52,6 +52,18 @@ const urlMap: Net = {
   openGif: {
     url: '/image/gif/open',
     method: 'get'
+  },
+  saveGifImage: {
+    url: '/image/gif/save',
+    method: 'post'
+  },
+  createGifImage: {
+    url: '/image/gif/create',
+    method: 'post'
+  },
+  updateGifImage: {
+    url: '/image/gif/update',
+    method: 'post'
   }
 };
 

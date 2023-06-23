@@ -179,6 +179,31 @@ const updateAdditional = (value: Additional) => {
   Api.updateAdditional(value);
 };
 
+const gifChange = (value: GIF) => {
+  const params = {...value, image: ''};
+  Api.saveGifImage(params);
+};
+
+const createGifImage = async (value: GIF, cancelCreate: () => void) => {
+  const res = await Api.createGifImage(value).catch(response => {
+    alert(response.message);
+  });
+  if (res) {
+    await getCatalog();
+    current.value = res.mid;
+  } else {
+    cancelCreate();
+  }
+};
+
+const replaceGif = (value: GIF) => {
+  gif.value = value;
+};
+
+const updateGifImage = (value: GIF) => {
+  Api.updateGifImage(value);
+};
+
 onMounted(() => {
   getCatalog();
   getConfig();
@@ -211,10 +236,10 @@ onMounted(() => {
     <gif-container
       v-if="showGif && gif.image && gif.mid"
       :gif="gif"
-      @change="storyChange"
-      @replace="replace"
-      @create="createImage"
-      @update="updateImage"
+      @change="gifChange"
+      @replace="replaceGif"
+      @create="createGifImage"
+      @update="updateGifImage"
     />
   </div>
 </template>
@@ -234,7 +259,8 @@ onMounted(() => {
     background: #FFFFFF;
     flex-shrink: 0;
   }
-  .container {
+  .container,
+  .gif-container {
     flex: 1;
     width: calc(100% - @width);
     padding: 0 6px;

@@ -23,7 +23,6 @@ const injectUpdateText: () => void = inject('updateText') as () => void;
 const {max, size, color, stroke, swidth, align, direction, frame} = toRefs(props);
 
 const changeValue = (value: string, type: string) => {
-  // TODO 增加校验逻辑，保证数据的合法性
   const param: {[key: string]: string | number} = {
     max: max.value,
     size: size.value,
@@ -49,16 +48,16 @@ const pickColor = () => {
 </script>
 
 <template>
-  <div class="property">
-    <meme-input class="property-max" :value="max" @update:model-value="changeValue($event, 'max')"/>
-    <meme-input class="property-size" :value="size" @update:model-value="changeValue($event, 'size')"/>
-    <meme-input class="property-color" :value="color" @update:model-value="changeValue($event, 'color')"/>
+  <div class="gif-property">
+    <meme-input class="gif-property-max" :value="max" @update:model-value="changeValue($event, 'max')"/>
+    <meme-input class="gif-property-size" :value="size" @update:model-value="changeValue($event, 'size')"/>
+    <meme-input class="gif-property-color" :value="color" @update:model-value="changeValue($event, 'color')"/>
     <dice-button :color="color" @click="changeColor"/>
     <picker-button :color="color" @click="pickColor"/>
     <meme-radio label="start" name="align" value="start" :checked="align === 'start'" @toggle="changeValue($event, 'align')"/>
     <meme-radio label="center" name="align" value="center" :checked="align === 'center'" @toggle="changeValue($event, 'align')"/>
     <meme-radio
-      class="property-end"
+      class="gif-property-end"
       label="end"
       name="align"
       value="end"
@@ -66,7 +65,7 @@ const pickColor = () => {
       @toggle="changeValue($event, 'align')"
     />
     <meme-input
-      class="property-text"
+      class="gif-property-text"
       :value="injectText"
       @update:model-value="injectUpdateText"
     />
@@ -91,12 +90,11 @@ const pickColor = () => {
       :checked="direction === 'down'"
       @toggle="changeValue($event, 'direction')"
     />
-    <!-- <meme-input class="property-degree" :value="degree" @update:model-value="changeValue($event, 'degree')"/> -->
   </div>
 </template>
 
 <style lang="less">
-.property {
+.gif-property {
   width: 100%;
   height: 100%;
   display: flex;
@@ -106,16 +104,14 @@ const pickColor = () => {
   &-max,
   &-size,
   &-color,
-  &-text,
-  &-degree {
+  &-text {
     height: 30px;
     background: #FFFFFF;
     border: 1px solid #DDDEE4;
     margin-right: 10px;
   }
   &-max,
-  &-size,
-  &-degree {
+  &-size {
     width: 60px;
   }
   &-color{
@@ -127,7 +123,7 @@ const pickColor = () => {
   .meme-radio {
     margin-right: 8px;
   }
-  .property-color {
+  .gif-property-color {
     margin-right: 2px;
   }
   .dice-button {
@@ -136,7 +132,7 @@ const pickColor = () => {
   .picker-button {
     margin-right: 10px;
   }
-  .meme-radio.property-end {
+  .meme-radio.gif-property-end {
     margin-right: 10px;
   }
 }
