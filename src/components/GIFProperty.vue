@@ -33,13 +33,18 @@ const changeValue = (value: string, type: string) => {
     direction: direction.value,
     frame: frame.value
   };
-  param[type] = ['color', 'align', 'direction'].includes(type) ? value : parseInt(value);
+  param[type] = ['color', 'align', 'direction', 'stroke', 'frame'].includes(type) ? value : parseInt(value);
   emit('change', param);
 };
 
 const changeColor = () => {
   const color = '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16);
   changeValue(color, 'color');
+};
+const changeStrokeColor = () => {
+  const color = '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16);
+  console.log(color);
+  changeValue(color, 'stroke');
 };
 
 const pickColor = () => {
@@ -54,6 +59,9 @@ const pickColor = () => {
     <meme-input class="gif-property-color" :value="color" @update:model-value="changeValue($event, 'color')"/>
     <dice-button :color="color" @click="changeColor"/>
     <picker-button :color="color" @click="pickColor"/>
+    <meme-input class="gif-property-color" :value="stroke" @update:model-value="changeValue($event, 'stroke')"/>
+    <dice-button :color="stroke" @click="changeStrokeColor"/>
+    <meme-input class="gif-property-swidth" :value="swidth" @update:model-value="changeValue($event, 'swidth')"/>
     <meme-radio label="start" name="align" value="start" :checked="align === 'start'" @toggle="changeValue($event, 'align')"/>
     <meme-radio label="center" name="align" value="center" :checked="align === 'center'" @toggle="changeValue($event, 'align')"/>
     <meme-radio
@@ -104,14 +112,16 @@ const pickColor = () => {
   &-max,
   &-size,
   &-color,
-  &-text {
+  &-text,
+  &-swidth {
     height: 30px;
     background: #FFFFFF;
     border: 1px solid #DDDEE4;
     margin-right: 10px;
   }
   &-max,
-  &-size {
+  &-size,
+  &-swidth {
     width: 60px;
   }
   &-color{
