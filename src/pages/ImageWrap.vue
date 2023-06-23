@@ -3,6 +3,7 @@ import {ref, watch, Ref, onMounted, provide, computed} from 'vue';
 import Side from '../components/Side.vue';
 import Container from '../components/Container.vue';
 import FeatureContainer from '../components/FeatureContainer.vue';
+import GifContainer from '../components/GIFContainer.vue';
 import {
   Story,
   Catalog,
@@ -206,6 +207,14 @@ onMounted(() => {
       v-if="curType === 'FEATURE' && feature.mid"
       :feature="feature"
       @change="featureChange"
+    />
+    <gif-container
+      v-if="showGif && gif.image && gif.mid"
+      :gif="gif"
+      @change="storyChange"
+      @replace="replace"
+      @create="createImage"
+      @update="updateImage"
     />
   </div>
 </template>

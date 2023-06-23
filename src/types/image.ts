@@ -118,3 +118,27 @@ export interface GIF {
   direction: string;
   frame: string;
 }
+
+export interface GIFValue {
+  max: number;
+  size: number;
+  color: string;
+  stroke: string;
+  swidth: number;
+  align: string;
+  direction: string;
+  frame: string;
+}
+
+export interface FillGIFText {
+  x: number;
+  y: number;
+  max: number;
+  font: string;
+  color: string;
+  stroke: string;
+  swidth: number;
+  align: string;
+  direction: string;
+  frame: string;
+}

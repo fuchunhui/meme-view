@@ -1,4 +1,7 @@
-import {FillText} from '../types/image';
+import {
+  FillText,
+  FillGIFText
+} from '../types/image';
 
 const LINE_HEIGHT = 1.2;
 
@@ -96,6 +99,29 @@ const fillText = (ctx: CanvasRenderingContext2D, width: number, text: string, op
   });
 };
 
+const fillGIFText = (ctx: CanvasRenderingContext2D, width: number, text: string, options: FillGIFText): void => {
+  const {x, y, font, color, stroke, swidth, align, max, direction, frame} = options;
+  ctx.font = font || '32px sans-serif';
+  ctx.fillStyle = color || '#000000';
+  ctx.textAlign = (align || 'center') as CanvasTextAlign; 
+
+  const maxWidth = max || width;
+  const size = getFontSize(font);
+  const lines = breakLines(text, maxWidth, ctx);
+  lines.forEach((item, index) => {
+    let offset = 0;
+    if (direction === 'down') {
+      offset = index;
+    } else if (direction === 'center') {
+      offset = index - (lines.length - 1) / 2;
+    } else { // up
+      offset = index - (lines.length - 1);
+    }
+
+    ctx.fillText(item, x, y + offset * size * LINE_HEIGHT, maxWidth);
+  });
+};
+
 const _drawGrid = (ctx: CanvasRenderingContext2D) => {
   ctx.imageSmoothingEnabled = false;
   ctx.lineCap = 'round';
@@ -143,5 +169,6 @@ export {
   breakLines,
   fillText,
   drawLayer,
-  getFontSize
+  getFontSize,
+  fillGIFText
 };
