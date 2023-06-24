@@ -37,13 +37,9 @@ const changeValue = (value: string, type: string) => {
   emit('change', param);
 };
 
-const changeColor = () => {
+const changeColor = (key: string) => {
   const color = '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16);
-  changeValue(color, 'color');
-};
-const changeStrokeColor = () => {
-  const color = '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16);
-  changeValue(color, 'stroke');
+  changeValue(color, key);
 };
 
 const pickColor = () => {
@@ -56,10 +52,10 @@ const pickColor = () => {
     <meme-input class="gif-property-max" :value="max" @update:model-value="changeValue($event, 'max')"/>
     <meme-input class="gif-property-size" :value="size" @update:model-value="changeValue($event, 'size')"/>
     <meme-input class="gif-property-color" :value="color" @update:model-value="changeValue($event, 'color')"/>
-    <dice-button :color="color" @click="changeColor"/>
+    <dice-button :color="color" @click="changeColor('color')"/>
     <picker-button :color="color" @click="pickColor"/>
     <meme-input class="gif-property-color" :value="stroke" @update:model-value="changeValue($event, 'stroke')"/>
-    <dice-button :color="stroke" @click="changeStrokeColor"/>
+    <dice-button :color="stroke" @click="changeColor('stroke')"/>
     <meme-input class="gif-property-swidth" :value="swidth" @update:model-value="changeValue($event, 'swidth')"/>
     <meme-radio label="start" name="align" value="start" :checked="align === 'start'" @toggle="changeValue($event, 'align')"/>
     <meme-radio label="center" name="align" value="center" :checked="align === 'center'" @toggle="changeValue($event, 'align')"/>

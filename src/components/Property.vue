@@ -36,7 +36,7 @@ const changeValue = (value: string, type: string) => {
     stroke: stroke.value,
     swidth: swidth.value
   };
-  param[type] = ['color', 'align', 'direction'].includes(type) ? value : parseInt(value);
+  param[type] = ['color', 'align', 'direction', 'stroke'].includes(type) ? value : parseInt(value);
   emit('change', param);
 };
 
