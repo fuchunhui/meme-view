@@ -32,6 +32,8 @@ let story: Ref<Story> = ref({
   max: 100,
   font: '32px sans-serif',
   color: '#FFFFFF',
+  stroke: 'transparent',
+  swidth: 1,
   align: 'start',
   direction: 'down',
   blur: 0,

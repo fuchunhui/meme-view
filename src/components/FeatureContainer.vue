@@ -108,7 +108,7 @@ const offsetWidth = computed(() => {
 });
 
 const imageTextOption = computed(() => {
-  const {font, color, direction, blur, degree} = localFeature.value.story;
+  const {font, color, direction, blur, degree, stroke, swidth} = localFeature.value.story;
   const {x, y, width} = imageProperty.value;
   const options = {
     x: x + width / 2,
@@ -119,13 +119,15 @@ const imageTextOption = computed(() => {
     align: 'center',
     direction,
     blur,
-    degree
+    degree,
+    stroke,
+    swidth
   };
   return options;
 });
 
 const textPropertyChange = (value: PropertyValue) => {
-  const {max, size, color, align, direction, blur, degree} = value;
+  const {max, size, color, align, direction, blur, degree, stroke, swidth} = value;
   (localFeature.value.et as ExtensionText).max = max;
   (localFeature.value.et as ExtensionText).font = `${size}px sans-serif`;
   (localFeature.value.et as ExtensionText).color = color;
@@ -133,6 +135,8 @@ const textPropertyChange = (value: PropertyValue) => {
   (localFeature.value.et as ExtensionText).direction = direction;
   (localFeature.value.et as ExtensionText).blur = blur;
   (localFeature.value.et as ExtensionText).degree = degree;
+  (localFeature.value.et as ExtensionText).stroke = stroke;
+  (localFeature.value.et as ExtensionText).swidth = swidth;
 };
 
 const extImg = new Image();
@@ -484,6 +488,8 @@ onMounted(() => {
       :direction="textProperty.direction"
       :blur="textProperty.blur"
       :degree="textProperty.degree"
+      :stroke="textProperty.stroke"
+      :swidth="textProperty.swidth"
       @change="textPropertyChange"
       @pick="pick"
     />

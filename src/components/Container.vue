@@ -50,10 +50,12 @@ const locationChange = (x: number, y: number) => {
 };
 
 const propertyChange = (value: PropertyValue) => {
-  const {max, size, color, align, direction, blur, degree} = value;
+  const {max, size, color, align, direction, blur, degree, stroke, swidth} = value;
   localStory.value.max = max;
   localStory.value.font = `${size}px sans-serif`; // 统一默认字体，均使用sans-serif
   localStory.value.color = color;
+  localStory.value.stroke = stroke;
+  localStory.value.swidth = swidth;
   localStory.value.align = align;
   localStory.value.direction = direction;
   localStory.value.blur = blur;
@@ -237,9 +239,10 @@ const updateData = () => {
 const fileChange = ({name, base64}: BaseFile) => {
   noImage.value = false;
 
-  const {mid, title, feature, image, x, y, max, font, color, align, direction, senior, blur, degree} = localStory.value;
+  const {mid, title, feature, image, x, y, max, font, color, align, direction,
+    senior, blur, degree, stroke, swidth} = localStory.value;
   backStory = {
-    mid, title, feature, image, x, y, max, font, color, align, direction, senior, blur, degree
+    mid, title, feature, image, x, y, max, font, color, align, direction, senior, blur, degree, stroke, swidth
   };
 
   const ntitle = name.slice(0, name.lastIndexOf('.'));
@@ -253,6 +256,8 @@ const fileChange = ({name, base64}: BaseFile) => {
     max: 100,
     font: '32px sans-serif',
     color: '#FF0000',
+    stroke: 'transparent',
+    swidth: 1,
     align: 'start',
     direction: 'down',
     blur: 0,
@@ -408,6 +413,8 @@ onMounted(() => {
       <property
         :max="localStory.max"
         :color="localStory.color"
+        :stroke="localStory.stroke"
+        :swidth="localStory.swidth"
         :size="size"
         :align="localStory.align"
         :direction="localStory.direction"

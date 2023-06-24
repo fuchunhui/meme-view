@@ -66,13 +66,15 @@ const breakLines = (text: string, width: number, ctx: CanvasRenderingContext2D):
 };
 
 const fillText = (ctx: CanvasRenderingContext2D, width: number, text: string, options: FillText): void => {
-  const {x, y, font, color, align, max, direction, blur, degree} = options;
+  const {x, y, font, color, stroke, swidth, align, max, direction, blur, degree} = options;
   ctx.font = font || '32px sans-serif';
   ctx.fillStyle = color || '#000000';
   if (blur) {
     ctx.filter = `blur(${blur}px)`;
   }
-  ctx.textAlign = (align || 'center') as CanvasTextAlign; 
+  ctx.textAlign = (align || 'center') as CanvasTextAlign;
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = swidth;
 
   const maxWidth = max || width;
   const size = getFontSize(font);
@@ -91,8 +93,10 @@ const fillText = (ctx: CanvasRenderingContext2D, width: number, text: string, op
     if (degree) {
       ctx.translate(x, y + offset * size * LINE_HEIGHT);
       ctx.rotate(degree * Math.PI / 180);
+      ctx.strokeText(item, 0, 0, maxWidth);
       ctx.fillText(item, 0, 0, maxWidth);
     } else {
+      ctx.strokeText(item, x, y + offset * size * LINE_HEIGHT, maxWidth);
       ctx.fillText(item, x, y + offset * size * LINE_HEIGHT, maxWidth);
     }
     ctx.restore();

@@ -9,6 +9,8 @@ export interface Story {
   max: number;
   font: string;
   color: string;
+  stroke: string;
+  swidth: number;
   align: string;
   direction: string;
   blur: number;
@@ -21,6 +23,8 @@ export interface FillText {
   max: number;
   font: string;
   color: string;
+  stroke: string;
+  swidth: number;
   align: string;
   direction: string;
   blur: number;
@@ -40,6 +44,8 @@ export interface PropertyValue {
   max: number;
   size: number;
   color: string;
+  stroke: string;
+  swidth: number;
   align: string;
   direction: string;
   blur: number;
@@ -66,6 +72,8 @@ export interface ExtensionText {
   max: number;
   font: string;
   color: string;
+  stroke: string;
+  swidth: number;
   align: string;
   direction: string;
   blur: number;

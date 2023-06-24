@@ -11,7 +11,9 @@ const props = defineProps<{
   align: string,
   direction: string,
   blur: number,
-  degree: number
+  degree: number,
+  stroke: string,
+  swidth: number
 }>();
 
 const emit = defineEmits(['change', 'pick']);
@@ -19,7 +21,7 @@ const emit = defineEmits(['change', 'pick']);
 const injectText = inject('text');
 const injectUpdateText: () => void = inject('updateText') as () => void;
 
-const {max, size, color, align, direction, blur, degree} = toRefs(props);
+const {max, size, color, align, direction, blur, degree, stroke, swidth} = toRefs(props);
 
 const changeValue = (value: string, type: string) => {
   // TODO 增加校验逻辑，保证数据的合法性
@@ -30,15 +32,17 @@ const changeValue = (value: string, type: string) => {
     align: align.value,
     direction: direction.value,
     blur: blur.value,
-    degree: degree.value
+    degree: degree.value,
+    stroke: stroke.value,
+    swidth: swidth.value
   };
   param[type] = ['color', 'align', 'direction'].includes(type) ? value : parseInt(value);
   emit('change', param);
 };
 
-const changeColor = () => {
+const changeColor = (key: string) => {
   const color = '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16);
-  changeValue(color, 'color');
+  changeValue(color, key);
 };
 
 const pickColor = () => {
@@ -51,8 +55,11 @@ const pickColor = () => {
     <meme-input class="property-max" :value="max" @update:model-value="changeValue($event, 'max')"/>
     <meme-input class="property-size" :value="size" @update:model-value="changeValue($event, 'size')"/>
     <meme-input class="property-color" :value="color" @update:model-value="changeValue($event, 'color')"/>
-    <dice-button :color="color" @click="changeColor"/>
+    <dice-button :color="color" @click="changeColor('color')"/>
     <picker-button :color="color" @click="pickColor"/>
+    <meme-input class="property-color" :value="stroke" @update:model-value="changeValue($event, 'stroke')"/>
+    <dice-button :color="stroke" @click="changeColor('stroke')"/>
+    <meme-input class="property-swidth" :value="swidth" @update:model-value="changeValue($event, 'swidth')"/>
     <meme-radio label="start" name="align" value="start" :checked="align === 'start'" @toggle="changeValue($event, 'align')"/>
     <meme-radio label="center" name="align" value="center" :checked="align === 'center'" @toggle="changeValue($event, 'align')"/>
     <meme-radio
@@ -105,7 +112,8 @@ const pickColor = () => {
   &-size,
   &-color,
   &-text,
-  &-degree {
+  &-degree,
+  &-swidth {
     height: 30px;
     background: #FFFFFF;
     border: 1px solid #DDDEE4;
@@ -113,7 +121,8 @@ const pickColor = () => {
   }
   &-max,
   &-size,
-  &-degree {
+  &-degree,
+  &-swidth {
     width: 60px;
   }
   &-color{
