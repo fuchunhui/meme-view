@@ -100,10 +100,12 @@ const fillText = (ctx: CanvasRenderingContext2D, width: number, text: string, op
 };
 
 const fillGIFText = (ctx: CanvasRenderingContext2D, width: number, text: string, options: FillGIFText): void => {
-  const {x, y, font, color, stroke, swidth, align, max, direction, frame} = options;
+  const {x, y, font, color, stroke, swidth, align, max, direction} = options;
   ctx.font = font || '32px sans-serif';
   ctx.fillStyle = color || '#000000';
   ctx.textAlign = (align || 'center') as CanvasTextAlign; 
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = swidth;
 
   const maxWidth = max || width;
   const size = getFontSize(font);
@@ -118,6 +120,7 @@ const fillGIFText = (ctx: CanvasRenderingContext2D, width: number, text: string,
       offset = index - (lines.length - 1);
     }
 
+    ctx.strokeText(item, x, y + offset * size * LINE_HEIGHT, maxWidth);
     ctx.fillText(item, x, y + offset * size * LINE_HEIGHT, maxWidth);
   });
 };

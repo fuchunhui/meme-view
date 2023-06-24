@@ -43,7 +43,6 @@ const changeColor = () => {
 };
 const changeStrokeColor = () => {
   const color = '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16);
-  console.log(color);
   changeValue(color, 'stroke');
 };
 

@@ -140,5 +140,4 @@ export interface FillGIFText {
   swidth: number;
   align: string;
   direction: string;
-  frame: string;
 }
