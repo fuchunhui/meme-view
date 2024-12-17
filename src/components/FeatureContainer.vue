@@ -46,7 +46,7 @@ const updateText = (value: string) => {
   if (isText.value) {
     renderImage();
   } else {
-    Api.getMaterialBase64({
+    Api.getImageBase64({
       ipath: imageProperty.value.ipath,
       value
     }).then(res => {

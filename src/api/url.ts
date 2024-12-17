@@ -33,8 +33,8 @@ const urlMap: Net = {
     url: '/image/feature/save',
     method: 'post'
   },
-  getMaterialBase64: {
-    url: '/material/base64',
+  getImageBase64: {
+    url: '/image/base64',
     method: 'get'
   },
   getMaterialCatalog: {

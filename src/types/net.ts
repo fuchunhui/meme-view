@@ -7,6 +7,7 @@ export interface API {
 export interface NetInfo {
   url: string;
   method: Method;
+  [key: string]: string | boolean;
 }
 
 export interface Net {

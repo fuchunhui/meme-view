@@ -5,7 +5,7 @@ import MaterialCenter from '../pages/MaterialCenter.vue';
 
 const routes = [
   {
-    path: '/',
+    path: '/image',
     component: ImageWrap
   },
   {
@@ -14,6 +14,10 @@ const routes = [
   },
   {
     path: '/edit',
+    component: ImageWrap
+  },
+  {
+    path: '/butter',
     component: ImageWrap
   },
 ];
