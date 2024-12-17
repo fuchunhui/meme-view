@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {useGlobalStore} from '@/stores/global';
 import {NetInfo} from '../types';
 import {getDomain} from '../config';
 
@@ -11,11 +12,17 @@ import {getDomain} from '../config';
 export default (api: NetInfo) => {
   return async (params: any = {}, options: any = {}): Promise<void> => {
     const {url, method} = api;
+    let realUrl = url;
+    const store = useGlobalStore();
+    if (store.currentPath.startsWith('/butter')) {
+      realUrl = url.replace('/image', '/butter');
+    }
+
     const base = getDomain();
 
     return axios.request({
       withCredentials: false,
-      url: base + url,
+      url: base + realUrl,
       method,
       [method === 'get' ? 'params' : 'data']: params
     }).then(result => {

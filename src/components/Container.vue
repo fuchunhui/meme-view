@@ -331,7 +331,7 @@ const pickColor = (event: MouseEvent) => {
 
 const route = useRoute();
 const canEdit = computed(() => {
-  return route.path === '/edit';
+  return route.path.includes('/edit');
 });
 
 const changeTitle = (value: string) => {
