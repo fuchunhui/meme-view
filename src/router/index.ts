@@ -1,9 +1,14 @@
 import {createRouter, createWebHashHistory} from 'vue-router';
 import {useGlobalStore} from '../stores/global';
 import ImageWrap from '../pages/ImageWrap.vue';
+import WarnCenter from '../pages/WarnCenter.vue';
 import MaterialCenter from '../pages/MaterialCenter.vue';
 
 const routes = [
+  {
+    path: '/',
+    component: WarnCenter
+  },
   {
     path: '/story',
     component: ImageWrap
