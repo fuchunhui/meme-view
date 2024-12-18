@@ -5,7 +5,7 @@ import path from 'path';
 import copy from 'rollup-plugin-copy';
 
 export default defineConfig({
-  base: '/meme-view/',
+  base: '/',
   plugins: [
     vue(),
     copy({
@@ -28,4 +28,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  define: {
+    'process.env': process.env
+  }
 });

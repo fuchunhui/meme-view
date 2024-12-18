@@ -1,15 +1,15 @@
-import {createRouter, createWebHistory} from 'vue-router';
+import {createRouter, createWebHashHistory} from 'vue-router';
 import {useGlobalStore} from '../stores/global';
 import ImageWrap from '../pages/ImageWrap.vue';
 import MaterialCenter from '../pages/MaterialCenter.vue';
 
 const routes = [
   {
-    path: '/image',
+    path: '/story',
     component: ImageWrap
   },
   {
-    path: '/image/edit',
+    path: '/story/edit',
     component: ImageWrap
   },
   {
@@ -27,7 +27,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes
 });
 
