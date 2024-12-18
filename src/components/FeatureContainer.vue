@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {toRefs, Ref, ref, onMounted, watch, computed, provide} from 'vue';
+import {toRefs, type Ref, ref, onMounted, watch, computed, provide} from 'vue';
 import Property from '../components/Property.vue';
 import FeatureProperty from '../components/FeatureProperty.vue';
 import {MemeButton} from './common';
@@ -12,7 +12,7 @@ import {
 } from '../utils/canvas';
 import {getExt} from '../utils/file';
 import {download} from '../utils/download';
-import {
+import type {
   Feature,
   ExtensionText,
   ExtensionImage,

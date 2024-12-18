@@ -1,6 +1,6 @@
 import {
-  FillText,
-  FillGIFText
+  type FillText,
+  type FillGIFText
 } from '../types/image';
 
 const LINE_HEIGHT = 1.2;

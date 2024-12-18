@@ -1,10 +1,11 @@
 import {defineConfig} from 'vite';
 import vue from '@vitejs/plugin-vue';
+import { fileURLToPath, URL } from 'node:url'
 import path from 'path';
 import copy from 'rollup-plugin-copy';
 
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/meme-view/' : '/',
+  base: '/meme-view/',
   plugins: [
     vue(),
     copy({
@@ -22,7 +23,9 @@ export default defineConfig({
       fileName: (format: string) => `imeme.${format}.js`
     }
   },
-  define: {
-    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-  }
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    },
+  },
 });

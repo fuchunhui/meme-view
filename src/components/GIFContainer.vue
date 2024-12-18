@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {toRefs, Ref, ref, onMounted, watch, computed, provide} from 'vue';
+import {toRefs, type Ref, ref, onMounted, watch, computed, provide} from 'vue';
 import GifProperty from '../components/GIFProperty.vue';
 import {MemeButton, MemeFileUpload, MemeInput} from './common';
 import {
@@ -10,7 +10,7 @@ import {
   RANK
 } from '../utils/canvas';
 import {getExt} from '../utils/file';
-import {GIF, GIFValue, BaseFile} from '../types';
+import type {GIF, GIFValue, BaseFile} from '../types';
 import {useRoute} from 'vue-router';
 
 const props = defineProps<{

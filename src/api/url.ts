@@ -1,4 +1,4 @@
-import {Net} from '../types';
+import type {Net} from '../types';
 
 const urlMap: Net = {
   getCatalog: {

@@ -1,22 +1,21 @@
-module.exports = {
-  root: true,
-  env: {
-    browser: true,
-    node: true
+import pluginVue from 'eslint-plugin-vue'
+import vueTsEslintConfig from '@vue/eslint-config-typescript'
+
+export default [
+  {
+    name: 'app/files-to-lint',
+    files: ['**/*.{ts,mts,tsx,vue}'],
   },
-  parser: 'vue-eslint-parser',
-  parserOptions: {
-    ecmaVersion: 2022,
-    parser: '@typescript-eslint/parser'
+
+  {
+    name: 'app/files-to-ignore',
+    ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
   },
-  extends: [
-    'eslint:recommended',
-    'plugin:vue/vue3-strongly-recommended',
-    'plugin:@typescript-eslint/recommended'
-  ],
-  rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+
+  ...pluginVue.configs['flat/essential'],
+  ...vueTsEslintConfig(),
+  {
+    '@typescript-eslint/no-explicit-any': 'off',
     'semi': ['error', 'always'],
     'indent': 'off',
     'no-empty-function': 'off',
@@ -65,37 +64,11 @@ module.exports = {
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-namespace': 'off',
     '@typescript-eslint/no-this-alias': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-inferrable-types': [
       'off',
       'ignore-params',
       'ignore-properties'
     ]
-  },
-  overrides: [
-    {
-      files: ['*.ts', '*.tsx'],
-      parserOptions: {
-        parser: '@typescript-eslint/parser',
-        project: './tsconfig.json'
-      },
-      rules: {
-        '@typescript-eslint/restrict-plus-operands': 'error'
-      }
-    },
-    {
-      files: ['*.js', '*.ts'],
-      rules: {
-        '@typescript-eslint/explicit-module-boundary-types': 'warn'
-      }
-    }
-  ],
-  globals: {
-    defineProps: 'readonly',
-    defineEmits: 'readonly',
-    defineExpose: 'readonly',
-    withDefaults: 'readonly',
-    CanvasTextAlign: 'readonly'
   }
-};
+]

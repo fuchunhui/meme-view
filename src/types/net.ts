@@ -1,4 +1,4 @@
-import {Method} from 'axios';
+import {type Method} from 'axios';
 
 export interface API {
   [key: string]: (params: any, options?: any) => Promise<any>

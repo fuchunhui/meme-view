@@ -1,6 +1,6 @@
 import apiList from './url';
 import factory from './factory';
-import {API} from '../types';
+import type {API} from '../types';
 
 const Api: API = {};
 

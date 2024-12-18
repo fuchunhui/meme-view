@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {toRefs, Ref, ref, onMounted, watch, computed, provide} from 'vue';
+import {toRefs, type Ref, ref, onMounted, watch, computed, provide} from 'vue';
 import Property from '../components/Property.vue';
 import {MemeButton, MemeFileUpload, MemeInput} from './common';
 import {
@@ -11,7 +11,7 @@ import {
 } from '../utils/canvas';
 import {getExt} from '../utils/file';
 import {download} from '../utils/download';
-import {Story, PropertyValue, BaseFile, Additional} from '../types';
+import type {Story, PropertyValue, BaseFile, Additional} from '../types';
 import {useRoute} from 'vue-router';
 
 const props = defineProps<{

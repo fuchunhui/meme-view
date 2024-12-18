@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {inject, Ref} from 'vue';
+import {inject, type Ref} from 'vue';
 
 const commands = inject('commands') as Ref<[string]>;
 const emit = defineEmits(['change']);

@@ -1,5 +1,5 @@
 import {createRouter, createWebHistory} from 'vue-router';
-import {useGlobalStore} from '@/stores/global';
+import {useGlobalStore} from '../stores/global';
 import ImageWrap from '../pages/ImageWrap.vue';
 import MaterialCenter from '../pages/MaterialCenter.vue';
 

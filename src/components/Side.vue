@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {Ref, toRefs} from 'vue';
-import {Catalog, CatalogItem} from '../types';
+import {type Ref, toRefs} from 'vue';
+import type {Catalog, CatalogItem} from '../types';
 
 const props = defineProps<{
   catalogList: Catalog[];

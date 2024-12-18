@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {toRefs, inject} from 'vue';
 import {MemeInput, MemeSelect} from './common';
-import {OPTION} from '../types';
+import type {OPTION} from '../types';
 
 const props = defineProps<{
   width: number,

@@ -1,6 +1,6 @@
 import axios from 'axios';
-import {useGlobalStore} from '@/stores/global';
-import {NetInfo} from '../types';
+import {useGlobalStore} from '../stores/global';
+import type {NetInfo} from '../types';
 import {getDomain} from '../config';
 
 /**

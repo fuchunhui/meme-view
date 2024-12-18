@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import {ref, watch, Ref, onMounted, provide, computed} from 'vue';
+import {ref, watch, type Ref, onMounted, provide, computed} from 'vue';
 import Side from '../components/Side.vue';
 import Container from '../components/Container.vue';
 import FeatureContainer from '../components/FeatureContainer.vue';
 import GifContainer from '../components/GIFContainer.vue';
-import {
+import type {
   Story,
   Catalog,
   CatalogItem,
