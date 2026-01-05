@@ -1,5 +1,5 @@
 <template>
-  <select class="meme-select" @change="selectedChange">
+  <select class="meme-select" name="select" @change="selectedChange">
     <option
       v-for="item in options"
       :key="item.value"

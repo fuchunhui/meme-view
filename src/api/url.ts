@@ -24,46 +24,6 @@ const urlMap: Net = {
   getConfig: {
     url: '/image/config',
     method: 'get'
-  },
-  getFeatureImage: {
-    url: '/image/feature/open',
-    method: 'get'
-  },
-  saveFeatureImage: {
-    url: '/image/feature/save',
-    method: 'post'
-  },
-  getImageBase64: {
-    url: '/image/base64',
-    method: 'get'
-  },
-  getMaterialCatalog: {
-    url: '/material/catalog',
-    method: 'get'
-  },
-  getAdditional: {
-    url: '/image/additional',
-    method: 'get'
-  },
-  updateAdditional: {
-    url: '/image/additional/update',
-    method: 'post'
-  },
-  openGif: {
-    url: '/image/gif/open',
-    method: 'get'
-  },
-  saveGifImage: {
-    url: '/image/gif/save',
-    method: 'post'
-  },
-  createGifImage: {
-    url: '/image/gif/create',
-    method: 'post'
-  },
-  updateGifImage: {
-    url: '/image/gif/update',
-    method: 'post'
   }
 };
 

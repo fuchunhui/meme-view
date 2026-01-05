@@ -1,12 +1,24 @@
 export interface Story {
   mid: string;
-  title: string;
+  name: string;
   feature: string;
+  type: string;
   image: string;
-  senior: number;
+  children: StoryChild[];
+}
+
+export interface StoryChild {
+  type: string;
+  options: FillText | FillImage;
+}
+
+export interface FillText {
+  eid: string;
+  content: string;
   x: number;
   y: number;
   max: number;
+  size: number;
   font: string;
   color: string;
   stroke: string;
@@ -17,28 +29,28 @@ export interface Story {
   degree: number;
 }
 
-export interface FillText {
+export interface FillImage {
+  eid: string;
   x: number;
   y: number;
-  max: number;
-  font: string;
-  color: string;
-  stroke: string;
-  swidth: number;
-  align: string;
-  direction: string;
-  blur: number;
-  degree: number;
+  width: number;
+  height: number;
+  ipath: string;
 }
 
 export interface Catalog {
   id: string;
-  text: string;
+  name: string;
   type: string;
   children: CatalogItem[]
 }
 
 export type CatalogItem = Record<string, string | number>;
+
+
+
+
+// 下方为旧版类型定义，逐步迁移中
 
 export interface PropertyValue {
   max: number;
@@ -104,11 +116,6 @@ export interface ImagePropertyValue {
   width: number;
   height: number;
   ipath: string;
-}
-
-export interface Additional {
-  mid: string;
-  text: string;
 }
 
 export interface GIF {

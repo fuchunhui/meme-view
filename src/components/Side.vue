@@ -21,7 +21,7 @@ const showCell = (type: string, child: CatalogItem) => {
     <template v-for="item in catalogList" :key="item.id">
       <div class="side-content">
         <p class="side-content-title">
-          {{ item.text }}
+          {{ item.name }}
         </p>
         <div
           v-for="child in item.children"
@@ -32,7 +32,7 @@ const showCell = (type: string, child: CatalogItem) => {
           }"
           @click="showCell(item.type, child)"
         >
-          {{ child.title }}
+          {{ child.name }}
         </div>
       </div>
     </template>

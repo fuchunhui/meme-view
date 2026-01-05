@@ -7,7 +7,7 @@
         'disabled': disabled
       }
     ]"
-    :title="title"
+    name="input"
     :value="modelValue"
     @blur="blur"
     @keyup.enter="input?.blur()" 
@@ -23,10 +23,6 @@ export default defineComponent({
   props: {
     modelValue: {
       type: [String, Number],
-      default: ''
-    },
-    title: {
-      type: String,
       default: ''
     },
     disabled: {
