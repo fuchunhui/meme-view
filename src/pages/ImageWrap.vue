@@ -7,7 +7,7 @@
       @change="imageChange"
     />
     <container
-      v-if="current"
+      v-if="story.image"
       :story="story"
     />
   </div>

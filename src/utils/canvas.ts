@@ -1,10 +1,6 @@
-import {
-  type FillText,
-  type FillGIFText
-} from '../types/image';
+import { type FillText } from '../types/image';
 
 const LINE_HEIGHT = 1.2;
-
 const SIZE = 11; // 显示格子数
 const SCALE = 14; // 倍数
 const DW = SCALE * SIZE;
@@ -65,9 +61,10 @@ const breakLines = (text: string, width: number, ctx: CanvasRenderingContext2D):
   return lines;
 };
 
-const fillText = (ctx: CanvasRenderingContext2D, width: number, text: string, options: FillText): void => {
-  const {x, y, font, color, stroke, swidth, align, max, direction, blur = 0, degree = 0} = options;
-  ctx.font = font || '32px sans-serif';
+const fillText = (ctx: CanvasRenderingContext2D, width: number, options: FillText): void => {
+  const {content, x, y, size, font, color, stroke, swidth, align, max, direction, blur = 0, degree = 0} = options;
+  console.log(content, x, y, size, font, color, stroke, swidth, align, max, direction, blur, degree);
+  ctx.font = `${size}px ${font}` || '32px sans-serif';
   ctx.fillStyle = color || '#000000';
   if (blur) {
     ctx.filter = `blur(${blur}px)`;
@@ -77,8 +74,7 @@ const fillText = (ctx: CanvasRenderingContext2D, width: number, text: string, op
   ctx.lineWidth = swidth;
 
   const maxWidth = max || width;
-  const size = getFontSize(font);
-  const lines = breakLines(text, maxWidth, ctx);
+  const lines = breakLines(content || '金馆长', maxWidth, ctx);
   lines.forEach((item, index) => {
     let offset = 0;
     if (direction === 'down') {
@@ -103,32 +99,6 @@ const fillText = (ctx: CanvasRenderingContext2D, width: number, text: string, op
   });
 };
 
-const fillGIFText = (ctx: CanvasRenderingContext2D, width: number, text: string, options: FillGIFText): void => {
-  const {x, y, font, color, stroke, swidth, align, max, direction} = options;
-  ctx.font = font || '32px sans-serif';
-  ctx.fillStyle = color || '#000000';
-  ctx.textAlign = (align || 'center') as CanvasTextAlign; 
-  ctx.strokeStyle = stroke;
-  ctx.lineWidth = swidth;
-
-  const maxWidth = max || width;
-  const size = getFontSize(font);
-  const lines = breakLines(text, maxWidth, ctx);
-  lines.forEach((item, index) => {
-    let offset = 0;
-    if (direction === 'down') {
-      offset = index;
-    } else if (direction === 'center') {
-      offset = index - (lines.length - 1) / 2;
-    } else { // up
-      offset = index - (lines.length - 1);
-    }
-
-    ctx.strokeText(item, x, y + offset * size * LINE_HEIGHT, maxWidth);
-    ctx.fillText(item, x, y + offset * size * LINE_HEIGHT, maxWidth);
-  });
-};
-
 const _drawGrid = (ctx: CanvasRenderingContext2D) => {
   ctx.imageSmoothingEnabled = false;
   ctx.lineCap = 'round';
@@ -148,7 +118,8 @@ const _drawGrid = (ctx: CanvasRenderingContext2D) => {
 
   ctx.beginPath();
   ctx.strokeStyle = '#FF0000';
-  ctx.rect((SIZE - 1) * SCALE / 2, (SIZE - 1) * SCALE / 2, 1 * SCALE, 1 * SCALE); // 红点固定到圆心，对于源canvas的边缘像素，圆心值和实际值就不匹配，可通过把源canvas再封装一层解决，不计划调整。
+  // 红点固定到圆心，对于源canvas的边缘像素，圆心值和实际值就不匹配，可通过把源canvas再封装一层解决，不计划调整。
+  ctx.rect((SIZE - 1) * SCALE / 2, (SIZE - 1) * SCALE / 2, 1 * SCALE, 1 * SCALE); 
   ctx.stroke();
 };
 
@@ -165,17 +136,10 @@ const drawLayer = (canvas: HTMLCanvasElement, targetCanvas: HTMLCanvasElement, x
   _drawGrid(ctx);
 };
 
-const getFontSize = (font: string): number => {
-  const fontSize = font.match(/(\d{1,3})px/) || ['', '32'];
-  return Number(fontSize[1]);
-};
-
 export {
   LINE_HEIGHT,
   RANK,
   breakLines,
   fillText,
   drawLayer,
-  getFontSize,
-  fillGIFText
 };

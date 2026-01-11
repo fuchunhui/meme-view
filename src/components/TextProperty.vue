@@ -1,16 +1,12 @@
 <script setup lang="ts">
-import {toRefs, inject} from 'vue';
+import {toRefs} from 'vue';
 import {MemeInput, MemeSelect} from './common';
 import DiceButton from './block/DiceButton.vue';
 import PickerButton from './block/PickerButton.vue';
 import type {FillText} from '../types/image';
 
 const props = defineProps<FillText>();
-
 const emit = defineEmits(['change', 'pick']);
-
-const injectText = inject('text');
-const injectUpdateText: () => void = inject('updateText') as () => void;
 
 const {max, size, font, color, align, direction, blur, degree, stroke, swidth, content} = toRefs(props);
 
@@ -64,13 +60,8 @@ const pickColor = () => {
 </script>
 
 <template>
-  <div class="property">
-    <meme-input
-      class="property-text"
-      title="text"
-      :value="injectText"
-      @update:model-value="injectUpdateText"
-    />
+  <div class="property text-property">
+    <slot></slot>
     <meme-input
       class="property-content"
       title="content"
@@ -153,6 +144,7 @@ const pickColor = () => {
   &-degree,
   &-swidth,
   &-content,
+  &-path,
   &-font,
   &-align,
   &-direction {
@@ -168,6 +160,7 @@ const pickColor = () => {
     width: 60px;
   }
   &-color,
+  &-path,
   &-font {
     width: 100px;
   }

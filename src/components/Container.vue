@@ -1,27 +1,29 @@
 <script setup lang="ts">
-import {toRefs, type Ref, ref, onMounted, watch, computed, provide} from 'vue';
-import Property from '../components/Property.vue';
+import {toRefs, type Ref, ref, onMounted, watch, computed} from 'vue';
+import TextProperty from '../components/TextProperty.vue';
+import ImageProperty from '../components/ImageProperty.vue';
 import {MemeButton, MemeFileUpload, MemeInput} from './common';
 import {
   fillText,
   drawLayer,
   LINE_HEIGHT,
-  getFontSize,
   RANK
 } from '../utils/canvas';
 import {getExt} from '../utils/file';
 import {download} from '../utils/download';
-import type {Story, PropertyValue, BaseFile, Additional} from '../types';
+import type {Story, PropertyValue, BaseFile, FillText, FillImage} from '../types';
 import {useRoute} from 'vue-router';
 
+import { ELEMENT_TYPE } from '../utils/constant';
+
 const props = defineProps<{
-  story: Story,
-  additional: Additional
+  story: Story
 }>();
 
-const emit = defineEmits(['change', 'create', 'replace', 'update', 'additional']);
+const emit = defineEmits(['change', 'create', 'replace', 'update']);
 
 const localStory: Ref<Story> = toRefs(props).story;
+
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const areaRef = ref<HTMLElement | null>(null);
 const dragRef = ref<HTMLElement | null>(null);
@@ -38,52 +40,50 @@ const updateText = (value: string) => {
   text.value = value;
   renderImage();
 };
-provide('text', text);
-provide('updateText', updateText);
 
 const width = ref(0);
 const height = ref(0);
 
 const locationChange = (x: number, y: number) => {
-  localStory.value.x = x;
-  localStory.value.y = y;
+  // localStory.value.x = x;
+  // localStory.value.y = y;
 };
 
 const propertyChange = (value: PropertyValue) => {
-  const {max, size, color, align, direction, blur, degree, stroke, swidth} = value;
-  localStory.value.max = max;
-  localStory.value.font = `${size}px sans-serif`; // 统一默认字体，均使用sans-serif
-  localStory.value.color = color;
-  localStory.value.stroke = stroke;
-  localStory.value.swidth = swidth;
-  localStory.value.align = align;
-  localStory.value.direction = direction;
-  localStory.value.blur = blur;
-  localStory.value.degree = degree;
+  // const {max, size, color, align, direction, blur, degree, stroke, swidth} = value;
+  // localStory.value.max = max;
+  // localStory.value.font = `${size}px sans-serif`; // 统一默认字体，均使用sans-serif
+  // localStory.value.color = color;
+  // localStory.value.stroke = stroke;
+  // localStory.value.swidth = swidth;
+  // localStory.value.align = align;
+  // localStory.value.direction = direction;
+  // localStory.value.blur = blur;
+  // localStory.value.degree = degree;
 };
 
-const size = computed(() => {
-  return getFontSize(localStory.value.font);
-});
+// const size = computed(() => {
+//   // return getFontS1ize(localStory.value.font);
+//   return 32;
+// });
 
-const type = computed(() => {
+const extType = computed(() => {
   return getExt(localStory.value.image);
 });
 
-const localTitle = computed(() => {
-  return `${localStory.value.title}.${type.value}`
-    + ` ${width.value} * ${height.value} (${localStory.value.x}, ${localStory.value.y})`;
+const localName = computed(() => {
+  return `[${localStory.value.type}] ${localStory.value.name}.${extType.value} ${width.value} * ${height.value}`;
 });
 
-const offsetWidth = computed(() => {
-  const max = localStory.value.max || width.value;
-  const alignMap: Record<string, number> = {
-    'start': 0,
-    'center': Math.floor(max / 2),
-    'end': max,
-  };
-  return alignMap[localStory.value.align];
-});
+// const offsetWidth = computed(() => {
+//   const max = localStory.value.max || width.value;
+//   const alignMap: Record<string, number> = {
+//     'start': 0,
+//     'center': Math.floor(max / 2),
+//     'end': max,
+//   };
+//   return alignMap[localStory.value.align];
+// });
 
 const img = new Image();
 
@@ -119,11 +119,16 @@ const renderImage = () => {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   ctx.drawImage(img, 0, 0);
 
-  let content = text.value;
-  if (localStory.value.senior === 2) { // 附加文本类型，后置处理
-    content += localAdditional.value.text;
-  }
-  fillText(ctx, canvas.width, content, localStory.value);
+  // let content = text.value;
+  // 什么时候处理 content 内容和自定义的文本呢
+
+  localStory.value.children.forEach(({type, options}) => {
+    if (type === ELEMENT_TYPE.TEXT) {
+      fillText(ctx, canvas.width, options as FillText);
+    } else if (type === ELEMENT_TYPE.IMAGE) {
+      console.log('todo image');
+    }
+  })
 };
 
 const renderDragLayer = () => {
@@ -181,8 +186,8 @@ const mousemove = (event: MouseEvent) => {
   y = Math.max(Math.min(y, height.value - dragHeight + buffer), -buffer);
 
   // 调节浮层x, y的位置，与canvas中保持一致
-  x += offsetWidth.value;
-  y += size.value - 2;
+  // x += offsetWidth.value;
+  // y += size.value - 2;
 
   locationChange(x, y);
 };
@@ -219,8 +224,8 @@ const cancelCreate = () => {
 
 const _download = () => {
   const canvas = canvasRef.value as HTMLCanvasElement;
-  const fileName = `imeme_${localStory.value.title}_${text.value}`;
-  download(canvas, type.value, fileName);
+  const fileName = `imeme_${localStory.value.name}_${text.value}`;
+  download(canvas, extType.value, fileName);
 };
 
 const updateData = () => {
@@ -239,31 +244,31 @@ const updateData = () => {
 const fileChange = ({name, base64}: BaseFile) => {
   noImage.value = false;
 
-  const {mid, title, feature, image, x, y, max, font, color, align, direction,
-    senior, blur, degree, stroke, swidth} = localStory.value;
-  backStory = {
-    mid, title, feature, image, x, y, max, font, color, align, direction, senior, blur, degree, stroke, swidth
-  };
+  // const {mid, title, feature, image, x, y, max, font, color, align, direction,
+  //   senior, blur, degree, stroke, swidth} = localStory.value;
+  // backStory = {
+  //   mid, title, feature, image, x, y, max, font, color, align, direction, senior, blur, degree, stroke, swidth
+  // };
 
-  const ntitle = name.slice(0, name.lastIndexOf('.'));
-  updateImage({
-    mid: `meme_${new Date().getTime()}`,
-    title: ntitle,
-    feature: ntitle,
-    image: base64,
-    x: 60,
-    y: 60,
-    max: 100,
-    font: '32px sans-serif',
-    color: '#FF0000',
-    stroke: 'transparent',
-    swidth: 1,
-    align: 'start',
-    direction: 'down',
-    blur: 0,
-    degree: 0,
-    senior: 0
-  });
+  // const ntitle = name.slice(0, name.lastIndexOf('.'));
+  // updateImage({
+  //   mid: `meme_${new Date().getTime()}`,
+  //   title: ntitle,
+  //   feature: ntitle,
+  //   image: base64,
+  //   x: 60,
+  //   y: 60,
+  //   max: 100,
+  //   font: '32px sans-serif',
+  //   color: '#FF0000',
+  //   stroke: 'transparent',
+  //   swidth: 1,
+  //   align: 'start',
+  //   direction: 'down',
+  //   blur: 0,
+  //   degree: 0,
+  //   senior: 0
+  // });
 };
 
 const updateImage = (value: Story) => {
@@ -323,10 +328,10 @@ const pickColor = (event: MouseEvent) => {
     return;
   }
 
-  const color = computedData(offsetX, offsetY);
-  localStory.value.color = color;
-  showLayer.value = false;
-  pickStatus.value = false;
+  // const color = computedData(offsetX, offsetY);
+  // localStory.value.color = color;
+  // showLayer.value = false;
+  // pickStatus.value = false;
 };
 
 const route = useRoute();
@@ -334,22 +339,16 @@ const canEdit = computed(() => {
   return route.path.includes('/edit');
 });
 
-const changeTitle = (value: string) => {
-  if (value === localStory.value.title) {
+const changeName = (value: string) => {
+  if (value === localStory.value.name) {
     return;
   }
-  localStory.value.title = value;
+  localStory.value.name = value;
   emit('update', localStory.value);
 };
 
-const localAdditional: Ref<Additional> = toRefs(props).additional;
-const changeAdditional = (value: string) => {
-  if (value === localAdditional.value.text) {
-    return;
-  }
-  localAdditional.value.text = value;
-  renderImage();
-  emit('additional', localAdditional.value);
+const createLayer = () => {
+  // emit('create');
 };
 
 onMounted(() => {
@@ -363,10 +362,10 @@ onMounted(() => {
     <div class="container-header">
       <div class="container-title">
         <template v-if="canEdit">
-          <meme-input class="container-title-label" :value="localStory.title" @update:model-value="changeTitle($event)"/>
+          <meme-input class="container-title-label" :value="localStory.name" @update:model-value="changeName($event)"/>
         </template>
         <template v-else>
-          {{ localTitle }}
+          {{ localName }}
         </template>
       </div>
       <meme-button :label="updateStatus ? '添加' : '取消添加'" u="primary" @click="toggleAdd"/>
@@ -410,24 +409,37 @@ onMounted(() => {
           :height="RANK"
         />
       </div>
-      <property
-        :max="localStory.max"
-        :color="localStory.color"
-        :stroke="localStory.stroke"
-        :swidth="localStory.swidth"
-        :size="size"
-        :align="localStory.align"
-        :direction="localStory.direction"
-        :blur="localStory.blur"
-        :degree="localStory.degree"
-        @change="propertyChange"
-        @pick="pick"
-      />
-      <div class="container-additional" v-if="localStory.senior === 2 && canEdit">
-        <meme-input class="container-additional-label" :value="localAdditional.text" @update:model-value="changeAdditional($event)"/>
-      </div>
+      <template v-for="(child, index) in localStory.children" :key="index">
+        <image-property
+          v-if="child.type === ELEMENT_TYPE.IMAGE"
+          v-bind="child.options as FillImage"
+        >
+          <meme-input
+            class="property-text"
+            :key="index"
+            title="text"
+            :value="text"
+            @update:model-value="updateText"
+          />
+        </image-property>
+        <text-property
+          v-else
+          :key="index"
+          v-bind="child.options as FillText"
+          @change="propertyChange"
+          @pick="pick"
+        >
+          <meme-input
+            class="property-text"
+            title="text"
+            :value="text"
+            @update:model-value="updateText"
+          />
+        </text-property>
+      </template>
     </template>
     <footer class="container-footer">
+      <meme-button class="container-footer-label" label="添加属性" u="primary" @click="createLayer"/>
       <meme-button :label="updateStatus ? '更新' : '确认'" u="primary" @click="updateData"/>
     </footer>
   </div>
@@ -507,26 +519,15 @@ onMounted(() => {
     .meme-button {
       width: 130px;
     }
+    &-label {
+      margin-right: 40px;
+    }
   }
-  .property,
-  &-additional {
+  .property {
     height: 50px;
     flex-shrink: 0;
     background: #FFFFFF;
     border-top: 1px solid #DDDEE4;
-  }
-  &-additional {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0 10px;
-    &-label {
-      width: 200px;
-      height: 30px;
-      background: #FFFFFF;
-      border: 1px solid #DDDEE4;
-      margin-right: 10px;
-    }
   }
 }
 </style>
