@@ -13,6 +13,7 @@
       @replace="replace"
       @create="createImage"
       @update="updateImage"
+      @update-name="updateName"
     />
   </div>
 </template>
@@ -104,6 +105,10 @@ const updateImage = (value: Story) => {
   // Api.updateImage(value);
   console.log('updateImage');
 };
+
+const updateName = (value: Story) => { // ✅ 内部功能 OK
+  console.log(value);
+}
 
 const commands = ref([]);
 const paths = ref<OPTION[]>(); // TODO 待处理

@@ -31,7 +31,7 @@ const props = defineProps<{
   story: Story
 }>();
 
-const emit = defineEmits(['change', 'create', 'replace', 'update']);
+const emit = defineEmits(['change', 'create', 'replace', 'update-name']);
 
 const localStory: Ref<Story> = toRefs(props).story;
 
@@ -72,7 +72,6 @@ const changeLayerProperty = (value: TextPropertyValue | ImagePropertyValue) => {
     return;
   }
 
-  renderImage();
   emit('change', localStory.value);
 };
 
@@ -207,7 +206,6 @@ const updateLayerPosition = (id: string, left: number, top: number) => {
     const alignOffset = getAlignOffset(options.align || 'start', layerWidth);
     options.x = Math.round(left + alignOffset);
     options.y = Math.round(top + options.size - 2);
-    console.log({...target});
   } else if (target.type === ELEMENT_TYPE.IMAGE) {
     const options = target.options as FillImage;
     options.x = Math.round(left);
@@ -221,12 +219,10 @@ const handleDragStart = ({id, x, y}: DragMovePayload) => {
 
 const handleDragMove = ({id, x, y}: DragMovePayload) => {
   updateLayerPosition(id, x, y);
-  renderImage();
 };
 
 const handleDragEnd = ({id, x, y}: DragMovePayload) => {
   updateLayerPosition(id, x, y);
-  renderImage();
   emit('change', localStory.value);
 };
 
@@ -383,7 +379,6 @@ const pickColor = (event: MouseEvent) => {
 
   if (target) {
     (target.options as FillText).color = color;
-    renderImage();
     emit('change', localStory.value);
   }
 
@@ -402,7 +397,7 @@ const changeName = (value: string) => {
     return;
   }
   localStory.value.name = value;
-  emit('update', localStory.value);
+  emit('update-name', localStory.value);
 };
 
 const createLayer = () => {
