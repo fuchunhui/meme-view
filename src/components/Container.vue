@@ -3,7 +3,7 @@ import {toRefs, type Ref, ref, onMounted, watch, computed} from 'vue';
 import TextProperty from '../components/TextProperty.vue';
 import ImageProperty from '../components/ImageProperty.vue';
 import DragOverlay from './DragOverlay.vue';
-import {MemeButton, MemeFileUpload, MemeInput} from './common';
+import {MemeButton, MemeFileUpload, MemeInput, MemeSelect} from './common';
 import {
   fillText,
   drawLayer,
@@ -31,7 +31,7 @@ const props = defineProps<{
   story: Story
 }>();
 
-const emit = defineEmits(['change', 'create', 'replace', 'update-name']);
+const emit = defineEmits(['change', 'create', 'replace', 'update', 'create-layer', 'update-name']);
 
 const localStory: Ref<Story> = toRefs(props).story;
 
@@ -44,6 +44,7 @@ const pickStatus = ref(false);
 const showLayer = ref(false);
 const layerRef = ref<HTMLCanvasElement | null>(null);
 const pickEid = ref<string | null>(null);
+const newLayerType = ref(ELEMENT_TYPE.TEXT);
 
 const text = ref('金馆长');
 const updateText = (value: string) => {
@@ -387,6 +388,14 @@ const pickColor = (event: MouseEvent) => {
   pickEid.value = null;
 };
 
+const createLayer = (type?: string) => {
+  const layerType = type || newLayerType.value || ELEMENT_TYPE.TEXT;
+  if (!localStory.value.mid) {
+    return;
+  }
+  emit('create-layer', { mid: localStory.value.mid, type: layerType });
+};
+
 const route = useRoute();
 const canEdit = computed(() => {
   return route.path.includes('/edit');
@@ -398,10 +407,6 @@ const changeName = (value: string) => {
   }
   localStory.value.name = value;
   emit('update-name', localStory.value);
-};
-
-const createLayer = () => {
-  // emit('create');
 };
 
 onMounted(() => {
@@ -494,7 +499,16 @@ onMounted(() => {
       </template>
     </template>
     <footer class="container-footer">
-      <meme-button class="container-footer-label" label="添加属性" u="primary" @click="createLayer"/>
+      <meme-select
+        class="container-footer-select"
+        :options="[
+          { label: '文本', value: ELEMENT_TYPE.TEXT },
+          { label: '图片', value: ELEMENT_TYPE.IMAGE }
+        ]"
+        :selected="newLayerType"
+        @update:model-value="val => newLayerType = val"
+      />
+      <meme-button class="container-footer-label" label="添加新层" u="primary" @click="() => createLayer()"/>
       <meme-button :label="updateStatus ? '更新' : '确认'" u="primary" @click="updateData"/>
     </footer>
   </div>
@@ -565,6 +579,10 @@ onMounted(() => {
     }
     &-label {
       margin-right: 40px;
+    }
+    &-select {
+      width: 120px;
+      margin-right: 10px;
     }
   }
   .property {

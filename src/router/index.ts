@@ -10,11 +10,11 @@ const routes = [
     component: WarnCenter
   },
   {
-    path: '/story',
+    path: '/story/:mid?',
     component: ImageWrap
   },
   {
-    path: '/story/edit',
+    path: '/story/edit/:mid?',
     component: ImageWrap
   },
   {
@@ -22,11 +22,11 @@ const routes = [
     component: MaterialCenter
   },
   {
-    path: '/butter',
+    path: '/butter/:mid?',
     component: ImageWrap
   },
   {
-    path: '/butter/edit',
+    path: '/butter/edit/:mid?',
     component: ImageWrap
   },
 ];

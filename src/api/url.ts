@@ -21,6 +21,10 @@ const urlMap: Net = {
     url: '/image/update',
     method: 'post'
   },
+  createLayer: {
+    url: '/image/createLayer',
+    method: 'post'
+  },
   getConfig: {
     url: '/image/config',
     method: 'get'

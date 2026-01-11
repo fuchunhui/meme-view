@@ -9,17 +9,19 @@
     <container
       v-if="story.image"
       :story="story"
-      @change="storyChange"
+      @change="changeImage"
       @replace="replace"
       @create="createImage"
       @update="updateImage"
       @update-name="updateName"
+      @create-layer="createLayer"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import {ref, watch, type Ref, onMounted, provide} from 'vue';
+import {useRoute, useRouter} from 'vue-router';
 import Side from '../components/Side.vue';
 import Container from '../components/Container.vue';
 import type {
@@ -29,9 +31,12 @@ import type {
   OPTION,
 } from '../types';
 import Api from '../api';
+import { ELEMENT_TYPE } from '../utils/constant';
 
 const catalogList: Ref<Catalog[]> = ref([]);
 const current = ref('');
+const route = useRoute();
+const router = useRouter();
 
 let story: Ref<Story> = ref({
   mid: '',
@@ -47,14 +52,32 @@ const getCatalog = async () => {
   catalogList.value = res;
 };
 
-const imageChange = ({type, child}: {type: string; child: CatalogItem}) => {
-  if (current.value !== child.mid) {
-    current.value = child.mid as string;
+const resolveBasePath = () => {
+  const isButter = route.path.includes('/butter');
+  const isEdit = route.path.includes('/edit');
+  let base = isButter ? '/butter' : '/story';
+  if (isEdit) {
+    base += '/edit';
   }
+  return base;
 };
 
-watch(current, () => {
-  getImageData(current.value);
+const imageChange = ({child}: {type: string; child: CatalogItem}) => {
+  const base = resolveBasePath();
+  const mid = child.mid as string;
+  router.replace({path: `${base}/${mid}`});
+};
+
+watch(current, mid => {
+  if (mid) {
+    getImageData(mid);
+  }
+});
+
+watch(() => route.params.mid, mid => {
+  if (typeof mid === 'string') {
+    current.value = mid;
+  }
 });
 
 const getImageData = (mid: string) => {
@@ -66,7 +89,7 @@ const getImageData = (mid: string) => {
 };
 
 
-const storyChange = (value: Story) => {
+const changeImage = (value: Story) => { // ✅ 内部功能 OK，接口待打通
   // const params = {...value, image: ''};
   // Api.saveImage(params);
 
@@ -106,9 +129,19 @@ const updateImage = (value: Story) => {
   console.log('updateImage');
 };
 
-const updateName = (value: Story) => { // ✅ 内部功能 OK
+const updateName = (value: Story) => { // ✅ 内部功能 OK，接口待打通
   console.log(value);
 }
+
+const createLayer = async ({mid, type}: {mid: string; type: string}) => {
+  const targetMid = mid || current.value;
+  if (!targetMid) {
+    return;
+  }
+
+  await Api.createLayer({mid: targetMid, type: type || ELEMENT_TYPE.TEXT});
+  getImageData(targetMid);
+};
 
 const commands = ref([]);
 const paths = ref<OPTION[]>(); // TODO 待处理
@@ -129,6 +162,10 @@ const getConfig = async () => {
 onMounted(() => {
   getCatalog();
   getConfig();
+  const mid = route.params.mid as string;
+  if (mid) {
+    current.value = mid;
+  }
 });
 
 </script>
