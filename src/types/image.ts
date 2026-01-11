@@ -21,12 +21,12 @@ export interface FillText {
   size: number;
   font: string;
   color: string;
-  stroke: string;
-  swidth: number;
   align: string;
   direction: string;
   blur: number;
   degree: number;
+  stroke: string;
+  swidth: number;
 }
 
 export interface FillImage {
@@ -36,6 +36,21 @@ export interface FillImage {
   width: number;
   height: number;
   ipath: string;
+}
+
+export interface TextPropertyValue {
+  eid: string;
+  max: number;
+  size: number;
+  font: string;
+  color: string;
+  align: string;
+  direction: string;
+  blur: number;
+  degree: number;
+  stroke: string;
+  swidth: number;
+  content: string;
 }
 
 export interface Catalog {
@@ -51,18 +66,6 @@ export type CatalogItem = Record<string, string | number>;
 
 
 // 下方为旧版类型定义，逐步迁移中
-
-export interface PropertyValue {
-  max: number;
-  size: number;
-  color: string;
-  stroke: string;
-  swidth: number;
-  align: string;
-  direction: string;
-  blur: number;
-  degree: number;
-}
 
 export interface BaseFile {
   name: string;
@@ -113,6 +116,7 @@ export interface FeatureImage {
 }
 
 export interface ImagePropertyValue {
+  eid: string;
   width: number;
   height: number;
   ipath: string;

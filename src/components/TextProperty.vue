@@ -3,7 +3,7 @@ import {toRefs} from 'vue';
 import {MemeInput, MemeSelect} from './common';
 import DiceButton from './block/DiceButton.vue';
 import PickerButton from './block/PickerButton.vue';
-import type {FillText} from '../types/image';
+import type {FillText, TextPropertyValue} from '../types/image';
 
 const props = defineProps<FillText>();
 const emit = defineEmits(['change', 'pick']);
@@ -32,7 +32,8 @@ const directionOptions = [
 ];
 
 const changeValue = (value: string, type: string) => {
-  const param: {[key: string]: string | number} = {
+  const param = {
+    eid: props.eid,
     max: max.value,
     size: size.value,
     font: font.value,
@@ -44,9 +45,10 @@ const changeValue = (value: string, type: string) => {
     stroke: stroke.value,
     swidth: swidth.value,
     content: content.value
-  };
-  param[type] = ['color', 'align', 'direction', 'stroke', 'font', 'content'].includes(type) ? value : parseInt(value);
-  emit('change', param);
+  } as TextPropertyValue & Record<string, string | number>;
+  const isStringField = ['color', 'align', 'direction', 'stroke', 'font', 'content'].includes(type);
+  (param as Record<string, string | number>)[type] = isStringField ? value : parseInt(value);
+  emit('change', param as TextPropertyValue);
 };
 
 const changeColor = (key: string) => {

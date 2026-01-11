@@ -9,6 +9,10 @@
     <container
       v-if="story.image"
       :story="story"
+      @change="storyChange"
+      @replace="replace"
+      @create="createImage"
+      @update="updateImage"
     />
   </div>
 </template>
@@ -60,17 +64,46 @@ const getImageData = (mid: string) => {
   });
 };
 
-// const createImage = async (value: Story, cancelCreate: () => void) => {
-//   const res = await Api.createImage(value).catch(response => {
-//     alert(response.message);
-//   });
-//   if (res) {
-//     await getCatalog();
-//     current.value = res.mid;
-//   } else {
-//     cancelCreate();
-//   }
-// };
+
+const storyChange = (value: Story) => {
+  // const params = {...value, image: ''};
+  // Api.saveImage(params);
+
+  // 后端接口是实现逻辑类似：
+  // const params = req.body
+  // const {eid, type, options} = params;
+
+  // try {
+  //   if (type === ELEMENT_TYPE.IMAGE) {
+  //     updateImage(eid, options, ctx);
+  //   } else {
+  //     updateText(eid, options, ctx);
+  //   }
+  // }
+
+};
+
+const replace = (value: Story) => {
+  // story.value = value;
+};
+
+const createImage = async (value: Story, cancelCreate: () => void) => {
+  console.log('createImage');
+  // const res = await Api.createImage(value).catch(response => {
+  //   alert(response.message);
+  // });
+  // if (res) {
+  //   await getCatalog();
+  //   current.value = res.mid;
+  // } else {
+  //   cancelCreate();
+  // }
+};
+
+const updateImage = (value: Story) => {
+  // Api.updateImage(value);
+  console.log('updateImage');
+};
 
 const commands = ref([]);
 const paths = ref<OPTION[]>(); // TODO 待处理

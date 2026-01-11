@@ -13,7 +13,7 @@ import {
 } from '../utils/canvas';
 import {getExt} from '../utils/file';
 import {download} from '../utils/download';
-import type {Story, PropertyValue, BaseFile, FillText, FillImage} from '../types';
+import type {Story, TextPropertyValue, BaseFile, FillText, FillImage, ImagePropertyValue} from '../types';
 import {useRoute} from 'vue-router';
 
 import { ELEMENT_TYPE } from '../utils/constant';
@@ -44,9 +44,26 @@ const updateText = (value: string) => {
 const width = ref(0);
 const height = ref(0);
 
-const propertyChange = (value: PropertyValue) => {
-  void value;
-  // 预留：属性变更后更新当前 story
+const changeLayerProperty = (value: TextPropertyValue | ImagePropertyValue) => {
+  const target = localStory.value.children.find(child => {
+    const eid = (child.options as FillText | FillImage).eid;
+    return eid === value.eid;
+  });
+
+  if (!target) {
+    return;
+  }
+
+  if (target.type === ELEMENT_TYPE.TEXT && 'content' in value) {
+    Object.assign(target.options as FillText, value);
+  } else if (target.type === ELEMENT_TYPE.IMAGE && 'ipath' in value) {
+    Object.assign(target.options as FillImage, value);
+  } else {
+    return;
+  }
+
+  renderImage();
+  emit('change', localStory.value);
 };
 
 const extType = computed(() => {
@@ -56,16 +73,6 @@ const extType = computed(() => {
 const localName = computed(() => {
   return `[${localStory.value.type}] ${localStory.value.name}.${extType.value} ${width.value} * ${height.value}`;
 });
-
-// const offsetWidth = computed(() => {
-//   const max = localStory.value.max || width.value;
-//   const alignMap: Record<string, number> = {
-//     'start': 0,
-//     'center': Math.floor(max / 2),
-//     'end': max,
-//   };
-//   return alignMap[localStory.value.align];
-// });
 
 const img = new Image();
 
@@ -136,16 +143,11 @@ const getAlignOffset = (align: string, maxWidth: number) => {
 };
 
 const getTextHeight = (options: FillText, maxWidth: number) => {
-  if (!maxWidth) {
+  if (!maxWidth || !measureCtx) {
     return options.size * LINE_HEIGHT;
   }
 
-  if (!measureCtx) {
-    return options.size * LINE_HEIGHT;
-  }
-
-  const fontFamily = options.font ? `${options.size}px ${options.font}` : `${options.size}px sans-serif`;
-  measureCtx.font = fontFamily;
+  measureCtx.font = options.font ? `${options.size}px ${options.font}` : `${options.size}px sans-serif`;
   const lines = breakLines(options.content || '', maxWidth, measureCtx);
   const lineCount = Math.max(lines.length, 1);
   return lineCount * options.size * LINE_HEIGHT;
@@ -212,6 +214,7 @@ const updateLayerPosition = (id: string, left: number, top: number) => {
     const alignOffset = getAlignOffset(options.align || 'start', layerWidth);
     options.x = Math.round(left + alignOffset);
     options.y = Math.round(top + options.size - 2);
+    console.log({...target});
   } else if (target.type === ELEMENT_TYPE.IMAGE) {
     const options = target.options as FillImage;
     options.x = Math.round(left);
@@ -461,6 +464,7 @@ onMounted(() => {
         <image-property
           v-if="child.type === ELEMENT_TYPE.IMAGE"
           v-bind="child.options as FillImage"
+          @change="changeLayerProperty"
         >
           <meme-input
             class="property-text"
@@ -474,7 +478,7 @@ onMounted(() => {
           v-else
           :key="index"
           v-bind="child.options as FillText"
-          @change="propertyChange"
+          @change="changeLayerProperty"
           @pick="pick"
         >
           <meme-input
@@ -539,6 +543,9 @@ onMounted(() => {
     background-color: #fff;
     border-radius: 3px;
     overflow: hidden;
+  }
+  &-overlay {
+    border: thin solid gray;
   }
   &-pointer {
     cursor: pointer;
