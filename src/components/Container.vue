@@ -13,7 +13,16 @@ import {
 } from '../utils/canvas';
 import {getExt} from '../utils/file';
 import {download} from '../utils/download';
-import type {Story, TextPropertyValue, BaseFile, FillText, FillImage, ImagePropertyValue} from '../types';
+import type {
+  Story,
+  BaseFile,
+  FillText,
+  FillImage,
+  TextPropertyValue,
+  ImagePropertyValue,
+  DragLayer,
+  DragMovePayload,
+} from '../types';
 import {useRoute} from 'vue-router';
 
 import { ELEMENT_TYPE } from '../utils/constant';
@@ -34,6 +43,7 @@ let backStory: Story | null = null;
 const pickStatus = ref(false);
 const showLayer = ref(false);
 const layerRef = ref<HTMLCanvasElement | null>(null);
+const pickEid = ref<string | null>(null);
 
 const text = ref('金馆长');
 const updateText = (value: string) => {
@@ -110,23 +120,6 @@ const renderImage = () => {
       console.log('todo image');
     }
   })
-};
-
-type DragLayer = {
-  id: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  alignOffset: number;
-  size: number;
-  type: string;
-};
-
-type DragMovePayload = {
-  id: string;
-  x: number;
-  y: number;
 };
 
 const measureCtx = typeof document !== 'undefined'
@@ -325,7 +318,8 @@ const updateImage = (value: Story) => {
   emit('replace', value);
 };
 
-const pick = () => {
+const pick = (eid: string) => {
+  pickEid.value = eid;
   pickStatus.value = true;
 };
 
@@ -378,10 +372,24 @@ const pickColor = (event: MouseEvent) => {
     return;
   }
 
-  // const color = computedData(offsetX, offsetY);
-  // localStory.value.color = color;
-  // showLayer.value = false;
-  // pickStatus.value = false;
+  const color = computedData(offsetX, offsetY);
+  const target = localStory.value.children.find(child => {
+    if (child.type !== ELEMENT_TYPE.TEXT) {
+      return false;
+    }
+    const eid = (child.options as FillText).eid;
+    return pickEid.value ? eid === pickEid.value : true;
+  });
+
+  if (target) {
+    (target.options as FillText).color = color;
+    renderImage();
+    emit('change', localStory.value);
+  }
+
+  showLayer.value = false;
+  pickStatus.value = false;
+  pickEid.value = null;
 };
 
 const route = useRoute();
@@ -479,7 +487,7 @@ onMounted(() => {
           :key="index"
           v-bind="child.options as FillText"
           @change="changeLayerProperty"
-          @pick="pick"
+          @pick="() => pick((child.options as FillText).eid)"
         >
           <meme-input
             class="property-text"
