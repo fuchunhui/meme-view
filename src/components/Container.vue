@@ -2,12 +2,14 @@
 import {toRefs, type Ref, ref, onMounted, watch, computed} from 'vue';
 import TextProperty from '../components/TextProperty.vue';
 import ImageProperty from '../components/ImageProperty.vue';
+import DragOverlay from './DragOverlay.vue';
 import {MemeButton, MemeFileUpload, MemeInput} from './common';
 import {
   fillText,
   drawLayer,
   LINE_HEIGHT,
-  RANK
+  RANK,
+  breakLines
 } from '../utils/canvas';
 import {getExt} from '../utils/file';
 import {download} from '../utils/download';
@@ -25,8 +27,6 @@ const emit = defineEmits(['change', 'create', 'replace', 'update']);
 const localStory: Ref<Story> = toRefs(props).story;
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
-const areaRef = ref<HTMLElement | null>(null);
-const dragRef = ref<HTMLElement | null>(null);
 const updateStatus = ref(true);
 const noImage = ref(true);
 let backStory: Story | null = null;
@@ -44,28 +44,10 @@ const updateText = (value: string) => {
 const width = ref(0);
 const height = ref(0);
 
-const locationChange = (x: number, y: number) => {
-  // localStory.value.x = x;
-  // localStory.value.y = y;
-};
-
 const propertyChange = (value: PropertyValue) => {
-  // const {max, size, color, align, direction, blur, degree, stroke, swidth} = value;
-  // localStory.value.max = max;
-  // localStory.value.font = `${size}px sans-serif`; // 统一默认字体，均使用sans-serif
-  // localStory.value.color = color;
-  // localStory.value.stroke = stroke;
-  // localStory.value.swidth = swidth;
-  // localStory.value.align = align;
-  // localStory.value.direction = direction;
-  // localStory.value.blur = blur;
-  // localStory.value.degree = degree;
+  void value;
+  // 预留：属性变更后更新当前 story
 };
-
-// const size = computed(() => {
-//   // return getFontS1ize(localStory.value.font);
-//   return 32;
-// });
 
 const extType = computed(() => {
   return getExt(localStory.value.image);
@@ -96,9 +78,7 @@ const makeCanvas = () => {
     width.value = canvas.width;
     height.value = canvas.height;
 
-    renderAreaLayer();
     renderImage();
-    renderDragLayer();
   };
 
   img.onerror = err => {
@@ -106,12 +86,6 @@ const makeCanvas = () => {
   };
 
   img.src = localStory.value.image;
-};
-
-const renderAreaLayer = () => {
-  const ele = areaRef.value as HTMLElement;
-  ele.style.width = `${width.value}px`;
-  ele.style.height = `${height.value}px`;
 };
 
 const renderImage = () => {
@@ -131,73 +105,146 @@ const renderImage = () => {
   })
 };
 
-const renderDragLayer = () => {
-  const {x, y, max} = localStory.value;
-  const dragEle = dragRef.value as HTMLElement;
-  dragEle.style.width = `${max}px`;
-  dragEle.style.height = `${size.value * LINE_HEIGHT}px`;
-  dragEle.style.top = `${y - size.value + 2}px`;
-  dragEle.style.left = `${x - offsetWidth.value}px`;
+type DragLayer = {
+  id: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  alignOffset: number;
+  size: number;
+  type: string;
 };
 
-watch(localStory, (nv, ov) => {
-  if (nv.mid !== ov.mid) {
-    makeCanvas();
-  } else {
-    renderImage();
-    renderDragLayer();
+type DragMovePayload = {
+  id: string;
+  x: number;
+  y: number;
+};
+
+const measureCtx = typeof document !== 'undefined'
+  ? document.createElement('canvas').getContext('2d')
+  : null;
+
+const getAlignOffset = (align: string, maxWidth: number) => {
+  const map: Record<string, number> = {
+    'start': 0,
+    'center': Math.floor(maxWidth / 2),
+    'end': maxWidth,
+  };
+  return map[align] ?? 0;
+};
+
+const getTextHeight = (options: FillText, maxWidth: number) => {
+  if (!maxWidth) {
+    return options.size * LINE_HEIGHT;
   }
+
+  if (!measureCtx) {
+    return options.size * LINE_HEIGHT;
+  }
+
+  const fontFamily = options.font ? `${options.size}px ${options.font}` : `${options.size}px sans-serif`;
+  measureCtx.font = fontFamily;
+  const lines = breakLines(options.content || '', maxWidth, measureCtx);
+  const lineCount = Math.max(lines.length, 1);
+  return lineCount * options.size * LINE_HEIGHT;
+};
+
+const dragLayers = computed<DragLayer[]>(() => {
+  const canvasWidth = width.value;
+  const canvasHeight = height.value;
+
+  if (!canvasWidth || !canvasHeight) {
+    return [];
+  }
+
+  return localStory.value.children.map((child, index) => {
+    if (child.type === ELEMENT_TYPE.TEXT) {
+      const options = child.options as FillText;
+      const layerWidth = options.max || canvasWidth;
+      const alignOffset = getAlignOffset(options.align || 'start', layerWidth);
+      const layerHeight = getTextHeight(options, layerWidth);
+
+      return {
+        id: options.eid || `text-${index}`,
+        x: options.x - alignOffset,
+        y: options.y - options.size + 2,
+        width: layerWidth,
+        height: layerHeight,
+        alignOffset,
+        size: options.size,
+        type: child.type,
+      };
+    }
+
+    if (child.type === ELEMENT_TYPE.IMAGE) {
+      const options = child.options as FillImage;
+      return {
+        id: options.eid || `image-${index}`,
+        x: options.x,
+        y: options.y,
+        width: options.width,
+        height: options.height,
+        alignOffset: 0,
+        size: 0,
+        type: child.type,
+      };
+    }
+
+    return null;
+  }).filter((item): item is DragLayer => Boolean(item));
+});
+
+const updateLayerPosition = (id: string, left: number, top: number) => {
+  const target = localStory.value.children.find((child, index) => {
+    const eid = (child.options as FillText | FillImage).eid;
+    return eid ? eid === id : `${index}` === id;
+  });
+
+  if (!target) {
+    return;
+  }
+
+  if (target.type === ELEMENT_TYPE.TEXT) {
+    const options = target.options as FillText;
+    const layerWidth = options.max || width.value;
+    const alignOffset = getAlignOffset(options.align || 'start', layerWidth);
+    options.x = Math.round(left + alignOffset);
+    options.y = Math.round(top + options.size - 2);
+  } else if (target.type === ELEMENT_TYPE.IMAGE) {
+    const options = target.options as FillImage;
+    options.x = Math.round(left);
+    options.y = Math.round(top);
+  }
+};
+
+const handleDragStart = ({id, x, y}: DragMovePayload) => {
+  updateLayerPosition(id, x, y);
+};
+
+const handleDragMove = ({id, x, y}: DragMovePayload) => {
+  updateLayerPosition(id, x, y);
+  renderImage();
+};
+
+const handleDragEnd = ({id, x, y}: DragMovePayload) => {
+  updateLayerPosition(id, x, y);
+  renderImage();
+  emit('change', localStory.value);
+};
+
+watch(() => localStory.value.mid, () => {
+  makeCanvas();
+});
+
+watch(() => localStory.value.image, () => {
+  makeCanvas();
+});
+
+watch(() => localStory.value.children, () => {
+  renderImage();
 }, {deep: true});
-
-let cx = 0;
-let cy = 0;
-const buffer = 20;
-let canDrag = false;
-
-const mousedown = (event: MouseEvent) => {
-  canDrag = true;
-  const {clientX, clientY} = event;
-  cx = clientX;
-  cy = clientY;
-};
-
-const mousemove = (event: MouseEvent) => {
-  if (!canDrag) {
-    return;
-  }
-
-  const {clientX, clientY} = event;
-  const ele = dragRef.value as HTMLElement;
-
-  const {width: dragWidth, height: dragHeight} = ele.getBoundingClientRect();
-  let x = ele.offsetLeft + clientX - cx;
-  let y = ele.offsetTop + clientY - cy;
-
-  if (x < -buffer || y < -buffer
-    || x > width.value - dragWidth + buffer
-    || y > height.value - dragHeight + buffer) {
-    canDrag = false;
-  } else {
-    cx = clientX;
-    cy = clientY;
-  }
-
-  x = Math.max(Math.min(x, width.value - dragWidth + buffer), -buffer);
-  y = Math.max(Math.min(y, height.value - dragHeight + buffer), -buffer);
-
-  // 调节浮层x, y的位置，与canvas中保持一致
-  // x += offsetWidth.value;
-  // y += size.value - 2;
-
-  locationChange(x, y);
-};
-
-const mouseup = () => {
-  if (!canDrag) {
-    return;
-  }
-  canDrag = false;
-};
 
 const toggleAdd = () => {
   if (updateStatus.value) {
@@ -389,15 +436,16 @@ onMounted(() => {
           @mouseleave="pickMouseleave"
           @click="pickColor"
         />
-        <div
-          v-show="!pickStatus"
-          class="container-area"
-          ref="areaRef"
-          @mousemove="mousemove"
-          @mouseup="mouseup"
-        >
-          <div class="container-drag" ref="dragRef" @mousedown="mousedown"/>
-        </div>
+        <drag-overlay
+          v-if="!pickStatus && width && height"
+          class="container-overlay"
+          :layers="dragLayers"
+          :bounds="{ width, height }"
+          :offset="{ top: 10, left: 10 }"
+          @drag-start="handleDragStart"
+          @drag-move="handleDragMove"
+          @drag-end="handleDragEnd"
+        />
         <canvas
           v-show="pickStatus && showLayer"
           ref="layerRef"
@@ -491,20 +539,6 @@ onMounted(() => {
     background-color: #fff;
     border-radius: 3px;
     overflow: hidden;
-  }
-  &-area {
-    position: absolute;
-    top: 10px;
-    border: thin solid gray;
-  }
-  &-drag {
-    position: absolute;
-    top: 0;
-    width: 100px;
-    height: 32px;
-    user-select: none;
-    cursor: move;
-    border: 1px solid red;
   }
   &-pointer {
     cursor: pointer;
