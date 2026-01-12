@@ -15,6 +15,8 @@
       @update="updateImage"
       @update-name="updateName"
       @create-layer="createLayer"
+      @delete-layer="deleteLayer"
+      @reorder-layer="reorderLayer"
     />
   </div>
 </template>
@@ -126,7 +128,7 @@ const createImage = async (value: Story, cancelCreate: () => void) => {
 
 const updateImage = (value: Story) => {
   // Api.updateImage(value);
-  console.log('updateImage');
+  console.log('updateI1mage');
 };
 
 const updateName = (value: Story) => { // ✅ 内部功能 OK，接口待打通
@@ -140,6 +142,26 @@ const createLayer = async ({mid, type}: {mid: string; type: string}) => {
   }
 
   await Api.createLayer({mid: targetMid, type: type || ELEMENT_TYPE.TEXT});
+  getImageData(targetMid);
+};
+
+const deleteLayer = async ({mid, eid}: {mid: string; eid: string}) => {
+  const targetMid = mid || current.value;
+  if (!targetMid || !eid) {
+    return;
+  }
+
+  await Api.deleteLayer({mid: targetMid, eid});
+  getImageData(targetMid);
+};
+
+const reorderLayer = async ({mid, eid, direction}: {mid: string; eid: string; direction: 'up' | 'down'}) => {
+  const targetMid = mid || current.value;
+  if (!targetMid || !eid) {
+    return;
+  }
+
+  await Api.reorderLayer({mid: targetMid, eid, direction});
   getImageData(targetMid);
 };
 

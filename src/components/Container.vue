@@ -3,7 +3,7 @@ import {toRefs, type Ref, ref, onMounted, watch, computed} from 'vue';
 import TextProperty from '../components/TextProperty.vue';
 import ImageProperty from '../components/ImageProperty.vue';
 import DragOverlay from './DragOverlay.vue';
-import {MemeButton, MemeFileUpload, MemeInput, MemeSelect} from './common';
+import {MemeButton, MemeFileUpload, MemeInput} from './common';
 import {
   fillText,
   drawLayer,
@@ -31,7 +31,7 @@ const props = defineProps<{
   story: Story
 }>();
 
-const emit = defineEmits(['change', 'create', 'replace', 'update', 'create-layer', 'update-name']);
+const emit = defineEmits(['change', 'create', 'replace', 'update', 'create-layer', 'delete-layer', 'reorder-layer', 'update-name']);
 
 const localStory: Ref<Story> = toRefs(props).story;
 
@@ -44,7 +44,7 @@ const pickStatus = ref(false);
 const showLayer = ref(false);
 const layerRef = ref<HTMLCanvasElement | null>(null);
 const pickEid = ref<string | null>(null);
-const newLayerType = ref(ELEMENT_TYPE.TEXT);
+const showActions = ref(false);
 
 const text = ref('金馆长');
 const updateText = (value: string) => {
@@ -269,15 +269,10 @@ const _download = () => {
 };
 
 const updateData = () => {
-  // TODO 保证不过多发送数据，只在数据变化的执行 目前点击就同步
-  if (updateStatus.value) {
-    emit('change', localStory.value);
-  } else {
-    if (!noImage.value) {
-      emit('create', localStory.value, cancelCreate);
-      updateStatus.value = true;
-      noImage.value = true;
-    }
+  if (!noImage.value) {
+    emit('create', localStory.value, cancelCreate);
+    updateStatus.value = true;
+    noImage.value = true;
   }
 };
 
@@ -318,6 +313,17 @@ const updateImage = (value: Story) => {
 const pick = (eid: string) => {
   pickEid.value = eid;
   pickStatus.value = true;
+};
+
+const toggleActions = () => {
+  showActions.value = !showActions.value;
+};
+
+const moveLayer = (direction: 'up' | 'down', eid: string | undefined) => {
+  if (!localStory.value.mid || !eid) {
+    return;
+  }
+  emit('reorder-layer', { mid: localStory.value.mid, eid, direction });
 };
 
 const _drawLayer = (x: number, y: number) => {
@@ -388,12 +394,18 @@ const pickColor = (event: MouseEvent) => {
   pickEid.value = null;
 };
 
-const createLayer = (type?: string) => {
-  const layerType = type || newLayerType.value || ELEMENT_TYPE.TEXT;
+const createLayer = (type: string) => {
   if (!localStory.value.mid) {
     return;
   }
-  emit('create-layer', { mid: localStory.value.mid, type: layerType });
+  emit('create-layer', { mid: localStory.value.mid, type });
+};
+
+const deleteLayer = (eid: string | undefined) => {
+  if (!localStory.value.mid || !eid) {
+    return;
+  }
+  emit('delete-layer', { mid: localStory.value.mid, eid });
 };
 
 const route = useRoute();
@@ -426,6 +438,7 @@ onMounted(() => {
           {{ localName }}
         </template>
       </div>
+      <meme-button v-if="!updateStatus" label="确认" u="primary" @click="updateData"/>
       <meme-button :label="updateStatus ? '添加' : '取消添加'" u="primary" @click="toggleAdd"/>
       <meme-button label="下载" u="primary" @click="_download"/>
     </div>
@@ -481,6 +494,41 @@ onMounted(() => {
             :value="text"
             @update:model-value="updateText"
           />
+            <div
+              v-if="showActions"
+              class="property-actions"
+            >
+              <button
+                class="icon-button"
+                type="button"
+                @click="moveLayer('up', (child.options as FillImage).eid)"
+                :title="'上移'"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 5l6 6H6z" />
+                </svg>
+              </button>
+              <button
+                class="icon-button"
+                type="button"
+                @click="moveLayer('down', (child.options as FillImage).eid)"
+                :title="'下移'"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 19l-6-6h12z" />
+                </svg>
+              </button>
+                <button
+                  class="icon-button danger"
+                  type="button"
+                  @click="deleteLayer((child.options as FillImage).eid)"
+                  :title="'删除图层'"
+                >
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M16 9v9H8V9h8m-1.5-4h-5l-1 1H6v2h12V6h-2.5l-1-1z" />
+                </svg>
+              </button>
+            </div>
         </image-property>
         <text-property
           v-else
@@ -495,21 +543,48 @@ onMounted(() => {
             :value="text"
             @update:model-value="updateText"
           />
+            <div
+              v-if="showActions"
+              class="property-actions"
+            >
+              <button
+                class="icon-button"
+                type="button"
+                @click="moveLayer('up', (child.options as FillText).eid)"
+                :title="'上移'"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 5l6 6H6z" />
+                </svg>
+              </button>
+              <button
+                class="icon-button"
+                type="button"
+                @click="moveLayer('down', (child.options as FillText).eid)"
+                :title="'下移'"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 19l-6-6h12z" />
+                </svg>
+              </button>
+                <button
+                  class="icon-button danger"
+                  type="button"
+                  @click="deleteLayer((child.options as FillText).eid)"
+                  :title="'删除图层'"
+                >
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M16 9v9H8V9h8m-1.5-4h-5l-1 1H6v2h12V6h-2.5l-1-1z" />
+                </svg>
+              </button>
+            </div>
         </text-property>
       </template>
     </template>
     <footer class="container-footer">
-      <meme-select
-        class="container-footer-select"
-        :options="[
-          { label: '文本', value: ELEMENT_TYPE.TEXT },
-          { label: '图片', value: ELEMENT_TYPE.IMAGE }
-        ]"
-        :selected="newLayerType"
-        @update:model-value="val => newLayerType = val"
-      />
-      <meme-button class="container-footer-label" label="添加新层" u="primary" @click="() => createLayer()"/>
-      <meme-button :label="updateStatus ? '更新' : '确认'" u="primary" @click="updateData"/>
+      <meme-button class="container-footer-label" label="添加文本层" u="primary" @click="() => createLayer(ELEMENT_TYPE.TEXT)"/>
+      <meme-button class="container-footer-label" label="添加图片层" u="primary" @click="() => createLayer(ELEMENT_TYPE.IMAGE)"/>
+      <meme-button :label="showActions ? '隐藏操作区' : '显示操作区'" u="primary" @click="toggleActions"/>
     </footer>
   </div>
 </template>
@@ -578,11 +653,7 @@ onMounted(() => {
       width: 130px;
     }
     &-label {
-      margin-right: 40px;
-    }
-    &-select {
-      width: 120px;
-      margin-right: 10px;
+      margin-right: 12px;
     }
   }
   .property {
@@ -590,6 +661,48 @@ onMounted(() => {
     flex-shrink: 0;
     background: #FFFFFF;
     border-top: 1px solid #DDDEE4;
+  }
+  .property-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 10px;
+  }
+
+  .icon-button {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+
+    svg {
+      width: 16px;
+      height: 16px;
+      fill: #555;
+    }
+
+    &:hover {
+      background: #f5f7fa;
+      border-color: #cfd3dc;
+    }
+  }
+
+  .icon-button.danger {
+    border-color: #f2b4b4;
+    svg {
+      fill: #d9534f;
+    }
+    &:hover {
+      background: #fdecec;
+      border-color: #e7a2a2;
+    }
   }
 }
 </style>
