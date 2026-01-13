@@ -10,9 +10,7 @@
       v-if="story.image"
       :story="story"
       @change="changeImage"
-      @replace="replace"
       @create="createImage"
-      @update="updateImage"
       @update-name="updateName"
       @create-layer="createLayer"
       @delete-layer="deleteLayer"
@@ -90,49 +88,54 @@ const getImageData = (mid: string) => {
   });
 };
 
+const changeImage = async (value: Story) => {
+  if (!value?.children?.length) return;
 
-const changeImage = (value: Story) => { // ✅ 内部功能 OK，接口待打通
-  // const params = {...value, image: ''};
-  // Api.saveImage(params);
-
-  // 后端接口是实现逻辑类似：
-  // const params = req.body
-  // const {eid, type, options} = params;
-
-  // try {
-  //   if (type === ELEMENT_TYPE.IMAGE) {
-  //     updateImage(eid, options, ctx);
-  //   } else {
-  //     updateText(eid, options, ctx);
-  //   }
-  // }
-
+  try {
+    await Promise.all(value.children.map(child => {
+      return Api.updateImage({
+        eid: (child.options as any).eid,
+        type: child.type,
+        options: child.options
+      });
+    }));
+  } catch (err: any) {
+    console.error('update layer fail', err);
+    window.alert(err?.message || '更新失败');
+  }
 };
 
-const replace = (value: Story) => {
-  // story.value = value;
+const createImage = async (options: Record<string, string>, cancelCreate?: () => void) => {
+  if (!options?.name || !options?.image) {
+    window.alert('缺少必要的故事信息');
+    return;
+  }
+
+  try {
+    const res = await Api.createImage(options);
+    const mid = res?.mid || res?.data?.mid;
+
+    if (!mid) {
+      window.alert(res?.message || '创建失败');
+      return;
+    }
+
+    await getCatalog();
+    current.value = mid;
+    await getImageData(mid);
+    cancelCreate?.();
+  } catch (err: any) {
+    console.error('create image fail', err);
+    window.alert(err?.message || '创建失败');
+  }
 };
 
-const createImage = async (value: Story, cancelCreate: () => void) => {
-  console.log('createImage');
-  // const res = await Api.createImage(value).catch(response => {
-  //   alert(response.message);
-  // });
-  // if (res) {
-  //   await getCatalog();
-  //   current.value = res.mid;
-  // } else {
-  //   cancelCreate();
-  // }
-};
+const updateName = async (value: Story) => {
+  if (!value?.mid || !value?.name) {
+    return;
+  }
 
-const updateImage = (value: Story) => {
-  // Api.updateImage(value);
-  console.log('updateI1mage');
-};
-
-const updateName = (value: Story) => { // ✅ 内部功能 OK，接口待打通
-  console.log(value);
+  await Api.updateName({ mid: value.mid, name: value.name });
 }
 
 const createLayer = async ({mid, type}: {mid: string; type: string}) => {

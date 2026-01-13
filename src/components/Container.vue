@@ -25,20 +25,24 @@ import type {
 } from '../types';
 import {useRoute} from 'vue-router';
 
-import { ELEMENT_TYPE } from '../utils/constant';
+import { ELEMENT_TYPE, STORY_TYPE } from '../utils/constant';
 
 const props = defineProps<{
   story: Story
 }>();
 
-const emit = defineEmits(['change', 'create', 'replace', 'update', 'create-layer', 'delete-layer', 'reorder-layer', 'update-name']);
+const emit = defineEmits(['change', 'create', 'create-layer', 'delete-layer', 'reorder-layer', 'update-name']);
 
 const localStory: Ref<Story> = toRefs(props).story;
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
-const updateStatus = ref(true);
-const noImage = ref(true);
-let backStory: Story | null = null;
+const createStatus = ref(false);
+const imageInfo = ref<{
+  name: string;
+  type: string;
+  image: string;
+  layerType: string;
+} | null>(null);
 
 const pickStatus = ref(false);
 const showLayer = ref(false);
@@ -239,75 +243,34 @@ watch(() => localStory.value.children, () => {
   renderImage();
 }, {deep: true});
 
-const toggleAdd = () => {
-  if (updateStatus.value) {
-    updateStatus.value = false;
-  } else {
-    updateStatus.value = true;
-    noImage.value = true;
-
-    if (backStory) {
-      updateImage(backStory as Story);
-      backStory = null;
-    } else {
-      makeCanvas();
-    }
-  }
-};
-
-const cancelCreate = () => {
-  if (backStory) {
-    updateImage(backStory as Story);
-    backStory = null;
-  }
-};
-
 const _download = () => {
   const canvas = canvasRef.value as HTMLCanvasElement;
   const fileName = `imeme_${localStory.value.name}_${text.value}`;
   download(canvas, extType.value, fileName);
 };
 
+const startCreate = () => {
+  createStatus.value = true;
+};
+
+const cancelCreate = () => {
+  createStatus.value = false;
+  imageInfo.value = null;
+};
+
 const updateData = () => {
-  if (!noImage.value) {
-    emit('create', localStory.value, cancelCreate);
-    updateStatus.value = true;
-    noImage.value = true;
+  if (imageInfo.value) {
+    emit('create', imageInfo.value, cancelCreate);
   }
 };
 
 const fileChange = ({name, base64}: BaseFile) => {
-  noImage.value = false;
-
-  // const {mid, title, feature, image, x, y, max, font, color, align, direction,
-  //   senior, blur, degree, stroke, swidth} = localStory.value;
-  // backStory = {
-  //   mid, title, feature, image, x, y, max, font, color, align, direction, senior, blur, degree, stroke, swidth
-  // };
-
-  // const ntitle = name.slice(0, name.lastIndexOf('.'));
-  // updateImage({
-  //   mid: `meme_${new Date().getTime()}`,
-  //   title: ntitle,
-  //   feature: ntitle,
-  //   image: base64,
-  //   x: 60,
-  //   y: 60,
-  //   max: 100,
-  //   font: '32px sans-serif',
-  //   color: '#FF0000',
-  //   stroke: 'transparent',
-  //   swidth: 1,
-  //   align: 'start',
-  //   direction: 'down',
-  //   blur: 0,
-  //   degree: 0,
-  //   senior: 0
-  // });
-};
-
-const updateImage = (value: Story) => {
-  emit('replace', value);
+  imageInfo.value = {
+    name: name.slice(0, name.lastIndexOf('.')) || name,
+    type: STORY_TYPE.TEXT,
+    image: base64,
+    layerType: ELEMENT_TYPE.TEXT,
+  };
 };
 
 const pick = (eid: string) => {
@@ -438,13 +401,14 @@ onMounted(() => {
           {{ localName }}
         </template>
       </div>
-      <meme-button v-if="!updateStatus" label="确认" u="primary" @click="updateData"/>
-      <meme-button :label="updateStatus ? '添加' : '取消添加'" u="primary" @click="toggleAdd"/>
+      <meme-button v-if="createStatus" label="保存新故事" u="primary" @click="updateData"/>
+      <meme-button v-if="createStatus" label="取消新建" u="primary" @click="cancelCreate"/>
+      <meme-button v-else label="新建故事" u="primary" @click="startCreate"/>
       <meme-button label="下载" u="primary" @click="_download"/>
     </div>
     <div
       class="container-wall"
-      v-if="!updateStatus && noImage"
+      v-if="createStatus"
     >
       <meme-file-upload @change="fileChange"/>
     </div>
@@ -647,6 +611,7 @@ onMounted(() => {
   }
   &-footer {
     height: 64px;
+    min-height: 64px;
     .flex-center();
 
     .meme-button {

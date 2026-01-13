@@ -1,6 +1,10 @@
 import type {Net} from '../types';
 
 const urlMap: Net = {
+  getConfig: {
+    url: '/image/config',
+    method: 'get'
+  },
   getCatalog: {
     url: '/image/catalog',
     method: 'get'
@@ -8,10 +12,6 @@ const urlMap: Net = {
   openImage: {
     url: '/image/open',
     method: 'get'
-  },
-  saveImage: {
-    url: '/image/save',
-    method: 'post'
   },
   createImage: {
     url: '/image/create',
@@ -21,21 +21,21 @@ const urlMap: Net = {
     url: '/image/update',
     method: 'post'
   },
+  updateName: {
+    url: '/image/update/name',
+    method: 'post'
+  },
   createLayer: {
-    url: '/image/createLayer',
+    url: '/image/layer/create',
     method: 'post'
   },
   deleteLayer: {
-    url: '/image/deleteLayer',
+    url: '/image/layer/delete',
     method: 'post'
   },
   reorderLayer: {
-    url: '/image/reorderLayer',
+    url: '/image/layer/reorder',
     method: 'post'
-  },
-  getConfig: {
-    url: '/image/config',
-    method: 'get'
   }
 };
 

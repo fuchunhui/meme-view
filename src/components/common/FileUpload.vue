@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import {inject, type Ref} from 'vue';
+import {inject, type Ref, ref} from 'vue';
 
 const commands = inject('commands') as Ref<[string]>;
 const emit = defineEmits(['change']);
+
+const previewImage = ref('');
+const imageInfo = ref<{
+  name: string;
+  ext: string;
+  width: number;
+  height: number;
+} | null>(null);
 
 const fileChange = (event: Event) => {
   const fileList = (event.target as HTMLInputElement).files;
@@ -83,6 +91,23 @@ const toast = (msg: string) => {
 };
 
 const handleImage = (name: string, base64: string) => {
+  previewImage.value = base64;
+  
+  // 获取图片尺寸
+  const img = new Image();
+  img.onload = () => {
+    const ext = name.slice(name.lastIndexOf('.') + 1);
+    const fileName = name.slice(0, name.lastIndexOf('.')) || name;
+    
+    imageInfo.value = {
+      name: fileName,
+      ext,
+      width: img.naturalWidth,
+      height: img.naturalHeight,
+    };
+  };
+  img.src = base64;
+  
   emit('change', {
     name,
     base64
@@ -106,7 +131,18 @@ const handleImage = (name: string, base64: string) => {
       @drop="fileDrop"
       @paste="filePaste"
     >
-      <i class="file-tips">Drop files here to upload</i>
+      <template v-if="previewImage && imageInfo">
+        <div class="file-preview">
+          <img :src="previewImage" :alt="imageInfo.name" class="file-preview-image">
+          <div class="file-preview-info">
+            <div class="file-preview-name">{{ imageInfo.name }}.{{ imageInfo.ext }}</div>
+            <div class="file-preview-size">{{ imageInfo.width }} × {{ imageInfo.height }}</div>
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <i class="file-tips">Drop files here to upload</i>
+      </template>
     </div>
   </div>
 </template>
@@ -168,11 +204,44 @@ const handleImage = (name: string, base64: string) => {
     margin: 10px 0;
     text-align: center;
     padding-top: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   .file-tips {
     font-size: 20px;
     color: gray;
     font-style: italic;
+  }
+  .file-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    max-width: 100%;
+    max-height: 100%;
+  }
+  .file-preview-image {
+    max-width: 80%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  .file-preview-info {
+    text-align: center;
+  }
+  .file-preview-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+    word-break: break-all;
+  }
+  .file-preview-size {
+    font-size: 14px;
+    color: #666;
   }
 }
 </style>
