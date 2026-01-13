@@ -17,7 +17,15 @@ const changeValue = (value: string, type: string) => {
     height: height.value,
     ipath: ipath.value
   };
-  param[type as keyof ImagePropertyValue] = type === 'ipath' ? value as ImagePropertyValue[keyof ImagePropertyValue] : parseInt(value) as unknown as ImagePropertyValue[keyof ImagePropertyValue];
+  
+  if (type === 'ipath') {
+    param.ipath = value;
+  } else if (type === 'width') {
+    param.width = parseInt(value);
+  } else if (type === 'height') {
+    param.height = parseInt(value);
+  }
+  
   emit('change', param);
 };
 </script>
