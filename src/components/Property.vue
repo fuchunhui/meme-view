@@ -24,7 +24,6 @@ const injectUpdateText: () => void = inject('updateText') as () => void;
 const {max, size, color, align, direction, blur, degree, stroke, swidth} = toRefs(props);
 
 const changeValue = (value: string, type: string) => {
-  // TODO 增加校验逻辑，保证数据的合法性
   const param: {[key: string]: string | number} = {
     max: max.value,
     size: size.value,

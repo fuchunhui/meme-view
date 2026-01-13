@@ -63,7 +63,6 @@ const breakLines = (text: string, width: number, ctx: CanvasRenderingContext2D):
 
 const fillText = (ctx: CanvasRenderingContext2D, width: number, options: FillText): void => {
   const {content, x, y, size, font, color, stroke, swidth, align, max, direction, blur = 0, degree = 0} = options;
-  console.log(content, x, y, size, font, color, stroke, swidth, align, max, direction, blur, degree);
   ctx.font = `${size}px ${font}` || '32px sans-serif';
   ctx.fillStyle = color || '#000000';
   if (blur) {

@@ -9,8 +9,8 @@ import Api from '../api';
 const getCatalog = () => {
   Api.getMaterialCatalog({
     type: 'DB'.toLowerCase()
-  }).then(res => {
-    console.log(res);
+  }).then(() => {
+    // Catalog loaded
   });
 };
 

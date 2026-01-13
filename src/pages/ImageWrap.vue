@@ -100,7 +100,6 @@ const changeImage = async (value: Story) => {
       });
     }));
   } catch (err: any) {
-    console.error('update layer fail', err);
     window.alert(err?.message || '更新失败');
   }
 };
@@ -125,7 +124,6 @@ const createImage = async (options: Record<string, string>, cancelCreate?: () =>
     await getImageData(mid);
     cancelCreate?.();
   } catch (err: any) {
-    console.error('create image fail', err);
     window.alert(err?.message || '创建失败');
   }
 };
@@ -169,7 +167,7 @@ const reorderLayer = async ({mid, eid, direction}: {mid: string; eid: string; di
 };
 
 const commands = ref([]);
-const paths = ref<OPTION[]>(); // TODO 待处理
+const paths = ref<OPTION[]>();
 provide('commands', commands);
 provide('paths', paths);
 

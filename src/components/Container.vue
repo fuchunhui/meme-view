@@ -102,8 +102,8 @@ const makeCanvas = () => {
     renderImage();
   };
 
-  img.onerror = err => {
-    console.error(err);
+  img.onerror = () => {
+    console.error('图片加载失败');
   };
 
   img.src = localStory.value.image;
@@ -114,6 +114,7 @@ const renderImage = () => {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   ctx.drawImage(img, 0, 0);
 
+  // TODO 最后的一件事
   // let content = text.value;
   // 什么时候处理 content 内容和自定义的文本呢
 
@@ -121,7 +122,7 @@ const renderImage = () => {
     if (type === ELEMENT_TYPE.TEXT) {
       fillText(ctx, canvas.width, options as FillText);
     } else if (type === ELEMENT_TYPE.IMAGE) {
-      console.log('todo image');
+      // Image rendering logic to be implemented
     }
   })
 };
