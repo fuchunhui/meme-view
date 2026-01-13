@@ -28,7 +28,6 @@ import type {
   Story,
   Catalog,
   CatalogItem,
-  OPTION,
 } from '../types';
 import Api from '../api';
 import { ELEMENT_TYPE } from '../utils/constant';
@@ -48,6 +47,7 @@ let story: Ref<Story> = ref({
 });
 
 const getCatalog = async () => {
+  if (!Api.getCatalog) return;
   const res = await Api.getCatalog({});
   catalogList.value = res;
 };
@@ -81,6 +81,7 @@ watch(() => route.params.mid, mid => {
 });
 
 const getImageData = (mid: string) => {
+  if (!Api.openImage) return;
   Api.openImage({
     mid
   }).then(res => {
@@ -91,9 +92,10 @@ const getImageData = (mid: string) => {
 const changeImage = async (value: Story) => {
   if (!value?.children?.length) return;
 
+  if (!Api.updateImage) return;
   try {
     await Promise.all(value.children.map(child => {
-      return Api.updateImage({
+      return Api.updateImage!({
         eid: (child.options as any).eid,
         type: child.type,
         options: child.options
@@ -110,6 +112,7 @@ const createImage = async (options: Record<string, string>, cancelCreate?: () =>
     return;
   }
 
+  if (!Api.createImage) return;
   try {
     const res = await Api.createImage(options);
     const mid = res?.mid || res?.data?.mid;
@@ -129,7 +132,7 @@ const createImage = async (options: Record<string, string>, cancelCreate?: () =>
 };
 
 const updateName = async (value: Story) => {
-  if (!value?.mid || !value?.name) {
+  if (!value?.mid || !value?.name || !Api.updateName) {
     return;
   }
 
@@ -138,7 +141,7 @@ const updateName = async (value: Story) => {
 
 const createLayer = async ({mid, type}: {mid: string; type: string}) => {
   const targetMid = mid || current.value;
-  if (!targetMid) {
+  if (!targetMid || !Api.createLayer) {
     return;
   }
 
@@ -148,7 +151,7 @@ const createLayer = async ({mid, type}: {mid: string; type: string}) => {
 
 const deleteLayer = async ({mid, eid}: {mid: string; eid: string}) => {
   const targetMid = mid || current.value;
-  if (!targetMid || !eid) {
+  if (!targetMid || !eid || !Api.deleteLayer) {
     return;
   }
 
@@ -158,7 +161,7 @@ const deleteLayer = async ({mid, eid}: {mid: string; eid: string}) => {
 
 const reorderLayer = async ({mid, eid, direction}: {mid: string; eid: string; direction: 'up' | 'down'}) => {
   const targetMid = mid || current.value;
-  if (!targetMid || !eid) {
+  if (!targetMid || !eid || !Api.reorderLayer) {
     return;
   }
 
@@ -167,19 +170,12 @@ const reorderLayer = async ({mid, eid, direction}: {mid: string; eid: string; di
 };
 
 const commands = ref([]);
-const paths = ref<OPTION[]>();
 provide('commands', commands);
-provide('paths', paths);
 
 const getConfig = async () => {
-  const {commands: _commands, paths: _paths} = await Api.getConfig({});
+  if (!Api.getConfig) return;
+  const {commands: _commands} = await Api.getConfig({});
   commands.value = _commands;
-  paths.value = ['SVG', 'PNG', 'DB', 'RANDOM'].map((item: string) => {
-    return {
-      label: item,
-      value: item
-    };
-  });
 };
 
 onMounted(() => {

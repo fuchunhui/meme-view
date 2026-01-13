@@ -39,7 +39,6 @@ const canvasRef = ref<HTMLCanvasElement | null>(null);
 const createStatus = ref(false);
 const imageInfo = ref<{
   name: string;
-  type: string;
   image: string;
   layerType: string;
 } | null>(null);
@@ -114,7 +113,7 @@ const renderImage = () => {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   ctx.drawImage(img, 0, 0);
 
-  // TODO 最后的一件事
+  // TODO
   // let content = text.value;
   // 什么时候处理 content 内容和自定义的文本呢
 
@@ -268,7 +267,6 @@ const updateData = () => {
 const fileChange = ({name, base64}: BaseFile) => {
   imageInfo.value = {
     name: name.slice(0, name.lastIndexOf('.')) || name,
-    type: STORY_TYPE.TEXT,
     image: base64,
     layerType: ELEMENT_TYPE.TEXT,
   };
@@ -318,7 +316,7 @@ const pickMouseleave = () => {
 
 const hexConvert = (imageData: ImageData) => {
   const hex = (num: number) => num.toString(16).padStart(2, '0');
-  const {0: r, 1: g, 2: b, 3: a} = imageData.data;
+  const {0: r = 0, 1: g = 0, 2: b = 0, 3: a = 0} = imageData.data;
   return `#${hex(r)}${hex(g)}${hex(b)}${hex(a)}`.toUpperCase();
 };
 

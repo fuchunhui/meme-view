@@ -57,6 +57,10 @@ const handleFiles = (fileList: FileList) => {
   }
   
   const file = fileList[0];
+  if (!file) {
+    toast('请选择文件');
+    return false;
+  }
   const {name, size, type} = file;
 
   if (!IMAGE_TYPE.test(type)) {

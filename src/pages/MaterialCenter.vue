@@ -7,6 +7,7 @@ import {onMounted} from 'vue';
 import Api from '../api';
 
 const getCatalog = () => {
+  if (!Api.getMaterialCatalog) return;
   Api.getMaterialCatalog({
     type: 'DB'.toLowerCase()
   }).then(() => {

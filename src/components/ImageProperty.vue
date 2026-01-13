@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import {toRefs, inject} from 'vue';
+import { toRefs } from 'vue';
 import {MemeInput, MemeSelect} from './common';
 import type {FillImage, ImagePropertyValue} from '../types/image';
-import type {OPTION} from '../types';
 
 const props = defineProps<FillImage>();
 const emit = defineEmits(['change']);
 
-const injectPaths = inject('paths') as OPTION[];
+const pathOptions = [
+  {label: 'SVG', value: 'SVG'},
+  {label: 'IMAGE', value: 'IMAGE'},
+  {label: 'DB', value: 'DB'},
+];
+
 const {width, height, ipath} = toRefs(props);
 
 const changeValue = (value: string, type: string) => {
@@ -37,7 +41,7 @@ const changeValue = (value: string, type: string) => {
     <meme-input class="property-size" :value="height" @update:model-value="changeValue($event, 'height')"/>
     <meme-select
       class="property-path"
-      :options="injectPaths"
+      :options="pathOptions"
       :selected="ipath"
       @update:model-value="changeValue($event, 'ipath')"
     />

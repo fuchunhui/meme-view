@@ -46,32 +46,34 @@ export default defineComponent({
   },
   setup(props: any) {
     const {show, interval, min} = toRefs(props);
-    const localShow = ref(show.value);
+    const localShow = ref(show?.value ?? false);
     let timer: number | undefined = undefined;
     let start = 0;
 
     const hide = () => {
       const now = new Date().getTime();
       const duration = now - start;
-      if (duration > min.value) {
+      const minValue = min?.value ?? 0;
+      if (duration > minValue) {
         localShow.value = false;
       } else {
         setTimeout(() => {
           localShow.value = false;
-        }, Math.max(min.value - duration, 0));
+        }, Math.max(minValue - duration, 0));
       }
     };
 
     const showChange = (value: boolean) => {
       if (value) {
-        if (interval.value === 0) {
+        const intervalValue = interval?.value ?? 0;
+        if (intervalValue === 0) {
           localShow.value = true;
           start = new Date().getTime();
         } else {
           timer = window.setTimeout(() => {
             localShow.value = true;
             start = new Date().getTime();  
-          }, interval.value);
+          }, intervalValue);
         }
       } else {
         clearTimeout(timer);
@@ -79,9 +81,11 @@ export default defineComponent({
       }
     };
 
-    watch(show, () => {
-      showChange(show.value);
-    });
+    if (show) {
+      watch(show, () => {
+        showChange(show.value);
+      });
+    }
     return {
       localShow,
       showChange

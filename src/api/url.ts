@@ -25,6 +25,10 @@ const urlMap: Net = {
     url: '/image/update/name',
     method: 'post'
   },
+  getNamed: {
+    url: '/image/named',
+    method: 'get'
+  },
   createLayer: {
     url: '/image/layer/create',
     method: 'post'

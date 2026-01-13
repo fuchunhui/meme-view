@@ -109,7 +109,7 @@ const _drawGrid = (ctx: CanvasRenderingContext2D) => {
 
   ctx.strokeStyle = '#D6D6D6';
   points.forEach(item => {
-    const {0: sx, 1: sy, 2: dx, 3: dy} = item;
+    const {0: sx = 0, 1: sy = 0, 2: dx = 0, 3: dy = 0} = item;
     ctx.moveTo(sx, sy);
     ctx.lineTo(dx, dy);
   });

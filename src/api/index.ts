@@ -5,7 +5,10 @@ import type {API} from '../types';
 const Api: API = {};
 
 for (const key in apiList) {
-  Api[key] = factory(apiList[key]);
+  const netInfo = apiList[key];
+  if (netInfo) {
+    Api[key] = factory(netInfo);
+  }
 }
 
 export default Api;

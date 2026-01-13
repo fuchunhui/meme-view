@@ -7,7 +7,7 @@ export const ELEMENT_TYPE = {
 // 图片路径类型
 export const IMAGE_TYPE = {
   'SVG': 'SVG',
-  'PNG': 'PNG',
+  'IMAGE': 'IMAGE',
   'DB': 'DB'
 };
 
