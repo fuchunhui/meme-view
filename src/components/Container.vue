@@ -84,7 +84,7 @@ const extType = computed(() => {
 });
 
 const localName = computed(() => {
-  return `[${localStory.value.type}] ${localStory.value.name}.${extType.value} ${width.value} * ${height.value}`;
+  return `${localStory.value.name}.${extType.value} ${width.value} * ${height.value}`;
 });
 
 const img = new Image();
@@ -113,13 +113,12 @@ const renderImage = () => {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   ctx.drawImage(img, 0, 0);
 
-  // TODO
-  // let content = text.value;
-  // 什么时候处理 content 内容和自定义的文本呢
-
   localStory.value.children.forEach(({type, options}) => {
     if (type === ELEMENT_TYPE.TEXT) {
-      fillText(ctx, canvas.width, options as FillText);
+      fillText(ctx, canvas.width, {
+        ...(options as FillText),
+        content: text.value + (options as FillText).content,
+      });
     } else if (type === ELEMENT_TYPE.IMAGE) {
       // Image rendering logic to be implemented
     }
@@ -244,6 +243,9 @@ watch(() => localStory.value.children, () => {
 }, {deep: true});
 
 const _download = () => {
+  if (createStatus.value) {
+    return;
+  }
   const canvas = canvasRef.value as HTMLCanvasElement;
   const fileName = `imeme_${localStory.value.name}_${text.value}`;
   download(canvas, extType.value, fileName);
@@ -403,7 +405,7 @@ onMounted(() => {
       <meme-button v-if="createStatus" label="保存新故事" u="primary" @click="updateData"/>
       <meme-button v-if="createStatus" label="取消新建" u="primary" @click="cancelCreate"/>
       <meme-button v-else label="新建故事" u="primary" @click="startCreate"/>
-      <meme-button label="下载" u="primary" @click="_download"/>
+      <meme-button label="下载" u="primary" :disabled="createStatus" @click="_download"/>
     </div>
     <div
       class="container-wall"
@@ -411,8 +413,8 @@ onMounted(() => {
     >
       <meme-file-upload @change="fileChange"/>
     </div>
-    <template v-else>
-      <div class="container-wraper">
+    <div class="container-wrapper" v-show="!createStatus">
+      <div class="container-area">
         <canvas
           ref="canvasRef"
           :class="{
@@ -543,8 +545,8 @@ onMounted(() => {
             </div>
         </text-property>
       </template>
-    </template>
-    <footer class="container-footer">
+    </div>
+    <footer class="container-footer" v-if="!createStatus">
       <meme-button class="container-footer-label" label="添加文本层" u="primary" @click="() => createLayer(ELEMENT_TYPE.TEXT)"/>
       <meme-button class="container-footer-label" label="添加图片层" u="primary" @click="() => createLayer(ELEMENT_TYPE.IMAGE)"/>
       <meme-button :label="showActions ? '隐藏操作区' : '显示操作区'" u="primary" @click="toggleActions"/>
@@ -590,14 +592,24 @@ onMounted(() => {
       height: 100%;
     }
   }
-  &-wraper,
+  &-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  &-area,
   &-wall {
     position: relative;
-    height: 100%;
     padding: 10px;
     background-color: #fff;
     border-radius: 3px;
     overflow: hidden;
+  }
+  &-area {
+    flex: 1;
+  }
+  &-wall {
+    height: 100%;
   }
   &-overlay {
     border: thin solid gray;
