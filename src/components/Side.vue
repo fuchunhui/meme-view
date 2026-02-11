@@ -46,6 +46,7 @@ const showCell = (type: string, child: CatalogItem) => {
   border-right: 1px solid #dddee4;
   overflow-y: auto;
   user-select: none;
+  padding-bottom: 40px;
 
   &-content {
     border-top: 1px solid #dddee4;

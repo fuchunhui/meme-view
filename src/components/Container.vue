@@ -222,6 +222,7 @@ const handleDragStart = ({id, x, y}: DragMovePayload) => {
 };
 
 const handleDragMove = ({id, x, y}: DragMovePayload) => {
+  console.log(x, y);
   updateLayerPosition(id, x, y);
 };
 
