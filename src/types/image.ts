@@ -90,3 +90,23 @@ export type DragMovePayload = {
   x: number;
   y: number;
 };
+
+export interface StaticCatalogItem {
+  mid: string;
+  name: string;
+  feature: string;
+  count: number;
+}
+
+export interface StaticItemMeta {
+  id: number;
+  hash: string;
+  ext: string;
+  tags: string;
+  created_at: string;
+}
+
+export interface StaticItemView extends StaticItemMeta {
+  image: string;
+  loading?: boolean;
+}

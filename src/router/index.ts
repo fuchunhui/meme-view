@@ -22,6 +22,10 @@ const routes = [
     component: MaterialCenter
   },
   {
+    path: '/butter/center',
+    component: MaterialCenter
+  },
+  {
     path: '/butter/:mid?',
     component: ImageWrap
   },

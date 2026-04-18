@@ -40,6 +40,30 @@ const urlMap: Net = {
   reorderLayer: {
     url: '/image/layer/reorder',
     method: 'post'
+  },
+  getStaticCatalog: {
+    url: '/image/static/catalog',
+    method: 'get'
+  },
+  getStaticItems: {
+    url: '/image/static/items',
+    method: 'get'
+  },
+  getStaticItemImage: {
+    url: '/image/static/item',
+    method: 'get'
+  },
+  createStaticCollection: {
+    url: '/image/static/create',
+    method: 'post'
+  },
+  addStaticItems: {
+    url: '/image/static/add',
+    method: 'post'
+  },
+  deleteStaticItem: {
+    url: '/image/static/item/delete',
+    method: 'post'
   }
 };
 

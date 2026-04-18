@@ -15,4 +15,5 @@ export const IMAGE_TYPE = {
 export const STORY_TYPE = {
   'TEXT': 'TEXT',
   'GIF': 'GIF',
+  'STATIC': 'STATIC',
 };
